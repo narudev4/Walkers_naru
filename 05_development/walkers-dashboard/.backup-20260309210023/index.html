@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Walkers Dashboard</title>
+<style>
+/* === CSS Variables (overridable by Theme module) === */
+:root {
+  --bg: #0f172a;
+  --bg-surface: #1e293b;
+  --bg-card: #1e293b;
+  --bg-card-hover: #263548;
+  --bg-input: #0f172a;
+  --border: #334155;
+  --border-focus: #3b82f6;
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-heading: #f1f5f9;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --glass-bg: rgba(30,41,59,0.85);
+  --glass-border: rgba(255,255,255,0.08);
+  --glass-blur: 12px;
+}
+
+/* === Reset === */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: -apple-system, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* === Header === */
+#header {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px; padding: 0 24px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border);
+}
+.header-left { display:flex; align-items:center; gap:12px; }
+.logo {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:32px; height:32px; background:var(--accent); color:#fff;
+  font-weight:800; font-size:16px; border-radius:8px;
+}
+#header h1 { font-size:16px; font-weight:600; color:var(--text-heading); }
+.header-center { display:flex; }
+#nav { display:flex; gap:4px; }
+.nav-link {
+  padding:8px 16px; font-size:13px; font-weight:500;
+  color:var(--text-muted); text-decoration:none;
+  border-radius:6px; transition:all 0.15s; cursor:pointer;
+}
+.nav-link:hover { color:var(--text); background:rgba(255,255,255,0.05); }
+.nav-link.active { color:var(--accent); background:rgba(59,130,246,0.1); }
+.header-right { display:flex; align-items:center; gap:8px; }
+
+/* === Buttons === */
+.btn-icon {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:32px; height:32px; border:1px solid var(--border); border-radius:6px;
+  background:transparent; color:var(--text-muted); font-size:16px;
+  cursor:pointer; transition:all 0.15s;
+}
+.btn-icon:hover { color:var(--text); background:rgba(255,255,255,0.05); border-color:var(--text-muted); }
+.btn { display:inline-flex; align-items:center; gap:6px; padding:6px 16px; font-size:13px; font-weight:500; border:1px solid var(--border); border-radius:6px; background:var(--bg-surface); color:var(--text); cursor:pointer; transition:all 0.15s; }
+.btn:hover { background:var(--bg-card-hover); }
+.btn-primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+.btn-primary:hover { background:var(--accent-hover); }
+
+/* === Status dot === */
+.status-dot { width:8px; height:8px; border-radius:50%; }
+.status-connected { background:var(--success); box-shadow:0 0 6px var(--success); }
+.status-error { background:var(--danger); box-shadow:0 0 6px var(--danger); }
+.status-refreshing { background:var(--warning); animation:pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* === Countdown === */
+.countdown {
+  font-size:11px; font-variant-numeric:tabular-nums;
+  color:var(--text-muted); padding:4px 8px;
+  background:var(--bg-input); border-radius:12px;
+}
+
+/* === Panel === */
+.panel { max-width:1400px; margin:0 auto; padding:24px; display:none; }
+.panel.active { display:block; }
+.panel-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+.panel-header h2 { font-size:20px; font-weight:700; color:var(--text-heading); }
+
+/* === Glass card === */
+.glass {
+  background:var(--glass-bg);
+  backdrop-filter:blur(var(--glass-blur));
+  -webkit-backdrop-filter:blur(var(--glass-blur));
+  border:1px solid var(--glass-border);
+  border-radius:12px;
+}
+
+/* === Skill Grid === */
+.skill-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; }
+.skill-card {
+  padding:16px; cursor:pointer; transition:transform 0.1s, box-shadow 0.15s;
+  background:var(--bg-card); border:1px solid var(--border); border-radius:8px;
+}
+.skill-card:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.3); }
+.skill-name { font-size:14px; font-weight:600; color:var(--accent); margin-bottom:4px; }
+.skill-triggers { font-size:12px; color:var(--text-muted); margin-bottom:8px; min-height:18px; }
+.skill-meta { display:flex; gap:12px; font-size:11px; color:var(--text-muted); }
+.skill-meta span { display:flex; align-items:center; gap:4px; }
+
+/* === Search === */
+.search-input {
+  padding:8px 12px; font-size:13px; width:240px;
+  background:var(--bg-input); color:var(--text);
+  border:1px solid var(--border); border-radius:6px; outline:none;
+}
+.search-input:focus { border-color:var(--border-focus); }
+.search-bar { display:flex; align-items:center; gap:12px; }
+
+/* === Memory Cards === */
+.memory-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:16px; }
+.memory-card {
+  padding:20px; cursor:pointer; transition:transform 0.1s;
+  background:var(--bg-card); border:1px solid var(--border); border-radius:8px;
+}
+.memory-card:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.3); }
+.memory-icon { font-size:24px; margin-bottom:8px; }
+.memory-name { font-size:15px; font-weight:600; color:var(--text-heading); margin-bottom:4px; }
+.memory-preview {
+  font-size:12px; color:var(--text-muted); line-height:1.5;
+  max-height:72px; overflow:hidden; white-space:pre-wrap;
+  font-family:'SF Mono','Fira Code',monospace;
+  background:var(--bg-input); padding:8px; border-radius:4px; margin-top:8px;
+}
+.memory-meta { font-size:11px; color:var(--text-muted); margin-top:8px; }
+
+/* === Pipeline === */
+.metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:24px; }
+.metric-card {
+  padding:20px; text-align:center;
+  background:var(--bg-card); border:1px solid var(--border); border-radius:8px;
+}
+.metric-value { font-size:32px; font-weight:700; color:var(--text-heading); }
+.metric-label { font-size:12px; color:var(--text-muted); margin-top:4px; }
+
+.pipeline-top { display:flex; gap:24px; align-items:flex-start; margin-bottom:24px; flex-wrap:wrap; }
+.donut-container { text-align:center; }
+.donut {
+  width:140px; height:140px; border-radius:50%; position:relative;
+  display:inline-block;
+}
+.donut-hole {
+  position:absolute; inset:28%; background:var(--bg); border-radius:50%;
+  display:flex; align-items:center; justify-content:center; flex-direction:column;
+}
+.donut-hole .big { font-size:28px; font-weight:700; color:var(--text-heading); }
+.donut-hole .small { font-size:10px; color:var(--text-muted); }
+.donut-legend { margin-top:12px; font-size:11px; color:var(--text-muted); text-align:left; }
+.donut-legend-item { display:flex; align-items:center; gap:6px; margin:3px 0; }
+.donut-legend-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+.kanban { display:flex; gap:16px; overflow-x:auto; padding-bottom:16px; }
+.kanban-col { min-width:280px; flex:1; background:rgba(255,255,255,0.02); border-radius:8px; padding:12px; }
+.kanban-col-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:12px; padding-bottom:8px; border-bottom:2px solid var(--border);
+}
+.kanban-col-title { font-size:13px; font-weight:600; color:var(--text-heading); }
+.kanban-col-count { font-size:11px; color:var(--text-muted); background:var(--bg-surface); padding:2px 8px; border-radius:9999px; }
+.kanban-cards { display:flex; flex-direction:column; gap:8px; min-height:40px; }
+.kanban-card {
+  background:var(--bg-card); border:1px solid var(--border); border-radius:8px;
+  padding:12px; transition:box-shadow 0.15s;
+}
+.kanban-card:hover { box-shadow:0 4px 12px rgba(0,0,0,0.3); }
+.kanban-card-client { font-size:13px; font-weight:600; color:var(--text-heading); margin-bottom:4px; }
+.kanban-card-project { font-size:12px; color:var(--text-muted); margin-bottom:6px; }
+.kanban-card-footer { display:flex; justify-content:space-between; align-items:center; }
+.badge { display:inline-flex; padding:2px 8px; font-size:10px; font-weight:600; border-radius:9999px; }
+.badge-high { color:var(--danger); background:rgba(239,68,68,0.1); }
+.badge-mid { color:var(--warning); background:rgba(245,158,11,0.1); }
+.badge-low { color:var(--success); background:rgba(34,197,94,0.1); }
+
+/* === Action Table === */
+.action-table { width:100%; border-collapse:collapse; font-size:13px; margin-top:24px; }
+.action-table th {
+  text-align:left; padding:8px 12px; font-size:11px; font-weight:600;
+  text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted);
+  border-bottom:1px solid var(--border);
+}
+.action-table td { padding:8px 12px; border-bottom:1px solid var(--border); }
+.action-table tr:hover td { background:var(--bg-card-hover); }
+
+/* === Projects === */
+.project-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
+.project-card {
+  padding:20px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px;
+}
+.project-name { font-size:16px; font-weight:600; color:var(--text-heading); margin-bottom:8px; }
+.project-files { font-size:12px; color:var(--text-muted); }
+.project-file { padding:2px 0; font-family:'SF Mono','Fira Code',monospace; font-size:11px; }
+
+/* === Settings === */
+.settings-section { margin-bottom:32px; }
+.settings-title { font-size:16px; font-weight:600; color:var(--text-heading); margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+.mcp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:8px; }
+.mcp-item {
+  display:flex; align-items:center; gap:8px; padding:10px 14px;
+  background:var(--bg-card); border:1px solid var(--border); border-radius:6px; font-size:13px;
+}
+.mcp-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.mcp-connected { background:var(--success); }
+.mcp-pending { background:var(--text-muted); }
+.git-commits { font-family:'SF Mono','Fira Code',monospace; font-size:12px; }
+.git-commit { padding:6px 0; color:var(--text-muted); border-bottom:1px solid rgba(255,255,255,0.04); }
+.git-hash { color:var(--accent); }
+
+/* === Editor Modal === */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200;
+  display:flex; align-items:stretch; justify-content:center; padding:24px;
+}
+.editor-modal-content {
+  width:100%; max-width:1000px; display:flex; flex-direction:column;
+  background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; overflow:hidden;
+}
+.editor-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 20px; border-bottom:1px solid var(--border);
+}
+.editor-header h2 { font-size:16px; font-weight:600; color:var(--text-heading); }
+.editor-actions { display:flex; gap:8px; }
+.editor-textarea {
+  flex:1; width:100%; border:none; outline:none; resize:none;
+  background:var(--bg-input); color:var(--text);
+  padding:20px; font-family:'SF Mono','Fira Code','Menlo',monospace;
+  font-size:13px; line-height:1.7; tab-size:2;
+}
+
+/* === Theme Picker === */
+.theme-picker {
+  position:absolute; top:56px; right:24px; z-index:150;
+  background:var(--bg-surface); border:1px solid var(--border); border-radius:8px;
+  padding:8px; min-width:160px; box-shadow:0 8px 24px rgba(0,0,0,0.4);
+}
+.theme-option {
+  display:flex; align-items:center; gap:8px; width:100%;
+  padding:8px 12px; border:none; background:transparent; color:var(--text);
+  font-size:13px; cursor:pointer; border-radius:4px; text-align:left;
+}
+.theme-option:hover { background:var(--bg-card-hover); }
+.theme-option.active { color:var(--accent); font-weight:600; }
+.theme-swatch { width:14px; height:14px; border-radius:50%; border:2px solid var(--border); flex-shrink:0; }
+
+/* === Toast === */
+.toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+  padding:10px 24px; border-radius:8px; font-size:13px; font-weight:500;
+  opacity:0; transition:all 0.3s; z-index:300; pointer-events:none;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.toast-success { background:var(--success); color:#fff; }
+.toast-error { background:var(--danger); color:#fff; }
+
+/* === Outputs === */
+.output-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+.output-card {
+  padding:14px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px;
+  font-size:12px;
+}
+.output-name { font-weight:600; color:var(--text-heading); margin-bottom:4px; word-break:break-all; }
+.output-meta { color:var(--text-muted); }
+
+/* === Empty State === */
+.empty-state { text-align:center; padding:60px 20px; color:var(--text-muted); }
+.empty-state-icon { font-size:48px; margin-bottom:12px; opacity:0.5; }
+.empty-state-msg { font-size:14px; }
+
+/* === Responsive === */
+@media (max-width:768px) {
+  #header { flex-wrap:wrap; height:auto; padding:12px; gap:8px; }
+  .header-center { order:3; width:100%; }
+  #nav { width:100%; justify-content:center; flex-wrap:wrap; }
+  .nav-link { padding:6px 10px; font-size:12px; }
+  .panel { padding:16px; }
+  .kanban { flex-direction:column; }
+  .kanban-col { min-width:auto; }
+  .pipeline-top { flex-direction:column; align-items:center; }
+  .search-input { width:100%; }
+  .panel-header { flex-direction:column; gap:12px; align-items:flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header id="header">
+  <div class="header-left">
+    <span class="logo">W</span>
+    <h1>Walkers Dashboard</h1>
+  </div>
+  <div class="header-center">
+    <nav id="nav">
+      <a class="nav-link active" data-panel="skills">Skills</a>
+      <a class="nav-link" data-panel="memory">Memory</a>
+      <a class="nav-link" data-panel="pipeline">Pipeline</a>
+      <a class="nav-link" data-panel="projects">Projects</a>
+      <a class="nav-link" data-panel="outputs">Outputs</a>
+      <a class="nav-link" data-panel="skillhub">Skill Hub</a>
+      <a class="nav-link" data-panel="settings">Settings</a>
+    </nav>
+  </div>
+  <div class="header-right">
+    <span id="refresh-countdown" class="countdown">60s</span>
+    <button id="refresh-btn" class="btn-icon" title="Refresh">&#x21bb;</button>
+    <button id="theme-btn" class="btn-icon" title="Theme">&#9789;</button>
+    <span id="status-dot" class="status-dot status-connected"></span>
+  </div>
+</header>
+
+<!-- Panels -->
+<main>
+  <div id="panel-skills" class="panel active"></div>
+  <div id="panel-memory" class="panel"></div>
+  <div id="panel-pipeline" class="panel"></div>
+  <div id="panel-projects" class="panel"></div>
+  <div id="panel-outputs" class="panel"></div>
+  <div id="panel-skillhub" class="panel"></div>
+  <div id="panel-settings" class="panel"></div>
+</main>
+
+<!-- Editor Modal -->
+<div id="editor-modal" class="modal-overlay" style="display:none">
+  <div class="editor-modal-content">
+    <div class="editor-header">
+      <h2 id="editor-title"></h2>
+      <div class="editor-actions">
+        <button id="editor-save" class="btn btn-primary">Save</button>
+        <button id="editor-cancel" class="btn">Close</button>
+      </div>
+    </div>
+    <textarea id="editor-textarea" class="editor-textarea" spellcheck="false"></textarea>
+  </div>
+</div>
+
+<!-- Sanitizer Modal -->
+<div id="sanitizer-modal" class="modal-overlay" style="display:none">
+  <div class="editor-modal-content" style="max-width:900px">
+    <div class="editor-header">
+      <h2 id="sanitizer-title">Skill Hubに掲載</h2>
+      <div class="editor-actions">
+        <button id="sanitizer-publish" class="btn btn-primary">掲載する</button>
+        <button id="sanitizer-cancel" class="btn">Cancel</button>
+      </div>
+    </div>
+    <div style="padding:10px 16px;border-bottom:1px solid var(--border);background:rgba(59,130,246,0.1);color:#60a5fa;font-size:13px;display:flex;align-items:center;gap:8px">
+      <span style="font-size:16px">&#x1f4cb;</span>
+      <span><strong>共有用コピーを編集中</strong> — 元のスキルファイルは変更されません。自由に編集してから掲載できます。</span>
+    </div>
+    <div style="padding:10px 16px;border-bottom:1px solid var(--border);background:rgba(245,158,11,0.1);color:#f59e0b;font-size:13px">
+      &#x26a0;&#xfe0f; 機密情報チェック: 検出されたパターンは<span style="background:#ef444433;padding:0 4px;border-radius:3px;color:#ef4444">赤色</span>でハイライト、自動で置換済みです。
+    </div>
+    <div id="sanitizer-detections" style="padding:8px 16px;max-height:80px;overflow-y:auto;border-bottom:1px solid var(--border);font-size:12px;color:var(--text-muted)"></div>
+    <div style="padding:12px 16px;display:flex;gap:12px;border-bottom:1px solid var(--border);align-items:center;flex-wrap:wrap">
+      <label style="font-size:13px;white-space:nowrap">作成者名:</label>
+      <input type="text" id="sanitizer-creator" placeholder="例: 古谷大輝" style="flex:1;min-width:150px;padding:8px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);font-size:14px">
+      <label style="font-size:13px;white-space:nowrap">カテゴリ:</label>
+      <select id="sanitizer-category" style="padding:8px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);font-size:13px">
+        <option value="content">コンテンツ作成</option>
+        <option value="sales">営業・経理</option>
+        <option value="schedule">スケジュール</option>
+        <option value="research">調査・分析</option>
+        <option value="system">システム</option>
+      </select>
+    </div>
+    <textarea id="sanitizer-textarea" class="editor-textarea" spellcheck="false" style="min-height:350px"></textarea>
+  </div>
+</div>
+
+<!-- Skill Preview Modal -->
+<div id="preview-modal" class="modal-overlay" style="display:none">
+  <div class="editor-modal-content" style="max-width:900px">
+    <div class="editor-header">
+      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
+        <h2 id="preview-title" style="margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></h2>
+        <span id="preview-badge" style="font-size:11px;padding:2px 8px;border-radius:10px;flex-shrink:0"></span>
+      </div>
+      <div class="editor-actions">
+        <button id="preview-install" class="btn btn-primary">インストール</button>
+        <button id="preview-close" class="btn">閉じる</button>
+      </div>
+    </div>
+    <div id="preview-meta" style="padding:10px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;font-size:13px"></div>
+    <div id="preview-body" style="flex:1;overflow:auto;padding:20px;font-family:'SF Mono','Fira Code','Menlo',monospace;font-size:13px;line-height:1.7;white-space:pre-wrap;color:var(--text)"></div>
+  </div>
+</div>
+
+<!-- Theme Picker -->
+<div id="theme-picker" class="theme-picker" style="display:none"></div>
+
+<script>
+/* ========================================================
+   Walkers Dashboard — Single-File Frontend
+   OpenClaw-style modular architecture
+   ======================================================== */
+
+// === Module 1: State ===
+const State = (() => {
+  const _data = {};
+  const _listeners = new Map();
+  return {
+    set(key, val) {
+      _data[key] = val;
+      (_listeners.get(key) || []).forEach(fn => fn(val));
+    },
+    get(key) { return _data[key]; },
+    on(key, fn) {
+      if (!_listeners.has(key)) _listeners.set(key, []);
+      _listeners.get(key).push(fn);
+    }
+  };
+})();
+
+// === Module 2: DataLayer ===
+const DataLayer = (() => {
+  async function fetchJSON(path) {
+    const res = await fetch(path);
+    if (!res.ok) throw new Error(`${res.status}`);
+    return res.json();
+  }
+  return {
+    async loadAll() {
+      const d = await fetchJSON('/api/data');
+      State.set('skills', d.skills || []);
+      State.set('memories', d.memories || {});
+      State.set('pipeline', d.pipeline || {});
+      State.set('projects', d.projects || []);
+      State.set('outputs', d.outputs || []);
+      State.set('settings', d.settings || {});
+      State.set('git', d.git || {});
+      State.set('meta', d._meta || {});
+      State.set('finance', d.finance || {});
+      State.set('daily', d.daily || {});
+      // Fetch live skillhub data from API (not cached data.json)
+      try {
+        const hub = await fetchJSON('/api/skillhub');
+        State.set('skillhub', hub);
+      } catch(e) {
+        State.set('skillhub', d.skillhub || {skills: []});
+      }
+      return d;
+    },
+    async getSkill(name) { return fetchJSON(`/api/skill/${encodeURIComponent(name)}`); },
+    async saveSkill(name, content) {
+      return fetch(`/api/skill/${encodeURIComponent(name)}`, {
+        method: 'PUT', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({content})
+      }).then(r => r.json());
+    },
+    async getMemory(key) { return fetchJSON(`/api/memory/${encodeURIComponent(key)}`); },
+    async saveMemory(key, content) {
+      return fetch(`/api/memory/${encodeURIComponent(key)}`, {
+        method: 'PUT', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({content})
+      }).then(r => r.json());
+    },
+    async refresh() {
+      return fetch('/api/refresh', {method:'POST'}).then(r => r.json());
+    }
+  };
+})();
+
+// === Module 3: Router ===
+const Router = (() => {
+  const PANELS = ['skills','memory','pipeline','projects','outputs','skillhub','settings'];
+  function navigate(panel) {
+    if (!PANELS.includes(panel)) panel = 'skills';
+    PANELS.forEach(p => {
+      const el = document.getElementById(`panel-${p}`);
+      const link = document.querySelector(`.nav-link[data-panel="${p}"]`);
+      if (el) { el.classList.toggle('active', p === panel); }
+      if (link) { link.classList.toggle('active', p === panel); }
+    });
+    State.set('activePanel', panel);
+    Renderer.renderPanel(panel);
+  }
+  function init() {
+    document.querySelectorAll('.nav-link').forEach(a => {
+      a.addEventListener('click', () => {
+        const p = a.dataset.panel;
+        location.hash = p;
+        navigate(p);
+      });
+    });
+    window.addEventListener('hashchange', () => navigate(location.hash.slice(1) || 'skills'));
+    navigate(location.hash.slice(1) || 'skills');
+  }
+  return { init, navigate };
+})();
+
+// === Module 4: Renderer ===
+const Renderer = (() => {
+  const rendered = {};
+
+  function renderPanel(panel) {
+    const data = {
+      skills: State.get('skills'),
+      memories: State.get('memories'),
+      pipeline: State.get('pipeline'),
+      projects: State.get('projects'),
+      outputs: State.get('outputs'),
+      settings: State.get('settings'),
+      git: State.get('git'),
+    };
+    switch(panel) {
+      case 'skills': renderSkills(data.skills || []); break;
+      case 'memory': renderMemory(data.memories || {}); break;
+      case 'pipeline': renderPipeline(data.pipeline || {}); break;
+      case 'projects': renderProjects(data.projects || []); break;
+      case 'outputs': renderOutputs(data.outputs || []); break;
+      case 'skillhub': renderSkillHub(State.get('skillhub')); break;
+      case 'settings': renderSettings(data.settings || {}, data.git || {}); break;
+    }
+  }
+
+  function renderSkills(skills) {
+    const panel = document.getElementById('panel-skills');
+    panel.innerHTML = `
+      <div class="panel-header">
+        <h2>Skills (${skills.length})</h2>
+        <div class="search-bar">
+          <input type="text" id="skill-search" placeholder="Search skills..." class="search-input">
+        </div>
+      </div>
+      <div class="skill-grid" id="skill-grid"></div>
+    `;
+    const grid = document.getElementById('skill-grid');
+    skills.forEach(s => {
+      const card = document.createElement('div');
+      card.className = 'skill-card';
+      card.innerHTML = `
+        <div class="skill-name">/${s.name}</div>
+        <div class="skill-triggers">${esc(s.triggers || '')}</div>
+        <div class="skill-meta">
+          <span>${s.phases || 0} sections</span>
+          <span>${s.lines} lines</span>
+          <span>${formatDate(s.modified)}</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="publish-btn" data-skill="${esc(s.name)}" style="flex:1;padding:6px 12px;border-radius:6px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;font-size:12px;transition:all .2s" onmouseover="this.style.background='var(--accent)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='var(--accent)'">Skill Hub\u306b\u63b2\u8f09</button>
+        </div>
+      `;
+      card.querySelector('.skill-name').addEventListener('click', () => Editor.open(s.name, 'skill'));
+      card.querySelector('.skill-triggers').addEventListener('click', () => Editor.open(s.name, 'skill'));
+      card.querySelector('.skill-meta').addEventListener('click', () => Editor.open(s.name, 'skill'));
+      card.querySelector('.publish-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        Sanitizer.open(s.name);
+      });
+      grid.appendChild(card);
+    });
+    document.getElementById('skill-search').addEventListener('input', e => {
+      const q = e.target.value.toLowerCase();
+      grid.querySelectorAll('.skill-card').forEach(c => {
+        c.style.display = c.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+  }
+
+  const MEM_ICONS = { facts:'&#x1f4ca;', decisions:'&#x2696;&#xfe0f;', preferences:'&#x2699;&#xfe0f;', auto_memory:'&#x1f9e0;' };
+  const MEM_LABELS = { facts:'Facts', decisions:'Decisions', preferences:'Preferences', auto_memory:'Auto Memory' };
+
+  function renderMemory(memories) {
+    const panel = document.getElementById('panel-memory');
+    const keys = Object.keys(memories);
+    if (!keys.length) {
+      panel.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x1f9e0;</div><div class="empty-state-msg">No memory files found</div></div>';
+      return;
+    }
+    panel.innerHTML = `<div class="panel-header"><h2>Memory (${keys.length})</h2></div><div class="memory-grid" id="memory-grid"></div>`;
+    const grid = document.getElementById('memory-grid');
+    keys.forEach(k => {
+      const m = memories[k];
+      const card = document.createElement('div');
+      card.className = 'memory-card';
+      card.innerHTML = `
+        <div class="memory-icon">${MEM_ICONS[k] || '&#x1f4c4;'}</div>
+        <div class="memory-name">${MEM_LABELS[k] || k}</div>
+        <div class="memory-preview">${esc(m.preview || '')}</div>
+        <div class="memory-meta">${m.lines} lines / ${formatBytes(m.size)}</div>
+      `;
+      card.addEventListener('click', () => Editor.open(k, 'memory'));
+      grid.appendChild(card);
+    });
+  }
+
+  const STAGE_COLORS = {
+    'リード':'#64748b', '商談中':'#3b82f6', '提案済':'#f59e0b', '契約手続中':'#22c55e',
+    '準備中':'#8b5cf6', '進行中':'#06b6d4', '既存顧客':'#10b981', '完了':'#6366f1', '失注':'#ef4444'
+  };
+  const STAGE_ORDER = ['リード','商談中','提案済','契約手続中','準備中','進行中','既存顧客'];
+
+  function parsePipelineMd(md) {
+    if (!md) return { deals:[], actions:[] };
+    const deals = [];
+    const sections = md.split(/^### \d+\.\s*/m).slice(1);
+    sections.forEach(sec => {
+      const lines = sec.split('\n');
+      const header = lines[0].trim();
+      const parts = header.split(/\s*[/／]\s*/);
+      const deal = { client: parts[0]||'', contact: parts[1]||'', status:'', project:'', priority:'中', nextAction:'', email:'', assignee:'' };
+      lines.forEach(line => {
+        const m = line.match(/^-\s\*\*(.+?)\*\*:\s*(.+)/);
+        if (!m) return;
+        const key = m[1].trim(), val = m[2].trim();
+        if (key === 'ステータス') deal.status = val.split('（')[0].trim();
+        else if (key === '案件内容') deal.project = val;
+        else if (key === '優先度') deal.priority = val.replace(/[（）()]/g, '').trim();
+        else if (key === '次回アクション') deal.nextAction = val;
+        else if (key === '連絡先') deal.email = val;
+        else if (key === '担当') deal.assignee = val;
+      });
+      deals.push(deal);
+    });
+    // Parse action table
+    const actions = [];
+    const actMatch = md.match(/## 要対応アクション[\s\S]*?(?=\n## |\Z)/);
+    if (actMatch) {
+      const rows = actMatch[0].match(/^\|(?![\s-]*\|)(.+)\|$/gm) || [];
+      rows.slice(1).forEach(row => {
+        const cells = row.split('|').map(c => c.trim()).filter(Boolean);
+        if (cells.length >= 4) actions.push({ priority:cells[0].replace(/\*/g,''), client:cells[1], action:cells[2], deadline:cells[3] });
+      });
+    }
+    return { deals, actions };
+  }
+
+  function renderPipeline(pipeline) {
+    const panel = document.getElementById('panel-pipeline');
+    if (!pipeline.raw) {
+      panel.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x1f4ca;</div><div class="empty-state-msg">No pipeline data</div></div>';
+      return;
+    }
+    const { deals, actions } = parsePipelineMd(pipeline.raw);
+    const stages = {};
+    deals.forEach(d => { const s = normalizeStage(d.status); stages[s] = (stages[s]||0)+1; });
+
+    // Metrics
+    let html = '<div class="panel-header"><h2>Sales Pipeline</h2></div>';
+    html += '<div class="metrics">';
+    html += metricCard(deals.length, 'Total Deals', '--accent');
+    STAGE_ORDER.forEach(s => {
+      if (stages[s]) html += metricCard(stages[s], s, '');
+    });
+    if (actions.length) html += metricCard(actions.length, 'Urgent', '--danger');
+    html += '</div>';
+
+    // Donut + Legend
+    html += '<div class="pipeline-top">';
+    html += renderDonut(deals, stages);
+
+    // Action table
+    if (actions.length) {
+      html += '<div style="flex:1;min-width:300px">';
+      html += '<h3 style="font-size:14px;color:var(--text-heading);margin-bottom:12px">Urgent Actions</h3>';
+      html += '<table class="action-table"><thead><tr><th>Priority</th><th>Client</th><th>Action</th><th>Deadline</th></tr></thead><tbody>';
+      actions.forEach(a => {
+        html += `<tr><td>${esc(a.priority)}</td><td>${esc(a.client)}</td><td>${esc(a.action)}</td><td>${esc(a.deadline)}</td></tr>`;
+      });
+      html += '</tbody></table></div>';
+    }
+    html += '</div>';
+
+    // Kanban
+    html += '<div class="kanban">';
+    STAGE_ORDER.forEach(stage => {
+      const stageDeals = deals.filter(d => normalizeStage(d.status) === stage);
+      const color = STAGE_COLORS[stage] || '#64748b';
+      html += `<div class="kanban-col">
+        <div class="kanban-col-header" style="border-bottom-color:${color}">
+          <span class="kanban-col-title">${stage}</span>
+          <span class="kanban-col-count">${stageDeals.length}</span>
+        </div>
+        <div class="kanban-cards">`;
+      stageDeals.forEach(d => {
+        const badgeClass = d.priority.includes('高') ? 'badge-high' : d.priority.includes('低') ? 'badge-low' : 'badge-mid';
+        html += `<div class="kanban-card">
+          <div class="kanban-card-client">${esc(d.client)}</div>
+          <div class="kanban-card-project">${esc(d.project || d.nextAction || '')}</div>
+          <div class="kanban-card-footer">
+            <span class="badge ${badgeClass}">${esc(d.priority)}</span>
+            <span style="font-size:11px;color:var(--text-muted)">${esc(d.contact)}</span>
+          </div>
+        </div>`;
+      });
+      html += '</div></div>';
+    });
+    html += '</div>';
+
+    panel.innerHTML = html;
+  }
+
+  function normalizeStage(status) {
+    if (!status) return 'リード';
+    for (const s of STAGE_ORDER) {
+      if (status.includes(s)) return s;
+    }
+    if (status.includes('提案')) return '提案済';
+    if (status.includes('契約')) return '契約手続中';
+    if (status.includes('既存')) return '既存顧客';
+    return 'リード';
+  }
+
+  function renderDonut(deals, stages) {
+    const total = deals.length;
+    if (!total) return '';
+    let cum = 0;
+    const segs = [];
+    STAGE_ORDER.forEach(s => {
+      const count = stages[s] || 0;
+      if (!count) return;
+      const pct = (count/total)*100;
+      segs.push({ stage:s, count, pct, start:cum, color: STAGE_COLORS[s]||'#64748b' });
+      cum += pct;
+    });
+    const gradient = segs.map(s => `${s.color} ${s.start}% ${s.start+s.pct}%`).join(', ');
+    let legend = '<div class="donut-legend">';
+    segs.forEach(s => {
+      legend += `<div class="donut-legend-item"><span class="donut-legend-dot" style="background:${s.color}"></span>${s.stage}: ${s.count}</div>`;
+    });
+    legend += '</div>';
+    return `<div class="donut-container">
+      <div class="donut" style="background:conic-gradient(${gradient})">
+        <div class="donut-hole"><span class="big">${total}</span><span class="small">deals</span></div>
+      </div>${legend}</div>`;
+  }
+
+  function metricCard(value, label, colorVar) {
+    const style = colorVar ? `color:var(${colorVar})` : '';
+    return `<div class="metric-card"><div class="metric-value" style="${style}">${value}</div><div class="metric-label">${label}</div></div>`;
+  }
+
+  function renderProjects(projects) {
+    const panel = document.getElementById('panel-projects');
+    if (!projects.length) {
+      panel.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x1f4c1;</div><div class="empty-state-msg">No projects found</div></div>';
+      return;
+    }
+    let html = `<div class="panel-header"><h2>Projects (${projects.length})</h2></div><div class="project-grid">`;
+    projects.forEach(p => {
+      html += `<div class="project-card">
+        <div class="project-name">${esc(p.name)}</div>
+        <div class="project-files">`;
+      (p.files || []).slice(0, 10).forEach(f => {
+        html += `<div class="project-file">${esc(f)}</div>`;
+      });
+      if (p.files && p.files.length > 10) html += `<div class="project-file" style="color:var(--text-muted)">...and ${p.files.length - 10} more</div>`;
+      html += `</div></div>`;
+    });
+    html += '</div>';
+    panel.innerHTML = html;
+  }
+
+  function renderOutputs(outputs) {
+    const panel = document.getElementById('panel-outputs');
+    if (!outputs.length) {
+      panel.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x1f5bc;</div><div class="empty-state-msg">No output files found</div></div>';
+      return;
+    }
+    let html = `<div class="panel-header"><h2>Output Files (${outputs.length})</h2></div><div class="output-grid">`;
+    outputs.forEach(o => {
+      html += `<div class="output-card">
+        <div class="output-name">${esc(o.name)}</div>
+        <div class="output-meta">${formatBytes(o.size)} / ${formatDate(o.modified)}</div>
+      </div>`;
+    });
+    html += '</div>';
+    panel.innerHTML = html;
+  }
+
+  function renderSkillHub(data) {
+    const panel = document.getElementById('panel-skillhub');
+    if (!data || !data.skills) {
+      panel.innerHTML = `<div class="panel-header"><h2>Skill Hub</h2><p style="opacity:.6">\u793e\u5185\u30b9\u30ad\u30eb\u5171\u6709\u30de\u30fc\u30b1\u30c3\u30c8\u30d7\u30ec\u30a4\u30b9</p></div><div style="padding:2rem;text-align:center;opacity:.5">\u8aad\u307f\u8fbc\u307f\u4e2d...</div>`;
+      return;
+    }
+
+    const categories = {
+      'all': '\u5168\u3066',
+      'content': '\u30b3\u30f3\u30c6\u30f3\u30c4\u4f5c\u6210',
+      'sales': '\u55b6\u696d\u30fb\u7d4c\u7406',
+      'schedule': '\u30b9\u30b1\u30b8\u30e5\u30fc\u30eb',
+      'research': '\u8abf\u67fb\u30fb\u5206\u6790',
+      'system': '\u30b7\u30b9\u30c6\u30e0'
+    };
+
+    const categoryColors = {
+      'content': '#3b82f6', 'sales': '#10b981', 'schedule': '#f59e0b',
+      'research': '#8b5cf6', 'system': '#6b7280'
+    };
+
+    const myName = localStorage.getItem('walkers-creator') || '';
+    let filterCat = 'all';
+    let searchTerm = '';
+
+    function render() {
+      const skills = data.skills || [];
+      const filtered = skills.filter(s => {
+        const cat = s.category || 'system';
+        const matchCat = filterCat === 'all' || cat === filterCat;
+        const matchSearch = !searchTerm ||
+          s.name.toLowerCase().includes(searchTerm) ||
+          (s.description || '').toLowerCase().includes(searchTerm) ||
+          (s.triggers || '').toLowerCase().includes(searchTerm) ||
+          (s.creator || '').toLowerCase().includes(searchTerm);
+        return matchCat && matchSearch;
+      });
+
+      const installed = data.installed || [];
+
+      const syncMode = data.sync_mode || 'local';
+      const syncBadge = syncMode === 'sheets'
+        ? '<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 10px;border-radius:12px;background:rgba(16,185,129,0.15);color:#10b981"><span style="width:6px;height:6px;border-radius:50%;background:#10b981;display:inline-block"></span>Google Sheets \u540c\u671f\u4e2d</span>'
+        : '<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 10px;border-radius:12px;background:rgba(239,68,68,0.15);color:#ef4444;cursor:pointer" title="\u30af\u30ea\u30c3\u30af\u3057\u3066\u30bb\u30c3\u30c8\u30a2\u30c3\u30d7\u624b\u9806\u3092\u8868\u793a" onclick="document.getElementById(\'sync-help\').style.display=document.getElementById(\'sync-help\').style.display===\'none\'?\'block\':\'none\'"><span style="width:6px;height:6px;border-radius:50%;background:#ef4444;display:inline-block"></span>\u540c\u671f\u3067\u304d\u3066\u3044\u307e\u305b\u3093</span>';
+
+      const _syncPrompt = 'Skill Hub\u306eGoogle Sheets\u540c\u671f\u3092\u30bb\u30c3\u30c8\u30a2\u30c3\u30d7\u3057\u3066\u304f\u3060\u3055\u3044\u3002\u624b\u9806: 1) 05_development/mcp-google/credentials.json \u304c\u3042\u308b\u304b\u78ba\u8a8d\u3002\u306a\u3051\u308c\u3070\u53e4\u8c37\u306b\u78ba\u8a8d\u3002 2) \u30d1\u30c3\u30c1\u306eauth-google.py\u3092\u5b9f\u884c\u3057\u3066Google\u8a8d\u8a3c\u3092\u901a\u3059\u3002 3) \u30c0\u30c3\u30b7\u30e5\u30dc\u30fc\u30c9\u3092\u518d\u8d77\u52d5\u3002';
+      const offlineBanner = syncMode !== 'sheets' ? `
+        <div id="sync-help" style="margin:0 1.5rem 16px;padding:20px 24px;border-radius:12px;background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(239,68,68,0.04));border:1px solid rgba(239,68,68,0.25)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <span style="font-size:20px">\u{1f6a8}</span>
+            <strong style="color:#ef4444;font-size:15px">Skill Hub \u304c\u540c\u671f\u3055\u308c\u3066\u3044\u307e\u305b\u3093</strong>
+          </div>
+          <p style="margin:0 0 16px;font-size:13px;opacity:.85;line-height:1.7">Google \u8a8d\u8a3c\u304c\u672a\u8a2d\u5b9a\u306e\u305f\u3081\u3001\u4ed6\u30e1\u30f3\u30d0\u30fc\u304c\u5171\u6709\u3057\u305f\u30b9\u30ad\u30eb\u304c\u8868\u793a\u3055\u308c\u307e\u305b\u3093\u3002<br>\u4ee5\u4e0b\u306e\u30e1\u30c3\u30bb\u30fc\u30b8\u3092 <strong>Claude Code</strong> \u306b\u8cbc\u308a\u4ed8\u3051\u3066\u304f\u3060\u3055\u3044\uff1a</p>
+          <div style="position:relative">
+            <div id="sync-prompt-box" style="background:rgba(0,0,0,0.35);border-radius:8px;padding:14px 16px;padding-right:80px;font-size:13px;line-height:1.7;color:#e2e8f0;cursor:pointer" onclick="navigator.clipboard.writeText(document.getElementById('sync-prompt-text').textContent).then(()=>{const b=document.getElementById('sync-copy-btn');b.textContent='\u2705 \u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f';setTimeout(()=>b.textContent='\u30b3\u30d4\u30fc',2000)})">
+              <span id="sync-prompt-text">Skill Hub\u306eGoogle Sheets\u540c\u671f\u3092\u30bb\u30c3\u30c8\u30a2\u30c3\u30d7\u3057\u3066\u304f\u3060\u3055\u3044\u3002\u624b\u9806: 1) 05_development/mcp-google/credentials.json \u304c\u3042\u308b\u304b\u78ba\u8a8d\u3002\u306a\u3051\u308c\u3070\u53e4\u8c37\u306b\u78ba\u8a8d\u3002 2) \u30d1\u30c3\u30c1\u306eauth-google.py\u3092\u5b9f\u884c\u3057\u3066Google\u8a8d\u8a3c\u3092\u901a\u3059\u3002 3) \u30c0\u30c3\u30b7\u30e5\u30dc\u30fc\u30c9\u3092\u518d\u8d77\u52d5\u3002</span>
+            </div>
+            <button id="sync-copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('sync-prompt-text').textContent).then(()=>{this.textContent='\u2705 \u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f';setTimeout(()=>this.textContent='\u30b3\u30d4\u30fc',2000)})" style="position:absolute;top:10px;right:10px;padding:6px 14px;border-radius:6px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;cursor:pointer;font-size:12px;transition:all .2s" onmouseover="this.style.background='var(--accent)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">\u30b3\u30d4\u30fc</button>
+          </div>
+          <p style="margin:12px 0 0;font-size:12px;opacity:.5">\u2192 Claude Code \u304c\u8a8d\u8a3c\u30d5\u30ed\u30fc\u3092\u30ac\u30a4\u30c9\u3057\u3066\u304f\u308c\u307e\u3059\u3002\u5b8c\u4e86\u5f8c\u3001\u30c0\u30c3\u30b7\u30e5\u30dc\u30fc\u30c9\u3092\u30ea\u30ed\u30fc\u30c9\u3059\u308c\u3070\u540c\u671f\u304c\u6709\u52b9\u306b\u306a\u308a\u307e\u3059\u3002</p>
+        </div>
+      ` : '';
+
+      panel.innerHTML = `
+        <div class="panel-header">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <h2 style="margin:0">Skill Hub</h2>
+            ${syncBadge}
+          </div>
+          <p style="opacity:.6;margin:4px 0 0">\u793e\u5185\u30b9\u30ad\u30eb\u5171\u6709\u30de\u30fc\u30b1\u30c3\u30c8\u30d7\u30ec\u30a4\u30b9 \u2014 ${skills.length}\u30b9\u30ad\u30eb\u63b2\u8f09\u4e2d</p>
+        </div>
+        ${offlineBanner}
+        ${skills.length === 0 ? `
+          <div style="padding:3rem;text-align:center">
+            <div style="font-size:48px;margin-bottom:16px;opacity:.3">\u{1f4e6}</div>
+            <p style="opacity:.5;font-size:15px">\u307e\u3060\u30b9\u30ad\u30eb\u304c\u63b2\u8f09\u3055\u308c\u3066\u3044\u307e\u305b\u3093</p>
+            <p style="opacity:.4;font-size:13px">Skills\u30bf\u30d6\u304b\u3089\u300c Skill Hub\u306b\u63b2\u8f09\u300d\u30dc\u30bf\u30f3\u3092\u62bc\u3057\u3066\u3001\u30b9\u30ad\u30eb\u3092\u5171\u6709\u3057\u307e\u3057\u3087\u3046</p>
+          </div>
+        ` : `
+        <div style="padding:0 1.5rem">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+            ${Object.entries(categories).map(([k,v]) =>
+              `<button class="cat-btn" data-cat="${k}" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:${filterCat===k?'var(--accent)':'transparent'};color:${filterCat===k?'#fff':'var(--text)'};cursor:pointer;font-size:13px;transition:all .2s">${v}</button>`
+            ).join('')}
+          </div>
+          <input type="text" placeholder="\u30b9\u30ad\u30eb\u3092\u691c\u7d22..." value="${searchTerm}" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--glass-bg);color:var(--text);font-size:14px;margin-bottom:16px;box-sizing:border-box">
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;padding:0 1.5rem 1.5rem">
+          ${filtered.map(s => {
+            const cat = s.category || 'system';
+            const catColor = categoryColors[cat] || '#6b7280';
+            const catLabel = categories[cat] || '\u30b7\u30b9\u30c6\u30e0';
+            const isInstalled = installed.includes(s.name);
+            const isMine = myName && s.creator === myName;
+            const initials = (s.creator || '?').slice(0, 1);
+            return `
+            <div class="card hub-skill-card" data-idx="${filtered.indexOf(s)}" style="padding:16px;display:flex;flex-direction:column;gap:8px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:transform 0.1s,box-shadow 0.15s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="font-weight:600;color:var(--accent);font-size:15px">/${esc(s.name)}</span>
+                <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:${catColor}22;color:${catColor};border:1px solid ${catColor}44">${catLabel}</span>
+              </div>
+              <p style="font-size:13px;opacity:.8;margin:0;line-height:1.5">${esc(s.description || '')}</p>
+              ${s.triggers ? `<div style="font-size:11px;opacity:.5;font-family:monospace">${esc(s.triggers)}</div>` : ''}
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0">${esc(initials)}</div>
+                <div>
+                  <div style="font-size:13px;font-weight:500">${esc(s.creator || '\u4e0d\u660e')}</div>
+                  <div style="font-size:11px;opacity:.4">${s.publishedAt ? formatDate(s.publishedAt) : ''} \u63b2\u8f09</div>
+                </div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:8px;border-top:1px solid var(--border)">
+                <div style="display:flex;gap:8px;align-items:center">
+                  <span style="font-size:11px;opacity:.5">${s.phases || '?'} phases</span>
+                  <span style="font-size:11px;opacity:.5">${s.lines || '?'} lines</span>
+                  ${isInstalled ? '<span style="font-size:11px;color:#10b981">&#x2713; \u30a4\u30f3\u30b9\u30c8\u30fc\u30eb\u6e08</span>' : ''}
+                </div>
+                <div style="display:flex;gap:6px" onclick="event.stopPropagation()">
+                  ${isMine ? `<button class="unpublish-btn" data-id="${esc(s.id)}" style="padding:4px 10px;border-radius:6px;border:1px solid #ef4444;background:transparent;color:#ef4444;cursor:pointer;font-size:12px;transition:all .2s">\u53d6\u308a\u4e0b\u3052</button>` : ''}
+                  <button class="install-btn" data-idx="${filtered.indexOf(s)}" style="padding:4px 10px;border-radius:6px;border:1px solid ${isInstalled ? '#10b981' : 'var(--accent)'};background:transparent;color:${isInstalled ? '#10b981' : 'var(--accent)'};cursor:pointer;font-size:12px;transition:all .2s">${isInstalled ? '\u2713 \u6e08' : '\u30a4\u30f3\u30b9\u30c8\u30fc\u30eb'}</button>
+                </div>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+        `}
+      `;
+
+      // Attach event listeners
+      panel.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.onclick = () => { filterCat = btn.dataset.cat; render(); };
+      });
+      const input = panel.querySelector('input[type="text"]');
+      if (input) input.oninput = (e) => { searchTerm = e.target.value.toLowerCase(); render(); };
+
+      // Card click → preview
+      panel.querySelectorAll('.hub-skill-card').forEach(card => {
+        card.onclick = () => {
+          const idx = parseInt(card.dataset.idx);
+          if (!isNaN(idx) && filtered[idx]) SkillPreview.open(filtered[idx]);
+        };
+      });
+
+      // Install button (inline)
+      panel.querySelectorAll('.install-btn').forEach(btn => {
+        btn.onclick = async () => {
+          const idx = parseInt(btn.dataset.idx);
+          if (isNaN(idx) || !filtered[idx]) return;
+          const s = filtered[idx];
+          try {
+            const res = await fetch('/api/skillhub/install', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name: s.name, content: s.content })
+            });
+            const result = await res.json();
+            if (result.ok) {
+              showToast(`/${s.name} \u3092\u30a4\u30f3\u30b9\u30c8\u30fc\u30eb\u3057\u307e\u3057\u305f`);
+              btn.textContent = '\u2713 \u6e08';
+              btn.style.borderColor = '#10b981';
+              btn.style.color = '#10b981';
+              // Refresh
+              const hubData = await (await fetch('/api/skillhub')).json();
+              State.set('skillhub', hubData);
+            }
+          } catch(e) { showToast('Error: ' + e.message, 'error'); }
+        };
+      });
+
+      // Unpublish
+      panel.querySelectorAll('.unpublish-btn').forEach(btn => {
+        btn.onclick = async () => {
+          if (!confirm('\u3053\u306e\u30b9\u30ad\u30eb\u3092 Skill Hub \u304b\u3089\u53d6\u308a\u4e0b\u3052\u307e\u3059\u304b\uff1f')) return;
+          try {
+            const res = await fetch('/api/skillhub/unpublish', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: btn.dataset.id })
+            });
+            const result = await res.json();
+            if (result.ok) {
+              showToast('\u53d6\u308a\u4e0b\u3052\u307e\u3057\u305f');
+              const hubData = await (await fetch('/api/skillhub')).json();
+              State.set('skillhub', hubData);
+              renderSkillHub(hubData);
+            }
+          } catch(e) { showToast('Error: ' + e.message, 'error'); }
+        };
+      });
+    }
+    render();
+  }
+
+  function renderSettings(settings, git) {
+    const panel = document.getElementById('panel-settings');
+    const servers = settings.mcpServers || [];
+    const connected = settings.connectedServers || [];
+
+    let html = '<div class="panel-header"><h2>Settings</h2></div>';
+
+    // CLAUDE.md stats
+    html += '<div class="settings-section"><div class="settings-title">CLAUDE.md</div>';
+    html += `<div style="font-size:13px;color:var(--text-muted)">
+      ${settings.claudeMdLines || 0} lines / ${formatBytes(settings.claudeMdSize || 0)}
+    </div></div>`;
+
+    // MCP Connections
+    html += '<div class="settings-section"><div class="settings-title">MCP Connections</div><div class="mcp-grid">';
+    servers.forEach(s => {
+      const isConnected = connected.includes(s);
+      html += `<div class="mcp-item">
+        <span class="mcp-dot ${isConnected ? 'mcp-connected' : 'mcp-pending'}"></span>
+        <span>${esc(s)}</span>
+      </div>`;
+    });
+    html += '</div></div>';
+
+    // Git
+    if (git && git.commits) {
+      html += `<div class="settings-section"><div class="settings-title">Git (${esc(git.branch || '')})</div><div class="git-commits">`;
+      (git.commits || []).forEach(c => {
+        const parts = c.split(' ');
+        const hash = parts[0];
+        const msg = parts.slice(1).join(' ');
+        html += `<div class="git-commit"><span class="git-hash">${esc(hash)}</span> ${esc(msg)}</div>`;
+      });
+      html += '</div></div>';
+    }
+
+    panel.innerHTML = html;
+  }
+
+  return { renderPanel };
+})();
+
+// === Module 5: Theme ===
+const Theme = (() => {
+  let _themes = {};
+  let _current = 'dark-blue';
+  async function load() {
+    try {
+      const res = await fetch('/themes.json');
+      _themes = await res.json();
+    } catch { _themes = {}; }
+  }
+  function apply(name) {
+    const t = _themes[name];
+    if (!t) return;
+    _current = name;
+    const root = document.documentElement;
+    Object.entries(t).forEach(([k,v]) => {
+      if (k === 'label' || k === 'type') return;
+      root.style.setProperty(`--${k}`, v);
+    });
+    localStorage.setItem('walkers-theme', name);
+  }
+  function showPicker() {
+    const picker = document.getElementById('theme-picker');
+    if (picker.style.display !== 'none') { picker.style.display = 'none'; return; }
+    picker.innerHTML = Object.entries(_themes).map(([name, t]) =>
+      `<button class="theme-option ${name === _current ? 'active' : ''}" data-theme="${name}">
+        <span class="theme-swatch" style="background:${t.accent || '#3b82f6'}"></span>
+        ${t.label || name}
+      </button>`
+    ).join('');
+    picker.style.display = 'block';
+    picker.querySelectorAll('.theme-option').forEach(btn => {
+      btn.addEventListener('click', () => { apply(btn.dataset.theme); picker.style.display = 'none'; });
+    });
+  }
+  function init() {
+    const saved = localStorage.getItem('walkers-theme');
+    if (saved && _themes[saved]) apply(saved);
+    else if (_themes['dark-blue']) apply('dark-blue');
+  }
+  return { load, apply, showPicker, init };
+})();
+
+// === Module 6: Sanitizer ===
+const Sanitizer = (() => {
+  let _skillName = '';
+  let _triggers = '';
+  let _description = '';
+
+  const PATTERNS = [
+    { name: 'Email', regex: /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g, replace: '[EMAIL]' },
+    { name: 'Google Doc ID', regex: /(?:docs|sheets|slides|drive)\.google\.com\/[^\s]*\/d\/([a-zA-Z0-9_\-]{20,})/g, replace: (m) => m.replace(/\/d\/[a-zA-Z0-9_\-]{20,}/, '/d/[DOC_ID]') },
+    { name: 'Standalone Doc ID', regex: /(?:ID|id|Id)[\s:]*[`"']?([a-zA-Z0-9_\-]{25,})[`"']?/g, replace: (m) => m.replace(/[a-zA-Z0-9_\-]{25,}/, '[DOC_ID]') },
+    { name: 'API Key', regex: /(?:sk-|ghp_|gho_|github_pat_|xoxb-|xoxp-|AKIA)[a-zA-Z0-9\-_]{10,}/g, replace: '[API_KEY]' },
+    { name: 'Phone', regex: /0\d{1,4}[\-\s]?\d{1,4}[\-\s]?\d{3,4}/g, replace: '[PHONE]' },
+    { name: 'Local Path', regex: /\/Users\/[^\s\])`'">]+/g, replace: '[LOCAL_PATH]' },
+    { name: 'Windows Path', regex: /[A-Z]:\\Users\\[^\s\])`'">]+/g, replace: '[LOCAL_PATH]' },
+  ];
+
+  function detect(text) {
+    const findings = [];
+    PATTERNS.forEach(p => {
+      const matches = text.match(p.regex);
+      if (matches) {
+        matches.forEach(m => findings.push({ type: p.name, value: m }));
+      }
+    });
+    return findings;
+  }
+
+  function sanitize(text) {
+    let result = text;
+    PATTERNS.forEach(p => {
+      if (typeof p.replace === 'function') {
+        result = result.replace(p.regex, p.replace);
+      } else {
+        result = result.replace(p.regex, p.replace);
+      }
+    });
+    return result;
+  }
+
+  async function open(skillName) {
+    _skillName = skillName;
+    const modal = document.getElementById('sanitizer-modal');
+    const textarea = document.getElementById('sanitizer-textarea');
+    const detections = document.getElementById('sanitizer-detections');
+    const title = document.getElementById('sanitizer-title');
+    const categorySelect = document.getElementById('sanitizer-category');
+
+    title.textContent = `/${skillName} \u3092 Skill Hub \u306b\u63b2\u8f09`;
+    textarea.value = 'Loading...';
+    modal.style.display = 'flex';
+
+    try {
+      const data = await DataLayer.getSkill(skillName);
+      const content = data.content;
+
+      // Extract triggers and description from original
+      _triggers = '';
+      _description = '';
+      for (const line of content.split('\n')) {
+        if (line.includes('\u30c8\u30ea\u30ac\u30fc') && line.includes(':')) {
+          _triggers = line.split(':').slice(1).join(':').trim();
+        }
+      }
+      // First non-empty non-header line as description
+      for (const line of content.split('\n')) {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith('#') && !trimmed.startsWith('-') && !trimmed.startsWith('*') && !trimmed.includes('\u30c8\u30ea\u30ac\u30fc')) {
+          _description = trimmed.slice(0, 100);
+          break;
+        }
+      }
+
+      // Auto-detect category
+      const catMap = {
+        'create-proposal': 'content', 'create-slides': 'content', 'create-mockup': 'content',
+        'write-article': 'content', 'write-draft': 'content', 'title-gen': 'content',
+        'meeting-minutes': 'content',
+        'sales-pipeline': 'sales', 'update-finance': 'sales', 'misoca': 'sales',
+        'daily-schedule': 'schedule', 'schedule-adjust': 'schedule',
+        'issue-triage': 'schedule', 'task-register': 'schedule',
+        'research': 'research', 'trend-check': 'research', 'strategy': 'research',
+        'article-monitor': 'research',
+      };
+      categorySelect.value = catMap[skillName] || 'system';
+
+      // Detect sensitive data
+      const findings = detect(content);
+      if (findings.length > 0) {
+        detections.innerHTML = `<strong style="color:#ef4444">${findings.length}\u4ef6\u306e\u6a5f\u5bc6\u60c5\u5831\u3092\u691c\u51fa:</strong> ` +
+          findings.map(f => `<span style="background:#ef444422;padding:2px 6px;border-radius:3px;margin:2px;display:inline-block;color:#ef4444">${esc(f.type)}: ${esc(f.value.slice(0, 40))}${f.value.length > 40 ? '...' : ''}</span>`).join('');
+      } else {
+        detections.innerHTML = '<span style="color:#22c55e">\u2713 \u6a5f\u5bc6\u60c5\u5831\u306f\u691c\u51fa\u3055\u308c\u307e\u305b\u3093\u3067\u3057\u305f\u3002\u5ff5\u306e\u305f\u3081\u5185\u5bb9\u3092\u78ba\u8a8d\u3057\u3066\u304f\u3060\u3055\u3044\u3002</span>';
+      }
+
+      // Auto-sanitize and show
+      textarea.value = sanitize(content);
+    } catch(e) {
+      textarea.value = `Error: ${e.message}`;
+    }
+  }
+
+  async function publish() {
+    const textarea = document.getElementById('sanitizer-textarea');
+    const creator = document.getElementById('sanitizer-creator').value.trim();
+    const category = document.getElementById('sanitizer-category').value;
+
+    if (!creator) {
+      showToast('\u4f5c\u6210\u8005\u540d\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044', 'error');
+      document.getElementById('sanitizer-creator').focus();
+      return;
+    }
+
+    // Re-check for remaining sensitive data
+    const remaining = detect(textarea.value);
+    if (remaining.length > 0) {
+      if (!confirm(`\u307e\u3060${remaining.length}\u4ef6\u306e\u6a5f\u5bc6\u60c5\u5831\u304c\u542b\u307e\u308c\u3066\u3044\u307e\u3059\u3002\u305d\u306e\u307e\u307e\u63b2\u8f09\u3057\u307e\u3059\u304b\uff1f`)) return;
+    }
+
+    try {
+      const res = await fetch('/api/skillhub/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: _skillName,
+          content: textarea.value,
+          creator: creator,
+          description: _description,
+          triggers: _triggers,
+          category: category
+        })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        showToast(`/${_skillName} \u3092 Skill Hub \u306b\u63b2\u8f09\u3057\u307e\u3057\u305f`);
+        close();
+        // Save creator name for next time
+        localStorage.setItem('walkers-creator', creator);
+        // Refresh skillhub data and navigate to Skill Hub
+        const hubData = await (await fetch('/api/skillhub')).json();
+        State.set('skillhub', hubData);
+        Router.navigate('skillhub');
+      } else {
+        showToast(data.error || '\u63b2\u8f09\u306b\u5931\u6557\u3057\u307e\u3057\u305f', 'error');
+      }
+    } catch(e) {
+      showToast(`Error: ${e.message}`, 'error');
+    }
+  }
+
+  function close() {
+    document.getElementById('sanitizer-modal').style.display = 'none';
+  }
+
+  function init() {
+    document.getElementById('sanitizer-publish').addEventListener('click', publish);
+    document.getElementById('sanitizer-cancel').addEventListener('click', close);
+    // Restore saved creator name
+    const saved = localStorage.getItem('walkers-creator');
+    if (saved) document.getElementById('sanitizer-creator').value = saved;
+    // Close on Escape
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && document.getElementById('sanitizer-modal').style.display === 'flex') close();
+    });
+  }
+
+  return { open, close, init };
+})();
+
+// === Module 7b: Skill Preview (read-only viewer + install) ===
+const SkillPreview = (() => {
+  let _current = null;
+
+  function renderMarkdown(text) {
+    // Lightweight markdown → HTML
+    return text
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/^### (.+)$/gm, '<h3 style="color:var(--accent);margin:18px 0 6px;font-size:14px">$1</h3>')
+      .replace(/^## (.+)$/gm, '<h2 style="color:var(--accent);margin:22px 0 8px;font-size:16px;border-bottom:1px solid var(--border);padding-bottom:4px">$1</h2>')
+      .replace(/^# (.+)$/gm, '<h1 style="color:var(--accent);margin:0 0 12px;font-size:20px">$1</h1>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/`([^`]+)`/g, '<code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:3px;font-size:12px">$1</code>')
+      .replace(/^- (.+)$/gm, '<div style="padding-left:16px;margin:2px 0">\u2022 $1</div>')
+      .replace(/^\d+\. (.+)$/gm, (m, p1, offset, str) => {
+        const num = m.match(/^(\d+)/)[1];
+        return `<div style="padding-left:16px;margin:2px 0">${num}. ${p1}</div>`;
+      })
+      .replace(/```([\s\S]*?)```/g, '<pre style="background:rgba(0,0,0,0.3);padding:12px;border-radius:6px;margin:8px 0;overflow-x:auto;font-size:12px">$1</pre>')
+      .replace(/^\|(.+)\|$/gm, (match) => {
+        const cells = match.split('|').filter(c => c.trim());
+        if (cells.every(c => /^[\s-:]+$/.test(c))) return '';
+        return '<div style="display:flex;gap:0;margin:1px 0">' +
+          cells.map(c => `<span style="flex:1;padding:4px 8px;border:1px solid var(--border);font-size:12px">${c.trim()}</span>`).join('') +
+          '</div>';
+      })
+      .replace(/\n\n/g, '<br><br>')
+      .replace(/\n/g, '<br>');
+  }
+
+  function open(skill) {
+    _current = skill;
+    const modal = document.getElementById('preview-modal');
+    const title = document.getElementById('preview-title');
+    const badge = document.getElementById('preview-badge');
+    const meta = document.getElementById('preview-meta');
+    const body = document.getElementById('preview-body');
+    const installBtn = document.getElementById('preview-install');
+
+    title.textContent = '/' + (skill.name || '');
+
+    const catMap = { content: '\u30b3\u30f3\u30c6\u30f3\u30c4\u4f5c\u6210', sales: '\u55b6\u696d\u30fb\u7d4c\u7406', schedule: '\u30b9\u30b1\u30b8\u30e5\u30fc\u30eb', research: '\u8abf\u67fb\u30fb\u5206\u6790', system: '\u30b7\u30b9\u30c6\u30e0' };
+    const catColors = { content: '#3b82f6', sales: '#10b981', schedule: '#f59e0b', research: '#8b5cf6', system: '#6b7280' };
+    const cat = skill.category || 'system';
+    const color = catColors[cat] || '#6b7280';
+    badge.textContent = catMap[cat] || '\u30b7\u30b9\u30c6\u30e0';
+    badge.style.cssText = `font-size:11px;padding:2px 8px;border-radius:10px;background:${color}22;color:${color};border:1px solid ${color}44`;
+
+    const initials = (skill.creator || '?').slice(0, 1);
+    const pubDate = skill.publishedAt ? new Date(skill.publishedAt).toLocaleDateString('ja-JP', {month:'numeric',day:'numeric'}) : '';
+    meta.innerHTML = `
+      <div style="width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0">${initials}</div>
+      <span style="font-weight:500">${skill.creator || '\u4e0d\u660e'}</span>
+      <span style="opacity:.4">${pubDate} \u63b2\u8f09</span>
+      <span style="opacity:.4">${skill.phases || '?'} phases</span>
+      <span style="opacity:.4">${skill.lines || '?'} lines</span>
+      ${skill.triggers ? `<span style="opacity:.5;font-family:monospace;font-size:12px">${skill.triggers}</span>` : ''}
+    `;
+
+    body.innerHTML = renderMarkdown(skill.content || '');
+
+    // Check install status
+    const hubData = State.get('skillhub') || {};
+    const installed = (hubData.installed || []);
+    if (installed.includes(skill.name)) {
+      installBtn.textContent = '\u2713 \u30a4\u30f3\u30b9\u30c8\u30fc\u30eb\u6e08';
+      installBtn.style.opacity = '0.5';
+      installBtn.disabled = true;
+    } else {
+      installBtn.textContent = '\u30a4\u30f3\u30b9\u30c8\u30fc\u30eb';
+      installBtn.style.opacity = '1';
+      installBtn.disabled = false;
+    }
+
+    modal.style.display = 'flex';
+  }
+
+  async function install() {
+    if (!_current) return;
+    try {
+      const res = await fetch('/api/skillhub/install', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: _current.name, content: _current.content })
+      });
+      const result = await res.json();
+      if (result.ok) {
+        showToast(`/${_current.name} \u3092\u30a4\u30f3\u30b9\u30c8\u30fc\u30eb\u3057\u307e\u3057\u305f`);
+        const installBtn = document.getElementById('preview-install');
+        installBtn.textContent = '\u2713 \u30a4\u30f3\u30b9\u30c8\u30fc\u30eb\u6e08';
+        installBtn.style.opacity = '0.5';
+        installBtn.disabled = true;
+        // Refresh installed list
+        const hubData = await (await fetch('/api/skillhub')).json();
+        State.set('skillhub', hubData);
+      } else {
+        showToast('Install failed: ' + (result.error || ''), 'error');
+      }
+    } catch(e) { showToast('Error: ' + e.message, 'error'); }
+  }
+
+  function close() {
+    document.getElementById('preview-modal').style.display = 'none';
+    _current = null;
+  }
+
+  function init() {
+    document.getElementById('preview-install').addEventListener('click', install);
+    document.getElementById('preview-close').addEventListener('click', close);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && document.getElementById('preview-modal').style.display === 'flex') close();
+    });
+  }
+
+  return { open, close, init };
+})();
+
+// === Module 7: Editor ===
+const Editor = (() => {
+  let _name = '', _type = '', _original = '';
+  async function open(name, type) {
+    _name = name; _type = type;
+    const modal = document.getElementById('editor-modal');
+    const title = document.getElementById('editor-title');
+    const textarea = document.getElementById('editor-textarea');
+    title.textContent = type === 'skill' ? `/${name}` : name;
+    textarea.value = 'Loading...';
+    modal.style.display = 'flex';
+    try {
+      const data = type === 'skill' ? await DataLayer.getSkill(name) : await DataLayer.getMemory(name);
+      _original = data.content;
+      textarea.value = data.content;
+      textarea.focus();
+    } catch(e) { textarea.value = `Error: ${e.message}`; }
+  }
+  async function save() {
+    const textarea = document.getElementById('editor-textarea');
+    const content = textarea.value;
+    if (content === _original) { close(); return; }
+    try {
+      const result = _type === 'skill'
+        ? await DataLayer.saveSkill(_name, content)
+        : await DataLayer.saveMemory(_name, content);
+      if (result.ok) {
+        _original = content;
+        showToast('Saved');
+        close();
+        await DataLayer.loadAll();
+        Renderer.renderPanel(State.get('activePanel'));
+      } else { showToast('Save failed', 'error'); }
+    } catch(e) { showToast(`Error: ${e.message}`, 'error'); }
+  }
+  function close() {
+    const textarea = document.getElementById('editor-textarea');
+    if (textarea.value !== _original && textarea.value !== 'Loading...') {
+      if (!confirm('Unsaved changes. Close?')) return;
+    }
+    document.getElementById('editor-modal').style.display = 'none';
+  }
+  function init() {
+    document.getElementById('editor-save').addEventListener('click', save);
+    document.getElementById('editor-cancel').addEventListener('click', close);
+    document.getElementById('editor-textarea').addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); save(); }
+      // Tab indent
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const ta = e.target;
+        const start = ta.selectionStart, end = ta.selectionEnd;
+        ta.value = ta.value.substring(0, start) + '  ' + ta.value.substring(end);
+        ta.selectionStart = ta.selectionEnd = start + 2;
+      }
+    });
+    // Close on Escape
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && document.getElementById('editor-modal').style.display === 'flex') close();
+    });
+  }
+  return { open, close, init };
+})();
+
+// === Module 7: App ===
+const App = (() => {
+  let _countdown = 60;
+  let _timer = null;
+
+  async function init() {
+    await Theme.load();
+    Theme.init();
+    try {
+      await DataLayer.loadAll();
+      setStatus('connected');
+    } catch(e) {
+      setStatus('error');
+      console.error('Load failed:', e);
+    }
+    Router.init();
+    Editor.init();
+    Sanitizer.init();
+    SkillPreview.init();
+    document.getElementById('refresh-btn').addEventListener('click', manualRefresh);
+    document.getElementById('theme-btn').addEventListener('click', Theme.showPicker);
+    // Close theme picker on outside click
+    document.addEventListener('click', e => {
+      const picker = document.getElementById('theme-picker');
+      const btn = document.getElementById('theme-btn');
+      if (picker.style.display !== 'none' && !picker.contains(e.target) && e.target !== btn) {
+        picker.style.display = 'none';
+      }
+    });
+    startCountdown();
+    // Keyboard shortcuts
+    document.addEventListener('keydown', e => {
+      if (document.getElementById('editor-modal').style.display === 'flex') return;
+      if (e.ctrlKey || e.metaKey) {
+        if (e.key === 'r') { e.preventDefault(); manualRefresh(); }
+      }
+    });
+  }
+
+  function startCountdown() {
+    _countdown = 60;
+    updateCountdown();
+    _timer = setInterval(() => {
+      _countdown--;
+      updateCountdown();
+      if (_countdown <= 0) { autoRefresh(); _countdown = 60; }
+    }, 1000);
+  }
+
+  function updateCountdown() {
+    document.getElementById('refresh-countdown').textContent = `${_countdown}s`;
+  }
+
+  async function autoRefresh() {
+    try {
+      await DataLayer.loadAll();
+      setStatus('connected');
+      Renderer.renderPanel(State.get('activePanel'));
+    } catch { setStatus('error'); }
+  }
+
+  async function manualRefresh() {
+    setStatus('refreshing');
+    try {
+      await DataLayer.refresh();
+      await DataLayer.loadAll();
+      setStatus('connected');
+      _countdown = 60;
+      Renderer.renderPanel(State.get('activePanel'));
+      showToast('Refreshed');
+    } catch(e) {
+      setStatus('error');
+      showToast('Refresh failed', 'error');
+    }
+  }
+
+  return { init };
+})();
+
+// === Helpers ===
+function setStatus(s) {
+  const dot = document.getElementById('status-dot');
+  dot.className = `status-dot status-${s}`;
+}
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function formatDate(iso) {
+  if (!iso) return '-';
+  const d = new Date(iso);
+  return `${d.getMonth()+1}/${d.getDate()}`;
+}
+function formatBytes(b) {
+  if (!b) return '0B';
+  if (b < 1024) return b + 'B';
+  return (b/1024).toFixed(1) + 'KB';
+}
+function showToast(msg, type='success') {
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('show'));
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2500);
+}
+
+// === Boot ===
+document.addEventListener('DOMContentLoaded', App.init);
+</script>
+</body>
+</html>

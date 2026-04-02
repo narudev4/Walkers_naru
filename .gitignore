@@ -1,0 +1,39 @@
+# Authentication & Secrets
+.env
+.env.*
+.mcp.json
+*.key
+*.pem
+credentials/
+secrets/
+**/credentials.json
+
+# API Keys & Tokens
+**/api_key*
+**/token*
+**/secret*
+
+# Claude Code (personal settings)
+.claude/settings.local.json
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node.js
+node_modules/
+
+# shinkoku 確定申告データ（個人情報を含む — 削除しないこと）
+shinkoku.config.yaml
+shinkoku.db
+shinkoku.db-wal
+shinkoku.db-shm
+.shinkoku/
+output/

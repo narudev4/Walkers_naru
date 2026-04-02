@@ -1,0 +1,9 @@
+{
+  "cron": {
+    "expression": "*/15 * * * *",
+    "enabled": true
+  },
+  "prompt": "Gatewayの状態をチェックしてください。\n\n1. `curl -s http://localhost:8080/api/gateway/status` でゲートウェイの状態を取得\n2. 以下の項目をチェック:\n   - uptime: 異常に短い（60秒未満）場合は再起動の可能性\n   - pendingCommands: 5件以上溜まっている場合は処理遅延の可能性\n   - runningAgents: 10分以上実行中のエージェントがいたら異常の可能性\n3. 異常を検知した場合のみ、`memories/alerts.md` に記録し、Google Chat（spaces/89bERSAAAAE）へ通知を送信してください\n4. 正常時は何もせず終了してください（ログには記録）\n\n【通知フォーマット】\n⚠️ Gateway Health Alert\n- 検知項目: {異常内容}\n- 詳細: {状態の説明}\n- 時刻: {現在時刻}",
+  "timeout": 120,
+  "description": "Gateway health monitor"
+}

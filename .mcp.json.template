@@ -1,0 +1,51 @@
+{
+  "mcpServers": {
+    "notion": {
+      "command": "npx",
+      "args": ["-y", "@notionhq/notion-mcp-server"],
+      "env": {
+        "NOTION_API_KEY": "__NOTION_API_KEY__"
+      }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest", "--browser", "chromium"]
+    },
+    "taskgod": {
+      "url": "https://taskgod-backend.onrender.com/mcp/sse",
+      "headers": {
+        "Authorization": "Bearer __TASKGOD_TOKEN__"
+      }
+    },
+    "google-sheets": {
+      "command": "npx",
+      "args": ["-y", "mcp-google-sheets"],
+      "env": {
+        "CREDENTIALS_PATH": "./credentials/google/gcp-oauth.keys.json",
+        "TOKEN_PATH": "./credentials/google/sheets-drive.token.json"
+      }
+    },
+    "google-drive": {
+      "command": "npx",
+      "args": ["-y", "mcp-google-drive"],
+      "env": {
+        "GOOGLE_CLIENT_ID": "__GOOGLE_CLIENT_ID__",
+        "GOOGLE_CLIENT_SECRET": "__GOOGLE_CLIENT_SECRET__",
+        "GOOGLE_REFRESH_TOKEN": "__GOOGLE_REFRESH_TOKEN__"
+      }
+    },
+    "walkers-sub-agents": {
+      "command": "python3",
+      "args": ["05_development/walkers-dashboard/mcp-sub-agents.py"]
+    },
+    "google-slides": {
+      "command": "npx",
+      "args": ["-y", "mcp-google-slides"],
+      "env": {
+        "GOOGLE_CLIENT_ID": "__GOOGLE_CLIENT_ID__",
+        "GOOGLE_CLIENT_SECRET": "__GOOGLE_CLIENT_SECRET__",
+        "GOOGLE_REFRESH_TOKEN": "__GOOGLE_REFRESH_TOKEN__"
+      }
+    }
+  }
+}

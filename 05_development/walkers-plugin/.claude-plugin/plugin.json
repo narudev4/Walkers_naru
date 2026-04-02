@@ -1,0 +1,10 @@
+{
+  "name": "walkers-skills",
+  "version": "1.0.0",
+  "description": "Walkers経営パートナーAIスキルセット — 営業・提案書・議事録・経理・スケジュール管理など27スキル",
+  "author": {
+    "name": "Walkers Inc.",
+    "email": "info@walker-s.co.jp"
+  },
+  "keywords": ["walkers", "consulting", "business", "japanese", "経営", "コンサルティング"]
+}

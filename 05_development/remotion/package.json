@@ -1,0 +1,19 @@
+{
+  "name": "walkers-remotion",
+  "version": "1.0.0",
+  "description": "Walkers - Remotion動画制作プロジェクト",
+  "scripts": {
+    "start": "npx remotion studio",
+    "build": "npx remotion render src/index.ts WalkersIntro out/walkers-intro.mp4 --codec h264"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.291",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "4.0.291"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "typescript": "^5.7.0"
+  }
+}

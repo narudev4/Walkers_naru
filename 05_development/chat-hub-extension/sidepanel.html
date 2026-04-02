@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatHub</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">CH</div>
+      <h1>ChatHub</h1>
+    </div>
+    <div class="header-right">
+      <button id="btn-settings" class="icon-btn" title="設定">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Tab Navigation -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="chats">
+      <span>チャット</span>
+      <span id="total-badge" class="badge hidden">0</span>
+    </button>
+    <button class="tab-btn" data-tab="ai">
+      <span>AI</span>
+    </button>
+    <button class="tab-btn" data-tab="settings">
+      <span>設定</span>
+    </button>
+  </nav>
+
+  <!-- Chats Tab -->
+  <section id="tab-chats" class="tab-content active">
+    <div class="actions-bar">
+      <button id="btn-open-all" class="btn btn-primary btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        全て開く
+      </button>
+      <button id="btn-close-all" class="btn btn-ghost btn-sm">全て閉じる</button>
+    </div>
+
+    <div id="chat-list" class="chat-list">
+      <!-- Dynamically populated -->
+    </div>
+  </section>
+
+  <!-- AI Tab -->
+  <section id="tab-ai" class="tab-content">
+    <div class="ai-section">
+      <div class="ai-input-group">
+        <label>メッセージを入力 or テキスト選択→右クリック</label>
+        <textarea id="ai-input" placeholder="返信したいメッセージを貼り付け..."></textarea>
+        <div class="ai-actions">
+          <button id="ai-reply" class="btn btn-primary btn-sm">返信案</button>
+          <button id="ai-summarize" class="btn btn-secondary btn-sm">要約</button>
+          <button id="ai-translate" class="btn btn-secondary btn-sm">英訳</button>
+          <button id="ai-custom" class="btn btn-ghost btn-sm">カスタム</button>
+        </div>
+      </div>
+
+      <div id="ai-loading" class="ai-loading hidden">
+        <div class="spinner"></div>
+        <span>AI生成中...</span>
+      </div>
+
+      <div id="ai-result" class="ai-result hidden">
+        <div class="ai-result-header">
+          <span>AI回答</span>
+          <button id="ai-copy" class="btn btn-ghost btn-xs">コピー</button>
+        </div>
+        <div id="ai-result-text" class="ai-result-text"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Settings Tab -->
+  <section id="tab-settings" class="tab-content">
+    <div class="settings-section">
+      <h3>AI設定</h3>
+      <div class="form-group">
+        <label>AIプロバイダー</label>
+        <select id="setting-ai-provider">
+          <option value="anthropic">Anthropic (Claude)</option>
+          <option value="openai">OpenAI (GPT)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>APIキー</label>
+        <input type="password" id="setting-api-key" placeholder="sk-... or sk-ant-...">
+        <button id="btn-save-key" class="btn btn-primary btn-sm" style="margin-top:6px">保存</button>
+      </div>
+
+      <h3>チャットツール設定</h3>
+      <div id="tool-settings" class="tool-settings">
+        <!-- Dynamically populated -->
+      </div>
+
+      <h3>ショートカット</h3>
+      <div class="shortcuts-info">
+        <div class="shortcut-row"><kbd>Ctrl+Shift+H</kbd> サイドパネル開閉</div>
+        <div class="shortcut-row"><kbd>右クリック</kbd> テキスト選択→AI機能</div>
+        <div class="shortcut-row"><kbd>Ctrl+1~9</kbd> チャット切り替え（予定）</div>
+      </div>
+    </div>
+  </section>
+
+  <script src="config.js"></script>
+  <script src="sidepanel.js"></script>
+</body>
+</html>

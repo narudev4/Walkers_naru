@@ -1,0 +1,35 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "walkers-dashboard",
+      "runtimeExecutable": "/usr/bin/python3",
+      "runtimeArgs": ["<PROJECT_ROOT>/05_development/walkers-dashboard/server.py"],
+      "port": 8080
+    },
+    {
+      "name": "remotion-studio",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["remotion", "studio", "--cwd", "<PROJECT_ROOT>/05_development/remotion"],
+      "port": 3000
+    },
+    {
+      "name": "static-preview",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["<PROJECT_ROOT>/output/gui/serve.js"],
+      "port": 8888
+    },
+    {
+      "name": "slide-starter",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["http-server", "<YOUR_PATH>", "-p", "8090", "-c-1"],
+      "port": 8090
+    },
+    {
+      "name": "lp-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["http-server", "/tmp", "-p", "8091", "-c-1"],
+      "port": 8091
+    }
+  ]
+}

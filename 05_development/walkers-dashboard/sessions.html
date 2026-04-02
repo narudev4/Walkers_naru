@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sessions — Walkers Dashboard</title>
+<style>
+:root {
+  --bg: #0f172a; --bg-surface: #1e293b; --bg-card: #1e293b; --bg-card-hover: #263548;
+  --bg-input: #0f172a; --border: #334155; --border-focus: #3b82f6;
+  --text: #e2e8f0; --text-muted: #94a3b8; --text-heading: #f1f5f9;
+  --accent: #3b82f6; --accent-hover: #2563eb; --success: #22c55e; --danger: #ef4444;
+  --warning: #f59e0b;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, 'Hiragino Sans', 'Noto Sans JP', sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+.btn { display:inline-flex; align-items:center; gap:6px; padding:6px 16px; font-size:13px; font-weight:500; border:1px solid var(--border); border-radius:6px; background:var(--bg-surface); color:var(--text); cursor:pointer; transition:all .15s; }
+.btn:hover { background:var(--bg-card-hover); }
+.btn-primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+.btn-primary:hover { background:var(--accent-hover); }
+.btn-danger { background:transparent; border-color:var(--danger); color:var(--danger); }
+.btn-danger:hover { background:rgba(239,68,68,.1); }
+.btn-sm { padding:3px 10px; font-size:12px; }
+.card { background:var(--bg-card); border:1px solid var(--border); border-radius:8px; transition:transform .1s; }
+.card:hover { transform:translateY(-1px); box-shadow:0 2px 8px rgba(0,0,0,.3); }
+.card.archived { opacity:.5; }
+.card.archived:hover { opacity:.7; }
+.card.selected { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
+.toast { position:fixed; bottom:24px; right:24px; padding:10px 20px; border-radius:8px; background:var(--accent); color:#fff; font-size:13px; z-index:999; animation:fadeIn .2s; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.checkbox { width:18px; height:18px; accent-color:var(--accent); cursor:pointer; }
+
+#header { position:sticky; top:0; z-index:100; display:flex; align-items:center; justify-content:space-between; height:56px; padding:0 24px; background:rgba(30,41,59,0.85); backdrop-filter:blur(16px); border-bottom:1px solid rgba(255,255,255,0.08); }
+#header h1 { font-size:16px; font-weight:600; color:var(--text-heading); }
+.header-left { display:flex; align-items:center; gap:12px; }
+.logo { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; background:var(--accent); color:#fff; font-weight:800; font-size:16px; border-radius:8px; }
+
+main { max-width:1200px; margin:0 auto; padding:24px; }
+</style>
+</head>
+<body>
+<div id="header">
+  <div class="header-left">
+    <span class="logo">W</span>
+    <h1>セッション管理</h1>
+  </div>
+  <div>
+    <a href="/" class="btn" style="text-decoration:none">← ダッシュボード</a>
+  </div>
+</div>
+<main>
+  <div id="session-list"></div>
+  <div id="session-viewer" style="display:none"></div>
+</main>
+<div id="toast-container"></div>
+
+<script>
+const sourceInfo = {
+  'google-chat': { icon: '💬', label: 'Google Chat', color: '#4285f4' },
+  'dashboard':   { icon: '🖥️', label: 'ダッシュボード', color: '#34a853' },
+  'cron':        { icon: '⏰', label: 'Cron', color: '#fbbc04' },
+  'app':         { icon: '💻', label: 'デスクトップApp', color: '#a855f7' },
+  'terminal':    { icon: '⌨️', label: 'ターミナル', color: '#9aa0a6' },
+};
+const agentInfo = {
+  'main':      { icon: '🤖', label: 'メイン' },
+  'sub-agent': { icon: '🔧', label: 'サブ' },
+};
+
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function showToast(msg, type) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  if (type === 'error') el.style.background = 'var(--danger)';
+  el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+// === State ===
+let filterSource = 'all', filterAgent = 'all', showArchived = false, allSessions = [];
+let selectMode = false, selectedIds = new Set();
+
+// === Session List ===
+async function loadSessions() {
+  const list = document.getElementById('session-list');
+  list.innerHTML = '<div style="padding:2rem;text-align:center;opacity:.5">読み込み中...</div>';
+  try {
+    const res = await fetch('/api/chat-sessions');
+    const data = await res.json();
+    allSessions = data.sessions || [];
+    renderList();
+  } catch(e) {
+    list.innerHTML = `<div style="color:red">エラー: ${e.message}</div>`;
+  }
+}
+
+function getFiltered() {
+  return allSessions.filter(s => {
+    if (!showArchived && s.archived) return false;
+    if (filterSource !== 'all' && s.source !== filterSource) return false;
+    if (filterAgent !== 'all' && s.agentType !== filterAgent) return false;
+    return true;
+  });
+}
+
+function renderList() {
+  const list = document.getElementById('session-list');
+  const filtered = getFiltered();
+  const activeCount = allSessions.filter(s => !s.archived).length;
+  const archivedCount = allSessions.filter(s => s.archived).length;
+  const stats = {};
+  allSessions.filter(s => showArchived || !s.archived).forEach(s => { stats[s.source] = (stats[s.source] || 0) + 1; });
+
+  list.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
+      <h2 style="margin:0;font-size:1.3em">セッション一覧 <span style="opacity:.5;font-size:.7em">(${activeCount}${archivedCount ? ` + ${archivedCount} archived` : ''})</span></h2>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        ${selectMode ? `
+          <span style="font-size:.85em;color:var(--accent)">${selectedIds.size}件選択中</span>
+          <button class="btn btn-sm" onclick="archiveSelected()" ${selectedIds.size===0?'disabled':''}>📦 アーカイブ</button>
+          <button class="btn btn-sm" onclick="selectMode=false;selectedIds.clear();renderList()">キャンセル</button>
+        ` : `
+          <button class="btn btn-sm" onclick="selectMode=true;selectedIds.clear();renderList()">☑ 選択モード</button>
+          <button class="btn btn-sm" onclick="archiveFiltered()">📦 表示中を一括アーカイブ</button>
+        `}
+      </div>
+    </div>
+    <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
+      ${Object.entries(stats).map(([src, count]) => {
+        const si = sourceInfo[src] || {icon:'❓',label:src,color:'#666'};
+        const active = filterSource === src;
+        return `<div style="background:${active ? si.color+'44' : si.color+'22'};border:1px solid ${si.color}44;border-radius:8px;padding:.4rem .8rem;font-size:.85em;cursor:pointer"
+          onclick="filterSource='${active ? 'all' : src}';renderList()">${si.icon} ${si.label}: <b>${count}</b></div>`;
+      }).join('')}
+      <div style="background:${showArchived?'var(--warning)22':'var(--bg-card)'};border:1px solid ${showArchived?'var(--warning)44':'var(--border)'};border-radius:8px;padding:.4rem .8rem;font-size:.85em;cursor:pointer"
+        onclick="showArchived=!showArchived;renderList()">📦 ${showArchived ? 'アーカイブ表示中' : 'アーカイブも表示'}${archivedCount ? ` (${archivedCount})` : ''}</div>
+      ${filterSource !== 'all' || filterAgent !== 'all' ? `<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:.4rem .8rem;font-size:.85em;cursor:pointer"
+        onclick="filterSource='all';filterAgent='all';renderList()">✕ フィルタ解除</div>` : ''}
+    </div>
+    <div style="display:flex;gap:1rem;margin-bottom:1rem;align-items:center">
+      <label style="font-size:.85em">経路:
+        <select id="fs" style="padding:.3rem;border-radius:4px;border:1px solid var(--border);background:var(--bg-input);color:var(--text)">
+          <option value="all">すべて</option>
+          ${Object.entries(sourceInfo).map(([k,v]) => `<option value="${k}" ${filterSource===k?'selected':''}>${v.icon} ${v.label}</option>`).join('')}
+        </select>
+      </label>
+      <label style="font-size:.85em">エージェント:
+        <select id="fa" style="padding:.3rem;border-radius:4px;border:1px solid var(--border);background:var(--bg-input);color:var(--text)">
+          <option value="all">すべて</option>
+          ${Object.entries(agentInfo).map(([k,v]) => `<option value="${k}" ${filterAgent===k?'selected':''}>${v.icon} ${v.label}</option>`).join('')}
+        </select>
+      </label>
+      <span style="opacity:.5;font-size:.85em">${filtered.length}件</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.5rem">
+      ${filtered.map(s => {
+        const si = sourceInfo[s.source]||{icon:'❓',label:s.source,color:'#666'};
+        const ai = agentInfo[s.agentType]||{icon:'❓',label:s.agentType};
+        const sizeKB = (s.size/1024).toFixed(1);
+        const threadShort = s.threadKey ? s.threadKey.split('/').pop().slice(0,12) : '';
+        const title = escHtml(s.title || s.firstMessage || '(メッセージなし)');
+        const titleAttr = escHtml(JSON.stringify(s.title||s.firstMessage||'')).replace(/"/g,'&quot;');
+        const isSelected = selectedIds.has(s.sessionId);
+        return `<div class="card ${s.archived?'archived':''} ${isSelected?'selected':''}" style="padding:.8rem;display:grid;grid-template-columns:${selectMode?'auto ':''}auto 1fr auto auto;gap:.8rem;align-items:center;cursor:pointer"
+          data-sid="${s.sessionId}" data-title="${titleAttr}" data-archived="${s.archived?1:0}">
+          ${selectMode ? `<input type="checkbox" class="checkbox" ${isSelected?'checked':''} onclick="event.stopPropagation();toggleSelect('${s.sessionId}')">` : ''}
+          <div style="display:flex;flex-direction:column;align-items:center;gap:.2rem;min-width:50px" onclick="openSession('${s.sessionId}',JSON.parse(this.parentElement.dataset.title))">
+            <span style="font-size:1.5em">${si.icon}</span>
+            <span style="font-size:.65em;opacity:.6">${ai.label}</span>
+          </div>
+          <div onclick="openSession('${s.sessionId}',JSON.parse(this.parentElement.dataset.title))">
+            <div style="font-weight:600;font-size:.9em;margin-bottom:.2rem">${title}${s.archived?' <span style="font-size:.7em;opacity:.5">📦</span>':''}</div>
+            <div style="font-size:.75em;opacity:.6">${s.updatedAtStr} · ${sizeKB}KB · ${s.turnCount}ターン${threadShort ? ' · 🧵'+threadShort : ''}</div>
+          </div>
+          <div style="font-size:.75em;opacity:.5;text-align:right">
+            <span style="display:inline-block;padding:.15rem .4rem;border-radius:4px;background:${si.color}22;color:${si.color};border:1px solid ${si.color}44">${si.label}</span>
+          </div>
+          <div style="display:flex;gap:4px" onclick="event.stopPropagation()">
+            ${s.archived
+              ? `<button class="btn btn-sm" onclick="archiveAction(['${s.sessionId}'],'unarchive')" title="復元">📤</button>`
+              : `<button class="btn btn-sm" onclick="archiveAction(['${s.sessionId}'],'archive')" title="アーカイブ">📦</button>`}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  document.getElementById('fs').onchange = e => { filterSource = e.target.value; renderList(); };
+  document.getElementById('fa').onchange = e => { filterAgent = e.target.value; renderList(); };
+}
+
+function toggleSelect(sid) {
+  if (selectedIds.has(sid)) selectedIds.delete(sid);
+  else selectedIds.add(sid);
+  renderList();
+}
+
+async function archiveAction(ids, action) {
+  try {
+    const res = await fetch('/api/chat-sessions/archive', {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ sessionIds: ids, action }),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      // Update local state
+      ids.forEach(id => {
+        const s = allSessions.find(x => x.sessionId === id);
+        if (s) s.archived = (action === 'archive');
+      });
+      selectedIds.clear();
+      showToast(`${data.count}件を${action === 'archive' ? 'アーカイブ' : '復元'}しました`);
+      renderList();
+    } else {
+      showToast('エラー: ' + (data.error || '不明'), 'error');
+    }
+  } catch(e) {
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+function archiveSelected() {
+  if (selectedIds.size === 0) return;
+  archiveAction([...selectedIds], 'archive');
+}
+
+function archiveFiltered() {
+  const filtered = getFiltered().filter(s => !s.archived);
+  if (filtered.length === 0) { showToast('アーカイブ対象がありません'); return; }
+  if (!confirm(`表示中の ${filtered.length} 件をアーカイブしますか？`)) return;
+  archiveAction(filtered.map(s => s.sessionId), 'archive');
+}
+
+// === Session Detail ===
+async function openSession(sessionId, title) {
+  const list = document.getElementById('session-list');
+  const viewer = document.getElementById('session-viewer');
+  list.style.display = 'none';
+  viewer.style.display = 'block';
+  viewer.innerHTML = '<div style="padding:2rem;text-align:center;opacity:.5">会話を読み込み中...</div>';
+
+  try {
+    const res = await fetch(`/api/chat-sessions/${sessionId}/messages`);
+    const data = await res.json();
+    const msgs = data.messages || [];
+    const session = allSessions.find(s => s.sessionId === sessionId);
+    const isArchived = session?.archived;
+
+    function renderMsg(m) {
+      const isUser = m.role === 'user';
+      const bg = isUser ? 'rgba(59,130,246,0.15)' : 'var(--bg-card)';
+      const border = isUser ? 'rgba(59,130,246,0.3)' : 'var(--border)';
+      const label = isUser ? '👤 You' : '🤖 Claude';
+      const tools = (m.toolUses && m.toolUses.length) ? `<div style="margin-top:.3rem;font-size:.75em;opacity:.5">🔧 ${m.toolUses.join(', ')}</div>` : '';
+      let text = m.text || '';
+      if (text.includes('[システム情報]')) {
+        const parts = text.split('\n\n');
+        text = '📋 [システム情報] ' + (parts[parts.length-1]||'').trim();
+      }
+      return `<div style="background:${bg};border:1px solid ${border};border-radius:8px;padding:.8rem;max-width:85%;${isUser?'align-self:flex-end':'align-self:flex-start'}">
+        <div style="font-size:.75em;font-weight:600;margin-bottom:.3rem;opacity:.7">${label}</div>
+        <div style="font-size:.85em;white-space:pre-wrap;word-break:break-word;line-height:1.5">${escHtml(text.substring(0,3000))}${text.length>3000?'...(truncated)':''}</div>
+        ${tools}
+      </div>`;
+    }
+
+    viewer.innerHTML = `
+      <div style="display:flex;flex-direction:column;height:calc(100vh - 120px)">
+        <div style="display:flex;align-items:center;gap:1rem;padding-bottom:.8rem;border-bottom:1px solid var(--border);flex-shrink:0">
+          <button class="btn" onclick="document.getElementById('session-list').style.display='block';document.getElementById('session-viewer').style.display='none'">← 戻る</button>
+          <h3 style="margin:0;font-size:1em;flex:1">${escHtml(title || sessionId.substring(0,12))}${isArchived?' <span style="font-size:.7em;opacity:.5">📦 アーカイブ済み</span>':''}</h3>
+          <span style="opacity:.5;font-size:.8em">${msgs.length}メッセージ</span>
+          <button class="btn btn-sm" onclick="archiveAction(['${sessionId}'],'${isArchived?'unarchive':'archive'}');setTimeout(()=>{document.getElementById('session-list').style.display='block';document.getElementById('session-viewer').style.display='none'},300)">${isArchived?'📤 復元':'📦 アーカイブ'}</button>
+        </div>
+        <div id="session-messages" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:.8rem;padding:.8rem 0">
+          ${msgs.map(m => renderMsg(m)).join('')}
+        </div>
+        <div style="flex-shrink:0;border-top:1px solid var(--border);padding-top:.8rem;display:flex;gap:.5rem">
+          <textarea id="session-input" placeholder="メッセージを入力..." rows="2"
+            style="flex:1;resize:none;padding:.6rem;font-size:.9em;background:var(--bg-input);color:var(--text);border:1px solid var(--border);border-radius:8px;outline:none;font-family:inherit"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg('${sessionId}')}"></textarea>
+          <button id="session-send-btn" class="btn btn-primary" style="align-self:flex-end;padding:.6rem 1.2rem"
+            onclick="sendMsg('${sessionId}')">送信</button>
+        </div>
+      </div>`;
+    const mc = document.getElementById('session-messages');
+    if (mc) mc.scrollTop = mc.scrollHeight;
+  } catch(e) {
+    viewer.innerHTML = `<div style="color:red">エラー: ${e.message}</div>
+      <button class="btn" onclick="document.getElementById('session-list').style.display='block';document.getElementById('session-viewer').style.display='none'">← 戻る</button>`;
+  }
+}
+
+// === Send Message (auto-resume) ===
+async function sendMsg(sessionId) {
+  const input = document.getElementById('session-input');
+  const btn = document.getElementById('session-send-btn');
+  const mc = document.getElementById('session-messages');
+  if (!input || !mc) return;
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.disabled = true; btn.disabled = true; btn.textContent = '⏳';
+
+  mc.innerHTML += `<div style="background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);border-radius:8px;padding:.8rem;max-width:85%;align-self:flex-end">
+    <div style="font-size:.75em;font-weight:600;margin-bottom:.3rem;opacity:.7">👤 You</div>
+    <div style="font-size:.85em;white-space:pre-wrap;word-break:break-word;line-height:1.5">${escHtml(text)}</div>
+  </div>`;
+  mc.innerHTML += `<div id="thinking" style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:.8rem;max-width:85%;align-self:flex-start">
+    <div style="font-size:.75em;font-weight:600;margin-bottom:.3rem;opacity:.7">🤖 Claude</div>
+    <div style="font-size:.85em;opacity:.5">考え中...</div>
+  </div>`;
+  mc.scrollTop = mc.scrollHeight;
+  input.value = '';
+
+  try {
+    const res = await fetch('/api/gateway/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: text, sessionKey: 'resume-' + sessionId, source: 'dashboard' }),
+    });
+    const cmd = await res.json();
+    const cmdId = cmd.commandId;
+
+    let attempts = 0;
+    const poll = async () => {
+      if (attempts++ > 120) {
+        document.getElementById('thinking').querySelector('div:last-child').textContent = '⏰ タイムアウト';
+        input.disabled = false; btn.disabled = false; btn.textContent = '送信'; return;
+      }
+      try {
+        const r = await fetch(`/api/gateway/result/${cmdId}`);
+        const d = await r.json();
+        if (d.message === 'Still running...' || (!d.ok && !d.error)) { setTimeout(poll, 3000); return; }
+        const el = document.getElementById('thinking');
+        if (el) {
+          const out = d.ok ? (d.output||'(出力なし)') : ('❌ '+(d.error||'エラー'));
+          el.id = '';
+          el.innerHTML = `<div style="font-size:.75em;font-weight:600;margin-bottom:.3rem;opacity:.7">🤖 Claude</div>
+            <div style="font-size:.85em;white-space:pre-wrap;word-break:break-word;line-height:1.5">${escHtml(out.substring(0,5000))}</div>`;
+        }
+        mc.scrollTop = mc.scrollHeight;
+      } catch(e) { setTimeout(poll, 3000); return; }
+      input.disabled = false; btn.disabled = false; btn.textContent = '送信'; input.focus();
+    };
+    setTimeout(poll, 2000);
+  } catch(e) {
+    document.getElementById('thinking').querySelector('div:last-child').textContent = '❌ ' + e.message;
+    input.disabled = false; btn.disabled = false; btn.textContent = '送信';
+  }
+}
+
+// Init
+loadSessions();
+</script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+{
+  "manifest_version": 3,
+  "name": "ChatHub - Walkers",
+  "version": "1.0.0",
+  "description": "9つのチャットツールを1画面で管理。AI返信アシスト付き。",
+  "permissions": [
+    "sidePanel",
+    "tabs",
+    "activeTab",
+    "storage",
+    "contextMenus",
+    "tabGroups"
+  ],
+  "host_permissions": [
+    "https://chat.line.biz/*",
+    "https://*.workmobile.com/*",
+    "https://*.larksuite.com/*",
+    "https://*.feishu.cn/*",
+    "https://*.chatwork.com/*",
+    "https://*.slack.com/*",
+    "https://app.slack.com/*",
+    "https://mail.google.com/*",
+    "https://www.messenger.com/*",
+    "https://teams.microsoft.com/*",
+    "https://teams.live.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.slack.com/*",
+        "https://app.slack.com/*"
+      ],
+      "js": ["content-scripts/slack.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://*.chatwork.com/*"
+      ],
+      "js": ["content-scripts/chatwork.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://mail.google.com/*"
+      ],
+      "js": ["content-scripts/gmail.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://*.workmobile.com/*"
+      ],
+      "js": ["content-scripts/lineworks.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://*.larksuite.com/*",
+        "https://*.feishu.cn/*"
+      ],
+      "js": ["content-scripts/lark.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://www.messenger.com/*"
+      ],
+      "js": ["content-scripts/messenger.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://teams.microsoft.com/*",
+        "https://teams.live.com/*"
+      ],
+      "js": ["content-scripts/teams.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "ChatHub"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

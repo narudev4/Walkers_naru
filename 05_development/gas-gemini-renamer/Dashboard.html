@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .loading { opacity: 0.5; pointer-events: none; }
+    .fade-in { animation: fadeIn 0.3s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .spinner {
+      border: 3px solid #e5e7eb;
+      border-top: 3px solid #4f46e5;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-200">
+    <div class="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-bold text-gray-900">Gemini議事録リネーマー</h1>
+        <p class="text-sm text-gray-500">Meet議事録の自動リネーム＋共有フォルダ移動</p>
+      </div>
+      <div id="user-email" class="text-sm text-gray-400"></div>
+    </div>
+  </header>
+
+  <main class="max-w-2xl mx-auto px-4 py-6 space-y-6">
+
+    <!-- Status Banner -->
+    <div id="status-banner" class="rounded-lg p-4 flex items-center justify-between bg-gray-100 border border-gray-200">
+      <div class="flex items-center gap-3">
+        <div id="status-dot" class="w-3 h-3 rounded-full bg-gray-400"></div>
+        <div>
+          <div id="status-text" class="font-semibold text-gray-700">読み込み中...</div>
+          <div id="status-detail" class="text-sm text-gray-500"></div>
+        </div>
+      </div>
+      <button id="btn-toggle" onclick="toggleEnabled()"
+              class="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50"
+              disabled>
+        ...
+      </button>
+    </div>
+
+    <!-- Settings -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-5">
+      <h2 class="text-lg font-semibold text-gray-800">設定</h2>
+
+      <!-- Calendars -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">照合するカレンダー</label>
+        <div id="calendar-list" class="space-y-2 max-h-48 overflow-y-auto">
+          <div class="text-sm text-gray-400"><span class="spinner"></span> カレンダー一覧を取得中...</div>
+        </div>
+      </div>
+
+      <!-- Shared Folder -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">共有フォルダID（任意）</label>
+        <p class="text-xs text-gray-400 mb-2">
+          リネーム後のファイル移動先。Google DriveフォルダURLの末尾IDをコピーしてください。<br>
+          例: https://drive.google.com/drive/folders/<strong>ここがID</strong>
+        </p>
+        <input id="shared-folder-id" type="text"
+               placeholder="空欄の場合はリネームのみ（移動しない）"
+               class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+
+      <!-- Exclude Patterns -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">除外パターン</label>
+        <p class="text-xs text-gray-400 mb-2">カレンダーイベント名にこれらが含まれる場合は照合対象外（1行に1パターン）</p>
+        <textarea id="exclude-patterns" rows="3"
+                  placeholder="睡眠&#10;ブロック&#10;タスク消化"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+      </div>
+
+      <!-- Save Button -->
+      <button id="btn-save" onclick="saveSettings()"
+              class="w-full py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-50">
+        設定を保存
+      </button>
+    </div>
+
+    <!-- Actions -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-3">
+      <h2 class="text-lg font-semibold text-gray-800">アクション</h2>
+      <div class="grid grid-cols-2 gap-3">
+        <button onclick="doDryRun()" id="btn-dryrun"
+                class="py-2.5 bg-amber-500 text-white rounded-lg text-sm font-medium hover:bg-amber-600 disabled:opacity-50">
+          ドライラン
+        </button>
+        <button onclick="doRunOnce()" id="btn-run-once"
+                class="py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 disabled:opacity-50">
+          今すぐ実行
+        </button>
+      </div>
+      <p class="text-xs text-gray-400">
+        ドライラン: リネームせず照合結果をプレビュー ／ 今すぐ実行: 実際にリネーム＋移動
+      </p>
+    </div>
+
+    <!-- Dry Run Results -->
+    <div id="dryrun-results" class="hidden bg-white rounded-lg shadow-sm border border-gray-200 p-6 fade-in">
+      <h2 class="text-lg font-semibold text-gray-800 mb-3">プレビュー結果</h2>
+      <div id="dryrun-content"></div>
+    </div>
+
+    <!-- Logs -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <h2 class="text-lg font-semibold text-gray-800 mb-3">実行ログ</h2>
+      <div id="logs-content" class="text-sm text-gray-500">ログはまだありません</div>
+    </div>
+
+    <!-- Help -->
+    <div class="bg-gray-50 rounded-lg border border-gray-200 p-4 text-xs text-gray-400">
+      <p class="font-medium text-gray-500 mb-1">使い方</p>
+      <ol class="list-decimal list-inside space-y-0.5">
+        <li>照合するカレンダーにチェックを入れる</li>
+        <li>共有フォルダIDを入力（任意）</li>
+        <li>「設定を保存」→「ドライラン」で動作確認</li>
+        <li>「有効化」で30分ごとの自動実行を開始</li>
+      </ol>
+    </div>
+
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-4 right-4 z-50 hidden transition-opacity">
+    <div id="toast-content" class="px-4 py-3 rounded-lg shadow-lg text-sm font-medium text-white"></div>
+  </div>
+
+  <script>
+    // ========================================
+    // State
+    // ========================================
+    let currentConfig = null;
+    let isEnabled = false;
+
+    // ========================================
+    // Initialize
+    // ========================================
+    function init() {
+      loadStatus();
+      loadCalendars();
+    }
+
+    // ========================================
+    // Load Status
+    // ========================================
+    function loadStatus() {
+      google.script.run
+        .withSuccessHandler(function(status) {
+          currentConfig = status.config;
+          isEnabled = status.enabled;
+
+          document.getElementById('user-email').textContent = status.email;
+          renderStatus();
+          renderSettings();
+          renderLogs(status.recentLogs);
+        })
+        .withFailureHandler(function(err) {
+          showToast('ステータスの取得に失敗: ' + err.message, 'error');
+        })
+        .getStatus();
+    }
+
+    // ========================================
+    // Load Calendars
+    // ========================================
+    function loadCalendars() {
+      google.script.run
+        .withSuccessHandler(function(calendars) {
+          renderCalendars(calendars);
+        })
+        .withFailureHandler(function(err) {
+          document.getElementById('calendar-list').innerHTML =
+            '<p class="text-sm text-red-500">カレンダーの取得に失敗しました</p>';
+        })
+        .listMyCalendars();
+    }
+
+    // ========================================
+    // Save Settings
+    // ========================================
+    function saveSettings() {
+      const btn = document.getElementById('btn-save');
+      btn.disabled = true;
+      btn.textContent = '保存中...';
+
+      const config = collectFormConfig_();
+
+      google.script.run
+        .withSuccessHandler(function(result) {
+          currentConfig = result.config;
+          btn.disabled = false;
+          btn.textContent = '設定を保存';
+          showToast('設定を保存しました', 'success');
+        })
+        .withFailureHandler(function(err) {
+          btn.disabled = false;
+          btn.textContent = '設定を保存';
+          showToast('保存に失敗: ' + err.message, 'error');
+        })
+        .saveConfig(JSON.stringify(config));
+    }
+
+    /** フォームから設定値を収集 */
+    function collectFormConfig_() {
+      const selectedCalendars = [];
+      document.querySelectorAll('#calendar-list input[type="checkbox"]:checked')
+        .forEach(cb => selectedCalendars.push(cb.value));
+
+      return {
+        calendars: selectedCalendars,
+        sharedFolderId: document.getElementById('shared-folder-id').value.trim(),
+        excludePatterns: document.getElementById('exclude-patterns').value
+          .split('\n').map(s => s.trim()).filter(s => s),
+      };
+    }
+
+    /** 設定を静かに保存してからコールバック実行 */
+    function saveSettingsQuiet_(callback) {
+      const config = collectFormConfig_();
+      google.script.run
+        .withSuccessHandler(function(result) {
+          currentConfig = result.config;
+          callback();
+        })
+        .withFailureHandler(function(err) {
+          showToast('設定の保存に失敗: ' + err.message, 'error');
+        })
+        .saveConfig(JSON.stringify(config));
+    }
+
+    // ========================================
+    // Toggle Enable/Disable
+    // ========================================
+    function toggleEnabled() {
+      const btn = document.getElementById('btn-toggle');
+      btn.disabled = true;
+      btn.textContent = '処理中...';
+
+      if (isEnabled) {
+        // 無効化
+        google.script.run
+          .withSuccessHandler(function() {
+            isEnabled = false;
+            renderStatus();
+            showToast('自動実行を無効化しました', 'success');
+            loadStatus();
+          })
+          .withFailureHandler(function(err) {
+            showToast('エラー: ' + err.message, 'error');
+            btn.disabled = false;
+          })
+          .removeUserTrigger();
+      } else {
+        // 有効化前にバリデーション
+        const selectedCalendars = [];
+        document.querySelectorAll('#calendar-list input[type="checkbox"]:checked')
+          .forEach(cb => selectedCalendars.push(cb.value));
+
+        if (selectedCalendars.length === 0) {
+          showToast('先にカレンダーを選択してください', 'error');
+          btn.disabled = false;
+          renderStatus();
+          return;
+        }
+
+        // 設定保存 → トリガー作成
+        saveSettingsQuiet_(function() {
+          google.script.run
+            .withSuccessHandler(function() {
+              isEnabled = true;
+              renderStatus();
+              showToast('自動実行を有効化しました（30分間隔）', 'success');
+              loadStatus();
+            })
+            .withFailureHandler(function(err) {
+              showToast('トリガー設定エラー: ' + err.message, 'error');
+              btn.disabled = false;
+            })
+            .setupUserTrigger();
+        });
+      }
+    }
+
+    // ========================================
+    // Dry Run
+    // ========================================
+    function doDryRun() {
+      const btn = document.getElementById('btn-dryrun');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> 実行中...';
+
+      saveSettingsQuiet_(function() {
+        google.script.run
+          .withSuccessHandler(function(result) {
+            btn.disabled = false;
+            btn.textContent = 'ドライラン';
+            renderDryRunResults(result);
+          })
+          .withFailureHandler(function(err) {
+            btn.disabled = false;
+            btn.textContent = 'ドライラン';
+            showToast('ドライラン失敗: ' + err.message, 'error');
+          })
+          .runDryRun();
+      });
+    }
+
+    // ========================================
+    // Run Once
+    // ========================================
+    function doRunOnce() {
+      const btn = document.getElementById('btn-run-once');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> 実行中...';
+
+      saveSettingsQuiet_(function() {
+        google.script.run
+          .withSuccessHandler(function(result) {
+            btn.disabled = false;
+            btn.textContent = '今すぐ実行';
+            if (result.error) {
+              showToast('エラー: ' + result.error, 'error');
+            } else {
+              showToast(
+                `完了: ${result.renamed}件リネーム, ${result.moved}件移動, ${result.skipped}件スキップ`,
+                'success'
+              );
+            }
+            loadStatus(); // ログ更新
+          })
+          .withFailureHandler(function(err) {
+            btn.disabled = false;
+            btn.textContent = '今すぐ実行';
+            showToast('実行エラー: ' + err.message, 'error');
+          })
+          .runOnce();
+      });
+    }
+
+    // ========================================
+    // Render Functions
+    // ========================================
+
+    function renderStatus() {
+      const banner = document.getElementById('status-banner');
+      const dot = document.getElementById('status-dot');
+      const text = document.getElementById('status-text');
+      const detail = document.getElementById('status-detail');
+      const btn = document.getElementById('btn-toggle');
+
+      if (isEnabled) {
+        banner.className = 'rounded-lg p-4 flex items-center justify-between bg-emerald-50 border border-emerald-200';
+        dot.className = 'w-3 h-3 rounded-full bg-emerald-500';
+        text.textContent = '自動実行が有効です';
+        text.className = 'font-semibold text-emerald-800';
+        detail.textContent = '30分ごとにGemini議事録をチェック → リネーム → 移動';
+        btn.textContent = '無効化';
+        btn.className = 'px-4 py-2 rounded-lg text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300';
+      } else {
+        banner.className = 'rounded-lg p-4 flex items-center justify-between bg-gray-50 border border-gray-200';
+        dot.className = 'w-3 h-3 rounded-full bg-gray-400';
+        text.textContent = '自動実行は無効です';
+        text.className = 'font-semibold text-gray-700';
+        detail.textContent = 'カレンダーを選択して「有効化」を押してください';
+        btn.textContent = '有効化';
+        btn.className = 'px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700';
+      }
+      btn.disabled = false;
+    }
+
+    function renderSettings() {
+      if (!currentConfig) return;
+      document.getElementById('shared-folder-id').value = currentConfig.sharedFolderId || '';
+      document.getElementById('exclude-patterns').value =
+        (currentConfig.excludePatterns || []).join('\n');
+    }
+
+    function renderCalendars(calendars) {
+      const container = document.getElementById('calendar-list');
+
+      if (!calendars || calendars.length === 0) {
+        container.innerHTML = '<p class="text-sm text-gray-400">カレンダーが見つかりません</p>';
+        return;
+      }
+
+      container.innerHTML = calendars.map(cal => {
+        const checked = cal.selected ? 'checked' : '';
+        const badge = cal.primary
+          ? '<span class="text-xs bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded ml-1">メイン</span>'
+          : '';
+        return `
+          <label class="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-gray-50 cursor-pointer">
+            <input type="checkbox" value="${escapeHtml(cal.id)}" ${checked}
+                   class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+            <span class="text-sm text-gray-700 truncate">${escapeHtml(cal.name)}</span>
+            ${badge}
+          </label>
+        `;
+      }).join('');
+    }
+
+    function renderLogs(logs) {
+      const container = document.getElementById('logs-content');
+
+      if (!logs || logs.length === 0) {
+        container.innerHTML = '<p class="text-gray-400">ログはまだありません</p>';
+        return;
+      }
+
+      container.innerHTML = logs.slice(0, 20).map(log => {
+        const time = new Date(log.time);
+        const timeStr = time.toLocaleString('ja-JP', {
+          month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+        const icon = log.type === 'RUN' ? '📄' : log.type === 'TRIGGER' ? '⚡' : '📌';
+
+        return `
+          <div class="flex items-start gap-2 py-2 border-b border-gray-100 last:border-0">
+            <span class="text-sm">${icon}</span>
+            <div class="flex-1 min-w-0">
+              <span class="text-sm text-gray-800">${escapeHtml(log.message)}</span>
+              ${log.details
+                ? '<div class="text-xs text-gray-400 mt-0.5 truncate">'
+                  + log.details.slice(0, 5).map(escapeHtml).join(', ')
+                  + (log.details.length > 5 ? '...' : '')
+                  + '</div>'
+                : ''}
+            </div>
+            <span class="text-xs text-gray-400 whitespace-nowrap">${timeStr}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderDryRunResults(result) {
+      const section = document.getElementById('dryrun-results');
+      const content = document.getElementById('dryrun-content');
+      section.classList.remove('hidden');
+
+      if (result.error) {
+        content.innerHTML = `<p class="text-red-500 text-sm">${escapeHtml(result.error)}</p>`;
+        return;
+      }
+
+      if (result.total === 0) {
+        content.innerHTML = '<p class="text-gray-500 text-sm">リネーム対象のGeminiメモはありません</p>';
+        return;
+      }
+
+      const matchCount = result.results.filter(r => r.status === 'MATCH').length;
+      const noMatchCount = result.results.filter(r => r.status === 'NO_MATCH').length;
+
+      let html = `<p class="text-sm text-gray-600 mb-3">
+        ${result.total}件中 ${matchCount}件マッチ, ${noMatchCount}件マッチなし
+      </p><div class="space-y-2">`;
+
+      result.results.forEach(r => {
+        if (r.status === 'MATCH') {
+          html += `
+            <div class="bg-emerald-50 rounded-lg p-3 text-sm">
+              <div class="text-emerald-800 font-medium">${escapeHtml(r.newName)}</div>
+              <div class="text-emerald-600 text-xs mt-1 truncate">← ${escapeHtml(r.originalName)}</div>
+              <div class="text-gray-400 text-xs mt-0.5">カレンダー差: ${r.timeDiff}分</div>
+            </div>`;
+        } else if (r.status === 'NO_MATCH') {
+          html += `
+            <div class="bg-amber-50 rounded-lg p-3 text-sm">
+              <div class="text-amber-800 font-medium">マッチなし</div>
+              <div class="text-amber-600 text-xs mt-1 truncate">${escapeHtml(r.originalName)}</div>
+              <div class="text-gray-400 text-xs mt-0.5">会議時刻: ${r.meetingTime}</div>
+            </div>`;
+        } else {
+          html += `
+            <div class="bg-gray-50 rounded-lg p-3 text-sm">
+              <div class="text-gray-600 font-medium">スキップ: ${escapeHtml(r.reason)}</div>
+              <div class="text-gray-400 text-xs mt-1 truncate">${escapeHtml(r.originalName)}</div>
+            </div>`;
+        }
+      });
+
+      html += '</div>';
+      content.innerHTML = html;
+
+      // スクロールして結果を表示
+      section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ========================================
+    // Utility
+    // ========================================
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    }
+
+    function showToast(message, type) {
+      const toast = document.getElementById('toast');
+      const content = document.getElementById('toast-content');
+
+      const colors = {
+        success: 'bg-emerald-600',
+        error: 'bg-red-600',
+        info: 'bg-indigo-600',
+      };
+
+      content.className = `px-4 py-3 rounded-lg shadow-lg text-sm font-medium text-white ${colors[type] || colors.info}`;
+      content.textContent = message;
+      toast.classList.remove('hidden');
+
+      setTimeout(() => toast.classList.add('hidden'), 4000);
+    }
+
+    // ========================================
+    // Start
+    // ========================================
+    init();
+  </script>
+</body>
+</html>

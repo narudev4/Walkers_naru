@@ -1,0 +1,32 @@
+{
+  "host": "127.0.0.1",
+  "port": 8080,
+  "machineId": "yamaguchi-orenomac",
+  "walkers_root": "../..",
+  "refresh_debounce_sec": 30,
+  "locale": "ja-JP",
+  "read_only": false,
+  "skillhub_sheet_id": "1t0ocy-1byRqzf37XG0ATBAyRIuvQbENtSdbxRP62z2k",
+  "skillhub_cache_ttl": 60,
+  "cloudApi": {
+    "url": "https://walkers-api.vercel.app",
+    "apiKey": ""
+  },
+  "mainAgent": {
+    "cron": {
+      "expression": "55 8 * * 1-5",
+      "enabled": false
+    },
+    "prompt": "",
+    "timeout": 900
+  },
+  "sharedMachineMode": {
+    "enabled": true,
+    "machineName": "yamaguchi-orenomac",
+    "description": "<YOUR_NAME>さんのMac (orenomac.local)",
+    "accessScope": "all",
+    "allowedMachines": []
+  },
+  "cronNotifySpace": "",
+  "allowedSenders": []
+}

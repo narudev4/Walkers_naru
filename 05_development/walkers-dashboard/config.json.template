@@ -1,0 +1,39 @@
+{
+  "host": "127.0.0.1",
+  "port": 8080,
+  "machineId": "__MACHINE_ID__",
+  "walkers_root": "../..",
+  "refresh_debounce_sec": 30,
+  "locale": "ja-JP",
+  "read_only": false,
+  "skillhub_sheet_id": "1t0ocy-1byRqzf37XG0ATBAyRIuvQbENtSdbxRP62z2k",
+  "skillhub_cache_ttl": 60,
+  "cloudApi": {
+    "url": "https://walkers-api.vercel.app",
+    "apiKey": "__CLOUD_API_KEY__"
+  },
+  "mainAgent": {
+    "cron": {
+      "expression": "55 8 * * 1-5",
+      "enabled": false
+    },
+    "prompt": "",
+    "timeout": 900
+  },
+  "sharedMachineMode": {
+    "enabled": true,
+    "machineName": "__MACHINE_NAME__",
+    "description": "__MACHINE_DESCRIPTION__",
+    "accessScope": "all",
+    "allowedMachines": []
+  },
+  "googleChatBot": {
+    "serviceAccountJson": "__PASTE_SERVICE_ACCOUNT_JSON_HERE__"
+  },
+  "imgurClientId": "__IMGUR_CLIENT_ID__",
+  "cronNotifySpace": "",
+  "allowedSenders": [
+    "daiki.furutani@walker-s.co.jp",
+    "fullsrodd@gmail.com"
+  ]
+}

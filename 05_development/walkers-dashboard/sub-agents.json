@@ -1,0 +1,138 @@
+{
+  "subAgents": [
+    {
+      "id": "gchat-analyzer",
+      "name": "Google Chat分析",
+      "description": "Google Chat経由のBot会話を分析し、うまくいかなかったやりとりを検出して改善提案を生成する",
+      "prompt": "Google Chat経由のBot会話を分析して改善提案を生成してください。\n\n## 手順\n1. Neon DBに接続してgateway_commands（source='google-chat'）の直近24時間分を取得する\n   - DB接続: postgresql://neondb_owner:npg_ZH5WuYjkUv1I@ep-small-hall-a1v5ex6l-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require\n   - SQL: SELECT id, prompt, status, result, created_at, completed_at FROM gateway_commands WHERE source = 'google-chat' AND created_at > NOW() - INTERVAL '24 hours' ORDER BY created_at\n2. 各会話を分析して以下を検出:\n   - ユーザーが何度も聞き返している（Bot が意図を理解できていない）\n   - Bot が「わかりません」「何をしますか？」と聞き返している\n   - エラーや失敗が発生している\n   - 応答時間が異常に長い（2分以上）\n   - 音声入力の誤変換を正しく推測できていない\n3. 問題を分類して改善提案を生成\n4. 結果をsub-agents/gchat-analyzer/memories/facts.mdに追記保存\n5. 改善が必要な場合はCLAUDE.mdへの具体的な修正案も提示\n\n## 出力フォーマット\n### 分析日: {日付}\n- 会話数: N件\n- 問題検出: N件\n- 改善提案: （箇条書き）",
+      "createdBy": "desktop-2h2gh54",
+      "skills": [
+        "agent-memory"
+      ],
+      "memory": {
+        "path": "sub-agents/gchat-analyzer/memories/",
+        "facts": "sub-agents/gchat-analyzer/memories/facts.md",
+        "decisions": "sub-agents/gchat-analyzer/memories/decisions.md",
+        "preferences": "sub-agents/gchat-analyzer/memories/preferences.md"
+      },
+      "cron": {
+        "expression": "0 22 * * *",
+        "description": "毎日22:00に実行",
+        "enabled": true
+      },
+      "stats": {
+        "totalRuns": 3,
+        "successRate": 1.0,
+        "memoryEntries": 3
+      },
+      "createdAt": "2026-03-18T23:00:00",
+      "lastRun": {
+        "timestamp": "2026-03-20T22:00:04",
+        "status": "success",
+        "duration": 263,
+        "summary": "## 実行結果: Google Chat Bot 分析完了（第3回・直近24時間） ### 📊 分析概要 - **対象期間**: 2026-03-19 16:59 〜 2026-03-20 14:52 (UTC)",
+        "sessionId": "90788130-0fd4-4820-a5ff-b275b56837c7"
+      }
+    },
+    {
+      "id": "trend-watcher",
+      "name": "トレンド監視",
+      "description": "IT・AI業界のトレンドを毎朝チェックし、重要ニュースを記憶に蓄積。前回との差分を検出して報告する",
+      "prompt": "IT・AI業界の最新トレンドを調査してください。\n\n## 手順\n1. まず自分のサブ記憶（sub-agents/trend-watcher/memories/facts.md）を読み、前回までに蓄積した情報を確認する\n2. Web検索で以下のトピックの最新動向を調べる:\n   - AI/LLM関連（Claude, GPT, Gemini等の新機能・新モデル）\n   - ノーコード/ローコード開発ツールの動向\n   - DX・業務自動化の事例やトレンド\n   - 補助金・助成金の新着情報（IT導入補助金、ものづくり補助金等）\n3. 前回の記憶と比較して、新しい情報や変化があるものを特定する\n4. 重要な発見をsub-agents/trend-watcher/memories/facts.mdに追記保存する\n5. Walkersの事業（コンサル・DX支援）に関連性が高いものを優先的に報告する\n\n## 出力フォーマット\n### トレンドレポート: {日付}\n- 新規トレンド: N件\n- 注目ニュース: （箇条書き、各項目に関連性スコア高/中/低）\n- Walkersへの示唆: （営業や提案に活かせるポイント）",
+      "createdBy": "desktop-2h2gh54",
+      "skills": [
+        "agent-memory",
+        "article-monitor",
+        "trend-check"
+      ],
+      "memory": {
+        "path": "sub-agents/trend-watcher/memories/",
+        "facts": "sub-agents/trend-watcher/memories/facts.md",
+        "decisions": "sub-agents/trend-watcher/memories/decisions.md",
+        "preferences": "sub-agents/trend-watcher/memories/preferences.md"
+      },
+      "cron": {
+        "expression": "0 9 * * 1-5",
+        "description": "平日毎朝9:00",
+        "enabled": true
+      },
+      "lastRun": {
+        "timestamp": "2026-03-20T18:10:53",
+        "status": "success",
+        "duration": 107,
+        "summary": "## 実行結果: トレンドレポート 2026年3月20日 ### 📊 調査概要 - **新規トレンド**: 初回調査のため全項目が新規（4カテゴリ、13件の重要情報）",
+        "sessionId": "00d30d47-bf50-4b85-b3b2-6f203bca63a6"
+      },
+      "stats": {
+        "totalRuns": 1,
+        "successRate": 1.0,
+        "memoryEntries": 1
+      },
+      "createdAt": "2026-03-20T17:00:00"
+    },
+    {
+      "id": "sales-support",
+      "name": "営業支援",
+      "description": "営業パイプラインの変化を週次で検知し、次アクションの提案と市場調査を行う",
+      "prompt": "営業パイプラインの最新状況を確認し、次のアクションを提案してください。\n\n## 手順\n1. まず自分のサブ記憶（sub-agents/sales-support/memories/facts.md）を読み、前回までの営業状況を確認する\n2. Notionの営業パイプラインデータを取得し、前回からの変化を特定する:\n   - 新規案件の追加\n   - ステータスの変化（商談中→提案済み等）\n   - 長期間動きがない案件（2週間以上停滞）\n   - クローズ間近の案件\n3. 変化があった案件について:\n   - 停滞案件 → フォローアップのタイミングと方法を提案\n   - 新規案件 → 簡易的な市場調査（競合・類似事例）を実施\n   - 提案段階の案件 → 提案書作成の準備状況を確認\n4. 重要な発見をsub-agents/sales-support/memories/facts.mdに追記保存する\n5. 今週の営業アクション推奨リストを生成する\n\n## 出力フォーマット\n### 営業レポート: {日付}\n- パイプライン概況: 全N件（新規N/商談中N/提案済みN/受注N）\n- 今週の変化: （箇条書き）\n- 推奨アクション: （優先度順）\n- 停滞アラート: （2週間以上動きなし）",
+      "createdBy": "desktop-2h2gh54",
+      "skills": [
+        "sales-pipeline",
+        "research",
+        "trend-check",
+        "create-proposal",
+        "agent-memory"
+      ],
+      "memory": {
+        "path": "sub-agents/sales-support/memories/",
+        "facts": "sub-agents/sales-support/memories/facts.md",
+        "decisions": "sub-agents/sales-support/memories/decisions.md",
+        "preferences": "sub-agents/sales-support/memories/preferences.md"
+      },
+      "cron": {
+        "expression": "0 9 * * 1",
+        "description": "毎週月曜9:00",
+        "enabled": true
+      },
+      "lastRun": null,
+      "stats": {
+        "totalRuns": 0,
+        "successRate": 0,
+        "memoryEntries": 0
+      },
+      "createdAt": "2026-03-20T17:00:00"
+    },
+    {
+      "id": "health-check",
+      "name": "Gateway ヘルスチェック",
+      "description": "Gatewayの状態を平日日中2時間ごとに監視し、異常検知時のみGoogle Chatへ通知する",
+      "prompt": "Gatewayの状態をチェックしてください。\n\n1. `curl -s http://localhost:8080/api/gateway/status` でゲートウェイの状態を取得\n2. 以下の項目をチェック:\n   - uptime: 異常に短い（60秒未満）場合は再起動の可能性\n   - pendingCommands: 5件以上溜まっている場合は処理遅延の可能性\n   - runningAgents: 10分以上実行中のエージェントがいたら異常の可能性\n3. 異常を検知した場合のみ、`memories/alerts.md` に記録し、Google Chat（spaces/89bERSAAAAE）へ通知を送信してください\n4. 正常時は何もせず終了してください（ログには記録）\n\n【通知フォーマット】\n⚠️ Gateway Health Alert\n- 検知項目: {異常内容}\n- 詳細: {状態の説明}\n- 時刻: {現在時刻}",
+      "createdBy": "desktop-2h2gh54",
+      "skills": [],
+      "memory": {
+        "path": "sub-agents/health-check/memories/",
+        "facts": "sub-agents/health-check/memories/facts.md",
+        "decisions": null,
+        "preferences": null
+      },
+      "cron": {
+        "expression": "0 9-19/2 * * 1-5",
+        "description": "平日9-19時の2時間ごと（9,11,13,15,17,19時）",
+        "enabled": true
+      },
+      "lastRun": {
+        "timestamp": "2026-03-20T21:30:03",
+        "status": "success",
+        "duration": 12,
+        "summary": "**実行結果:** Gateway 正常稼働を確認（uptime: 3518秒、pending: 0件、running: 自分のみ）。異常なし、通知不要。",
+        "sessionId": "222c444c-e208-4cb4-9381-63ec5d64e67c"
+      },
+      "stats": {
+        "totalRuns": 7,
+        "successRate": 1.0,
+        "memoryEntries": 7
+      },
+      "createdAt": "2026-03-20T18:30:00"
+    }
+  ]
+}
