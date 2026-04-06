@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "minVersion": "1.0.0",
+  "updatedAt": "2026-03-29",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-03-29",
+      "changes": [
+        "Initial core/custom 2-layer structure",
+        "CLAUDE_BASE.md / CLAUDE_LOCAL.md separation",
+        "sync-engine.sh for automated updates"
+      ]
+    }
+  ]
+}

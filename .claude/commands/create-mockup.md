@@ -5,6 +5,18 @@
 ## 入力
 $ARGUMENTS
 
+## 利用ツール
+
+| ステップ | ツール | 用途 |
+|---------|--------|------|
+| Step 1 | Read (built-in) | `memories/facts.md`、既存提案書・議事録の参照 |
+| Step 1 | Glob (built-in) | `03_projects/` 内の既存ドキュメント検索 |
+| Step 3 | Bash (`npx create-next-app@latest`) | Next.jsプロジェクト初期化 |
+| Step 3 | Bash (`npm install`) | 依存パッケージインストール |
+| Step 4 | Write (built-in) | 画面コンポーネント・ページファイル作成 |
+| Step 4 | Edit (built-in) | 既存ファイルの修正 |
+| Step 5 | Bash (`npx vercel --yes`) | Vercelデプロイ |
+
 ## 全体フロー
 
 ```

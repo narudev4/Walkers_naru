@@ -1,0 +1,46 @@
+{
+  "id": "app-dev",
+  "name": "アプリ開発チーム",
+  "description": "Webアプリ・モックアップの開発をAIチームで推進。要件定義→実装→QAのサイクルを自動化。",
+  "pm": {
+    "agentDef": "team-pm-dev",
+    "cron": "0 10,16 * * 1-5",
+    "cronDescription": "平日 10:00 / 16:00（1日2回）"
+  },
+  "members": [
+    {
+      "id": "requirements-analyst",
+      "agentDef": "team-requirements-analyst",
+      "role": "要件分析",
+      "description": "ヒアリング結果から要件定義書・画面遷移図を作成"
+    },
+    {
+      "id": "frontend-dev",
+      "agentDef": "team-frontend-dev",
+      "role": "フロントエンド開発",
+      "description": "Next.js + Tailwind CSSでUI実装"
+    },
+    {
+      "id": "qa-reviewer",
+      "agentDef": "team-qa-reviewer",
+      "role": "QAレビュー",
+      "description": "コードレビュー、アクセシビリティ、レスポンシブ検証"
+    }
+  ],
+  "initialTasks": [
+    { "title": "要件定義書の作成", "assignee": "requirements-analyst", "priority": "high", "description": "プロジェクト概要から要件定義書を作成する。画面一覧、機能一覧、非機能要件を含める。" },
+    { "title": "ワイヤーフレーム作成", "assignee": "requirements-analyst", "priority": "high", "description": "主要画面のワイヤーフレームをMarkdownで作成する。", "depends_on": ["TASK-001"] },
+    { "title": "プロジェクト初期セットアップ", "assignee": "frontend-dev", "priority": "high", "description": "Next.js + Tailwind CSSのプロジェクトを初期化し、ディレクトリ構造を整備する。" }
+  ],
+  "config": {
+    "maxConcurrentMembers": 2,
+    "memberTimeout": 600,
+    "reportFrequency": "every-run",
+    "escalation": {
+      "deadlineWarningDays": 2,
+      "memberFailureThreshold": 2,
+      "pmFailureAutoStop": 3
+    }
+  },
+  "briefTemplate": "# 開発プロジェクト\n\n## 概要\n{project_name}\n\n## 技術スタック\n- フロントエンド: Next.js + Tailwind CSS\n- デプロイ: Vercel\n\n## 要件\n{requirements}\n\n## 参照資料\n- プロジェクトデータ: {project_path}\n"
+}
