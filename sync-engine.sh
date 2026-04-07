@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# sync-engine.sh — YourAI core/custom 同期エンジン v1.0.0
+# sync-engine.sh — YourAI core/custom 同期エンジン v2.0.0
 # core/CLAUDE_BASE.md + custom/CLAUDE_LOCAL.md → CLAUDE.md を生成
-# core/skills/ + custom/skills/ → .claude/commands/ にマージ
+# core/skills/ + custom/skills/ → .claude/skills/<name>/SKILL.md にマージ（v2: skills形式）
 
 set -euo pipefail
 
@@ -11,7 +11,7 @@ CUSTOM_LOCAL="$SCRIPT_DIR/custom/CLAUDE_LOCAL.md"
 OUTPUT_CLAUDE="$SCRIPT_DIR/CLAUDE.md"
 CORE_SKILLS="$SCRIPT_DIR/core/skills"
 CUSTOM_SKILLS="$SCRIPT_DIR/custom/skills"
-TARGET_COMMANDS="$SCRIPT_DIR/.claude/commands"
+TARGET_SKILLS="$SCRIPT_DIR/.claude/skills"
 VERSION_FILE="$SCRIPT_DIR/core/version.json"
 
 # Colors
@@ -91,8 +91,47 @@ else
     echo -e "${GREEN}[OK]${NC} CLAUDE.md generated ($(wc -l < "$OUTPUT_CLAUDE" | tr -d ' ') lines)"
 fi
 
-# --- Step 2: Merge skills ---
-mkdir -p "$TARGET_COMMANDS"
+# --- Step 2: Merge skills → .claude/skills/<name>/SKILL.md ---
+
+# Helper: Extract first heading line as description fallback
+extract_description() {
+    local file="$1"
+    # Try to get the first # heading text
+    grep -m1 '^# ' "$file" | sed 's/^# //' || echo ""
+}
+
+# Helper: Convert a flat .md skill file to SKILL.md format with frontmatter
+convert_skill() {
+    local src="$1"
+    local dest_dir="$2"
+    local basename="$(basename "$src" .md)"
+
+    local dest="$dest_dir/$basename/SKILL.md"
+    local description
+    description="$(extract_description "$src")"
+
+    if $DRY_RUN; then
+        echo -e "${YELLOW}[dry-run]${NC} Would create: .claude/skills/$basename/SKILL.md"
+        return
+    fi
+
+    mkdir -p "$dest_dir/$basename"
+
+    # Check if source already has frontmatter
+    if head -1 "$src" | grep -q '^---$'; then
+        # Already has frontmatter, copy as-is
+        cp "$src" "$dest"
+    else
+        # Add YAML frontmatter
+        {
+            echo "---"
+            echo "description: $description"
+            echo "---"
+            echo ""
+            cat "$src"
+        } > "$dest"
+    fi
+}
 
 CORE_COUNT=0
 CUSTOM_COUNT=0
@@ -101,12 +140,7 @@ CUSTOM_COUNT=0
 if [[ -d "$CORE_SKILLS" ]]; then
     for skill in "$CORE_SKILLS"/*.md; do
         [[ -f "$skill" ]] || continue
-        BASENAME="$(basename "$skill")"
-        if $DRY_RUN; then
-            echo -e "${YELLOW}[dry-run]${NC} Would copy core skill: $BASENAME"
-        else
-            cp "$skill" "$TARGET_COMMANDS/$BASENAME"
-        fi
+        convert_skill "$skill" "$TARGET_SKILLS"
         CORE_COUNT=$((CORE_COUNT + 1))
     done
 fi
@@ -115,21 +149,16 @@ fi
 if [[ -d "$CUSTOM_SKILLS" ]]; then
     for skill in "$CUSTOM_SKILLS"/*.md; do
         [[ -f "$skill" ]] || continue
-        BASENAME="$(basename "$skill")"
-        if $DRY_RUN; then
-            echo -e "${YELLOW}[dry-run]${NC} Would copy custom skill: $BASENAME"
-        else
-            cp "$skill" "$TARGET_COMMANDS/$BASENAME"
-        fi
+        convert_skill "$skill" "$TARGET_SKILLS"
         CUSTOM_COUNT=$((CUSTOM_COUNT + 1))
     done
 fi
 
-echo -e "${GREEN}[OK]${NC} Skills synced: $CORE_COUNT core + $CUSTOM_COUNT custom"
+echo -e "${GREEN}[OK]${NC} Skills synced: $CORE_COUNT core + $CUSTOM_COUNT custom → .claude/skills/"
 
-# Count existing commands that were already there (not from core/custom)
-EXISTING_COUNT=$(ls "$TARGET_COMMANDS"/*.md 2>/dev/null | wc -l | tr -d ' ')
-echo -e "${GREEN}[OK]${NC} Total commands in .claude/commands/: $EXISTING_COUNT"
+# Count total skills
+EXISTING_COUNT=$(find "$TARGET_SKILLS" -name 'SKILL.md' 2>/dev/null | wc -l | tr -d ' ')
+echo -e "${GREEN}[OK]${NC} Total skills in .claude/skills/: $EXISTING_COUNT"
 
 # --- Step 3: Update version.json ---
 INSTANCE_NAME=$(grep -m1 'インスタンス名' "$CUSTOM_LOCAL" | awk -F'|' '{print $3}' | xargs 2>/dev/null || echo "unknown")
