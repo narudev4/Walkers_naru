@@ -93,7 +93,7 @@ def copy_slide(src_prs, src_idx, dst_prs):
 $ARGUMENTS に台本ファイルパスまたはスラッグが渡される。
 
 - パスの場合: そのファイルを読み込む
-- スラッグの場合: `output/youtube/{slug}-script.md` を読み込む
+- スラッグの場合: `output/youtube/{slug}/script.md` を読み込む
 - 引数なしの場合: `output/youtube/` 内の最新の `*-script.md` を使用
 
 ## 処理フロー
@@ -333,7 +333,7 @@ PYEOF
 
 ## 出力先
 
-- PPTX: `output/youtube/{slug}-slides.pptx`
+- PPTX: `output/youtube/{slug}/slides.pptx`
 - 完成後は `open` コマンドでPPTXを開く
 
 ## 品質チェック
@@ -360,7 +360,7 @@ FAILが1つでもあればPPTXを修正してからユーザーに渡すこと�
 ```python
 # 検証スクリプト（PPTX生成後に毎回実行）
 from pptx import Presentation
-prs = Presentation("output/youtube/{slug}-slides.pptx")
+prs = Presentation("output/youtube/{slug}/slides.pptx")
 total = len(prs.slides)
 errors = []
 for i, slide in enumerate(prs.slides):

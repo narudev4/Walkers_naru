@@ -2,11 +2,33 @@
 
 `/yt-voice` で生成した1本の音声ファイルを、Whisperで文字起こしして台本の内容に基づいてシーンごとに分割する。
 
-## 重要な前提（2026-03-25確認済み）
+## 重要な前提（2026-04-07更新）
 
 - **文字数比率や推定秒数で分割してはいけない**。必ず**コンテンツ内容**で分割する
 - **Whisper（mediumモデル以上）**で文字起こしし、各シーンの冒頭フレーズが出現する位置でカットする
 - ElevenLabsのWAVは`format 85`（MP3相当）の場合があるので、先に`ffmpeg`で**PCM WAV（pcm_s16le, 44100Hz）に変換**してからWhisperに渡す
+
+## カットポイントの計算（CRITICAL — 2026-04-07更新）
+
+**カットポイント = 現シーンの最後の単語の`end`時刻 + 0.05s**（次シーンの最初の単語の`start`ではない）
+
+```
+✅ 正しい: 〜ます。
+                  ↑ current_scene_last_word['end'] + 0.05s でカット
+❌ 誤り:   〜ます。 [無音] [息吸い] 次のセリフ...
+                                    ↑ next_scene_first_word['start'] でカット → 息吸いが混入
+```
+
+```python
+# 各シーンのカット点計算
+scene_words = [w for w in all_words
+               if w['start'] >= scene_start and w['start'] < next_scene_start]
+if scene_words:
+    last_word = max(scene_words, key=lambda w: w['start'])
+    cut_end = min(last_word['end'] + 0.05, next_scene_start)
+else:
+    cut_end = next_scene_start
+```
 
 ## 既知の問題と対策（CRITICAL）
 
@@ -60,7 +82,7 @@ for word in seg['words']:
 
 $ARGUMENTS にスラッグまたは音声ファイルパスが渡される。
 
-- スラッグの場合: `output/youtube/{slug}-audio/full.wav` と `output/youtube/{slug}-script.md` を使用
+- スラッグの場合: `output/youtube/{slug}/audio/full.wav` と `output/youtube/{slug}/script.md` を使用
 - パスの場合: そのファイルを処理（台本は同ディレクトリまたは `output/youtube/` から最新を検索）
 - 引数なしの場合: `output/youtube/` 内の最新の `full.wav` と `*-script.md` を使用
 
@@ -191,7 +213,7 @@ for w in seg['words']:
 
 ## 出力先
 
-- `output/youtube/{slug}-audio/scenes/scene{NN}_{name}.wav`
+- `output/youtube/{slug}/audio/scenes/scene{NN}_{name}.wav`
 - 完成後は `open` コマンドでフォルダを開く
 
 ## 出力後のアクション
@@ -206,7 +228,7 @@ for w in seg['words']:
 | 1 | scene01_title.wav | 0:00 | 37.6秒 | 皆様こんにちは... |
 ...
 
-📁 保存先: output/youtube/{slug}-audio/scenes/
+📁 保存先: output/youtube/{slug}/audio/scenes/
 → HeyGenの各シーンに「音声をアップロード」からアップロードしてください
 ```
 
@@ -234,7 +256,7 @@ HeyGenでは各スライドに個別の音声ファイルが必要。CTAテン�
 ※ Nは本編の最後のシーン番号。スライド総数に合わせてナンバリングする。
 
 ### 出力先
-`output/youtube/{slug}-audio/scenes/scene{NN}_cta{1-8}.wav`
+`output/youtube/{slug}/audio/scenes/scene{NN}_cta{1-8}.wav`
 
 ## 品質チェック
 

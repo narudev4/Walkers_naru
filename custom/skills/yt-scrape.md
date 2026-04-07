@@ -16,7 +16,7 @@ $ARGUMENTS に記事URLが渡される。
 3. 見出し構造（h2/h3/h4）を保持してMarkdown化
 4. 画像のalt属性も取得（スライド内容の参考にする）
 5. メタ情報（title, description, keywords）を抽出
-6. `output/youtube/{slug}-article.md` に保存
+6. `output/youtube/{slug}/article.md` に保存
 7. `open` コマンドでファイルを開く
 
 ## 抽出対象
@@ -57,7 +57,7 @@ scraped_at: {取得日時}
 
 ## 出力先
 
-- `output/youtube/{slug}-article.md`
+- `output/youtube/{slug}/article.md`
 - 完成後は `open` コマンドでファイルを開く
 
 ## 品質チェック
