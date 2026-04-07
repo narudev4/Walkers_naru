@@ -36,7 +36,7 @@ YouTube URL
 
 ```
 入力: URL
-出力: output/youtube/{slug}-article.md
+出力: output/youtube/{slug}/article.md
 ```
 
 WebFetch or Chrome MCPで記事を取得し、Markdown化する。
@@ -53,7 +53,7 @@ WebFetch or Chrome MCPで記事を取得し、Markdown化する。
 
 ```
 入力: article.md
-出力: output/youtube/{slug}-script.md
+出力: output/youtube/{slug}/script.md
 ```
 
 記事の見出し構造に追従した台本を生成。概要欄・チャプター・HeyGen対応表も含む。
@@ -62,7 +62,7 @@ WebFetch or Chrome MCPで記事を取得し、Markdown化する。
 ```
 ✅ STEP 2 完了: 台本を生成しました。
 
-📄 台本ファイル: output/youtube/{slug}-script.md
+📄 台本ファイル: output/youtube/{slug}/script.md
    （自動でファイルを開きます）
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -85,11 +85,11 @@ WebFetch or Chrome MCPで記事を取得し、Markdown化する。
 ```
 # 並列タスクA: スライド生成
 入力: script.md
-出力: output/youtube/{slug}-slides.pptx
+出力: output/youtube/{slug}/slides.pptx
 
 # 並列タスクB: 音声生成（ElevenLabs API）
 入力: script.md
-出力: output/youtube/{slug}-audio/full.wav
+出力: output/youtube/{slug}/audio/full.wav
 ```
 
 **完了後のメッセージ:**
@@ -97,9 +97,9 @@ WebFetch or Chrome MCPで記事を取得し、Markdown化する。
 ✅ STEP 3 完了: スライドを生成しました（{N}枚）
 ✅ STEP 4 完了: 音声を生成しました（{M}分{S}秒）
 
-📊 スライド: output/youtube/{slug}-slides.pptx
+📊 スライド: output/youtube/{slug}/slides.pptx
    （自動でKeynoteで開きます）
-🔊 音声: output/youtube/{slug}-audio/full.wav
+🔊 音声: output/youtube/{slug}/audio/full.wav
    （自動でFinderで開きます）
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -136,7 +136,7 @@ WebFetch or Chrome MCPで記事を取得し、Markdown化する。
 
 ```
 入力: full.wav + script.md
-出力: output/youtube/{slug}-audio/scenes/scene01〜{N}.wav + scene{N+1}_cta1〜scene{N+8}_cta8.wav
+出力: output/youtube/{slug}/audio/scenes/scene01〜{N}.wav + scene{N+1}_cta1〜scene{N+8}_cta8.wav
 ```
 
 Whisper mediumで文字起こし → 台本の冒頭フレーズで正確にカット。
@@ -146,7 +146,7 @@ Whisper mediumで文字起こし → 台本の冒頭フレーズで正確にカ�
 ```
 ✅ STEP 5 完了: 音声を{N}シーン + CTA 8シーンに分割しました。
 
-📁 保存先: output/youtube/{slug}-audio/scenes/
+📁 保存先: output/youtube/{slug}/audio/scenes/
    （自動でFinderで開きます）
 
 | # | ファイル | 長さ | 冒頭テキスト |
@@ -192,7 +192,8 @@ YouTube概要欄用のチャプター一覧を生成し、台本の概要欄テ�
 
 ### STEP 6: HeyGen動画生成 👤+🤖
 
-**ここが最も手動作業が多いパートです。**
+**手動作業: PPTXアップ・アバター選択（初回のみ）・BGM・生成ボタン**
+**自動化済み: 音声アップロード＋アバター位置調整（heygen-setup.py）**
 
 **メッセージ:**
 ```
@@ -202,51 +203,41 @@ YouTube概要欄用のチャプター一覧を生成し、台本の概要欄テ�
 以下の手順を順番に実行してください。
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-👤 あなたの作業（7ステップ）:
+👤 あなたの作業（5ステップ）:
 
-  【1】PPTXをHeyGenにアップロード
-     ・HeyGen（https://app.heygen.com）を開く
-     ・「Create Video」→ PPTXをアップロード
-     ・⚠ 「スライドの内容を編集可能な要素としてインポート」を必ずOFFにすること
-     ・「Use speaker notes as your script」を選択
-     ・ファイル: output/youtube/{slug}/{slug}-slides.pptx
+  【1】🤖 PPTXアップロード（自動）
+     ・HeyGenにログイン済みの状態でターミナルで実行:
+       HEYGEN_SLUG={slug} HEYGEN_PPTX_PATH=output/youtube/{slug}/slides.pptx /Users/naru/.pyenv/versions/3.13.0/bin/python3 output/youtube/_shared/heygen-setup.py
+     ・HeyGenエディタが自動で開きます（Phase 0完了で停止）
+     ・⚠ アップロード時「スライドの内容を編集可能な要素としてインポート」が出たら必ずOFFにすること
 
-  【2】音声をアップロード（自動化 or 手動）
-     ・「音声アップロードを自動化して」と言ってくれたら
-       Chrome MCPで自動アップロードを実行します
-     ・手動の場合: 各シーンの「音声をアップロード」から
-       scenes/scene01〜{N}.wavを順番にアップロード
+  【2】🤖 音声アップロード＋アバター位置調整（自動）
+     ・HeyGenエディタが開いた状態で以下を実行:
+       HEYGEN_SLUG={slug} /Users/naru/.pyenv/versions/3.13.0/bin/python3 output/youtube/_shared/heygen-setup.py
+     ・全シーンに音声をアップロードし、アバターを200x200・右上角に自動配置します
+     ・途中から再開: HEYGEN_START={N} を追加
+     ・ドライラン確認: HEYGEN_DRY=1 を追加
 
-  【3】アバター設定
+  【3】アバター選択（初回のみ）
      ・アバター: <担当者名>鳳汰(背景リアル&スーツ見えるver)
-     ・レイアウト: 円
-     ・半径: 98px
-     ・ズーム: 139%
-     ・モーションエンジン: アバター IV
+     ・レイアウト: 円、ズーム: 139%、モーションエンジン: アバター IV
      ・「既存のアバターを置き換え」→「選択」で全シーン適用
+     ※2回目以降は前回設定が引き継がれる場合あり
 
-  【4】アバター位置調整
-     ・各シーンでアバターを右上端にドラッグ
-     ※「既存のアバターを置き換え」では位置がコピーされないため
-       各シーンで手動調整が必要です
-
-  【5】背景BGMを追加
+  【4】背景BGMを追加
      ・画面上部または左メニューから「Background Music」を選択
-     ・好みのBGMを選ぶ（推奨: Corporate / Upbeat系）
+     ・推奨: Corporate / Upbeat系
      ・**Volume: 3%に設定**（ナレーションが聞こえなくなるので必ず下げる）
-     ・**Loop music: ONに設定**（動画全体をカバーするため）
+     ・**Loop music: ONに設定**
 
-  【6】プレビュー確認
+  【5】プレビュー確認 → 生成ボタン
      ・いくつかのシーンを再生して確認:
-       □ スライドが正しく表示されているか（ダブルクリックして確認）
-       □ アバターが右上に配置されているか
+       □ スライドが正しく表示されているか
+       □ アバターが右上に配置されているか（200×200・右上角）
        □ 音声がスライドと一致しているか
-       □ BGMが小さく流れているか（ナレーションを邪魔していないか）
-
-  【7】生成ボタンを押す
-     ・右上の「✓ 生成」ボタンをクリック
-     ・Quality + 1080p を選択
-     ・生成開始（2〜4時間かかります。放置OK）
+       □ BGMが小さく流れているか
+     ・右上の「✓ 生成」ボタン → Quality + 1080p → 生成開始
+     ・生成に2〜4時間かかります。放置OK
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
 → 動画が完成したら「完成した」と言ってください。
@@ -334,17 +325,17 @@ Ctrl+V で貼り付けできます。
 
 ```
 output/youtube/
-├── {slug}-article.md              # 記事テキスト
-├── {slug}-script.md               # 台本
-├── {slug}-slides.pptx             # スライド
-├── {slug}-audio/
-│   ├── full.wav                   # 全体音声
-│   ├── full_pcm.wav               # PCM変換版（Whisper用）
-│   └── scenes/
-│       ├── scene01_title.wav      # シーン別音声
-│       ├── scene02_toc.wav
-│       └── ...
-└── ...                            # シーン別音声
+└── {slug}/
+    ├── article.md                 # 記事テキスト
+    ├── script.md                  # 台本
+    ├── slides.pptx                # スライド
+    └── audio/
+        ├── full.wav               # 全体音声
+        ├── full_pcm.wav           # PCM変換版（Whisper用）
+        └── scenes/
+            ├── scene01_title.wav  # シーン別音声
+            ├── scene02_toc.wav
+            └── ...
 ```
 
 ## コスト（1動画あたり）

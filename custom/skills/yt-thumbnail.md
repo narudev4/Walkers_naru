@@ -7,7 +7,7 @@
 $ARGUMENTS にタイトルまたはスラッグが渡される。
 
 - タイトルの場合: そのタイトルでサムネイル生成
-- スラッグの場合: `output/youtube/{slug}-script.md` からタイトルを取得
+- スラッグの場合: `output/youtube/{slug}/script.md` からタイトルを取得
 - 引数なしの場合: `output/youtube/` 内の最新の `*-script.md` からタイトルを取得
 
 ## 処理フロー
@@ -104,7 +104,7 @@ def generate_thumbnail(title, slug, highlight_word=None):
     # ... テキストボックス追加
 
     # 保存 & 変換
-    pptx_path = f"output/youtube/{slug}-thumbnail.pptx"
+    pptx_path = f"output/youtube/{slug}/thumbnail.pptx"
     prs.save(pptx_path)
 
     # LibreOfficeでPNG変換
@@ -116,8 +116,8 @@ def generate_thumbnail(title, slug, highlight_word=None):
 
 ## 出力先
 
-- PPTX: `output/youtube/{slug}-thumbnail.pptx`
-- PNG: `output/youtube/{slug}-thumbnail.png`
+- PPTX: `output/youtube/{slug}/thumbnail.pptx`
+- PNG: `output/youtube/{slug}/thumbnail.png`
 - 完成後は `open` コマンドでPNG画像を開く
 
 ## 品質チェック

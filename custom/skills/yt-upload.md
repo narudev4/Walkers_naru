@@ -7,9 +7,9 @@
 $ARGUMENTS にスラッグまたは動画ファイルパスが渡される。
 
 - スラッグの場合: 以下のファイルを自動検索
-  - `output/youtube/{slug}-video.mp4` （動画）
-  - `output/youtube/{slug}-thumbnail.png` （サムネイル）
-  - `output/youtube/{slug}-script.md` （メタデータ源）
+  - `output/youtube/{slug}/video.mp4` （動画）
+  - `output/youtube/{slug}/thumbnail.png` （サムネイル）
+  - `output/youtube/{slug}/script.md` （メタデータ源）
 - 引数なしの場合: `output/youtube/` 内の最新ファイルを使用
 
 ## 前提条件

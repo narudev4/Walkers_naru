@@ -364,7 +364,7 @@ AI・ノーコード専門の開発会社Walkersで事業企画を担当。累�
 
 ## 出力先
 
-- `output/youtube/{slug}-script.md`
+- `output/youtube/{slug}/script.md`
 - 完成後は `open` コマンドでファイルを開く
 
 ## 品質チェック（生成後に確認）

@@ -15,7 +15,7 @@
 $ARGUMENTS に台本ファイルパスまたはスラッグが渡される。
 
 - パスの場合: そのファイルを読み込む
-- スラッグの場合: `output/youtube/{slug}-script.md` を読み込む
+- スラッグの場合: `output/youtube/{slug}/script.md` を読み込む
 - 引数なしの場合: `output/youtube/` 内の最新の `*-script.md` を使用
 
 ## 処理フロー（6ステップ）
@@ -175,7 +175,7 @@ import subprocess, glob, os
 trimmed_chunks = sorted(glob.glob("/tmp/chunk*_pcm_trimmed.wav"))
 silence_pad = "/tmp/silence_pad.wav"
 cta_pcm = os.path.abspath("output/youtube/_shared/templates/cta_audio_pcm.wav")
-slug_audio_dir = "output/youtube/{slug}-audio"
+slug_audio_dir = "output/youtube/{slug}/audio"
 
 # ffmpeg入力リストを構築: chunk1, silence, chunk2, silence, ..., chunkN, silence, CTA
 inputs = []
@@ -232,7 +232,7 @@ CTA_DUR=$(ffprobe -i output/youtube/_shared/templates/cta_audio_pcm.wav -show_en
 echo "CTA template: ${CTA_DUR}秒"
 
 # 全体の秒数
-FULL_DUR=$(ffprobe -i output/youtube/{slug}-audio/full_pcm.wav -show_entries format=duration -v quiet -of csv=p=0)
+FULL_DUR=$(ffprobe -i output/youtube/{slug}/audio/full_pcm.wav -show_entries format=duration -v quiet -of csv=p=0)
 echo "Full audio: ${FULL_DUR}秒"
 
 # 期待値との差分チェック（±5秒以内なら合格）
@@ -246,7 +246,7 @@ echo "Expected: ${EXPECTED}秒 / Actual: ${FULL_DUR}秒 / Diff: ${DIFF}秒"
 - CTA分（約105秒）が丸ごと欠落するパターンが過去に発生。原因は`cta_audio.wav`（中身MP3）を使ったこと
 - **必ず `cta_audio_pcm.wav` を使い、秒数assertを通すこと**
 
-出力後 `open -R output/youtube/{slug}-audio/full.wav` でFinderを開く。
+出力後 `open -R output/youtube/{slug}/audio/full.wav` でFinderを開く。
 
 ## CTAテンプレート
 
@@ -266,8 +266,8 @@ CTA台本の文言が変わったときのみ。
 
 ## 出力先
 
-- `output/youtube/{slug}-audio/full.wav`
-- `output/youtube/{slug}-audio/full_pcm.wav`（HeyGenアップロード用・Whisper分割用）
+- `output/youtube/{slug}/audio/full.wav`
+- `output/youtube/{slug}/audio/full_pcm.wav`（HeyGenアップロード用・Whisper分割用）
 
 ## 品質チェック
 
