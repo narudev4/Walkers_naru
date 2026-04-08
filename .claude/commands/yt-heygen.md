@@ -15,7 +15,7 @@ PPTXスライドとシーン別音声ファイルから、HeyGenでアバター�
 $ARGUMENTS にスラッグまたはディレクトリパスが渡される。
 
 - スラッグの場合: `output/youtube/{slug}/` 配下のファイルを自動検索
-  - `output/youtube/{slug}/slides.pptx`
+  - `output/youtube/{slug}/{slug}.pptx`
   - `output/youtube/{slug}/audio/scenes/scene*.wav`
 
 ---
@@ -30,7 +30,7 @@ $ARGUMENTS にスラッグまたはディレクトリパスが渡される。
 
   【1】HeyGen（https://app.heygen.com）を開く
   【2】「Create Video」→ PPTXをアップロード
-     ・ファイル: output/youtube/{slug}/slides.pptx
+     ・ファイル: output/youtube/{slug}/{slug}.pptx
      ・⚠「スライドの内容を編集可能な要素としてインポート」→ OFF
      ・「Use speaker notes as your script」を選択
   【3】アバター選択: 「本番用：山口〜」を選ぶ
@@ -155,27 +155,30 @@ req.requestEnd();
 
 ---
 
-## Phase 3: BGM設定 + 生成（手動）
+## Phase 3: BGM設定 + 生成（自動化候補）
+
+### BGM設定手順
+
+1. **右側バーの「音楽」アイコン**をクリック
+2. **「マイ ミュージック」タブ**をクリック
+3. **アップロードアイコン**をクリック → `output/youtube/Audiio_本番用.wav` をアップロード
+4. アップロード後、BGMとして適用
+5. **Volume: 3%** に設定
+6. **Loop music: ON**
+
+### 確認 → 生成
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-👤 手動作業: BGM設定 → 生成
+👤 確認作業 → 生成
 
-  【1】背景BGMを追加
-     ・画面上部「Background Music」を選択
-     ・ジャンル: Corporate / Upbeat系
-     ・**Volume: 3%**
-     ・**Loop music: ON**
+  【1】プレビュー確認（いくつかのシーンを再生）
+     ・スライド表示OK？
+     ・アバター右上200×200？
+     ・音声とスライドが一致？
+     ・BGMが小さく流れている？
 
-  【2】プレビュー確認
-     ・スライドが正しく表示されているか
-     ・アバターが右上に200×200で配置されているか
-     ・音声がスライドと一致しているか
-
-  【3】生成
-     ・右上「✓ 生成」ボタン
-     ・**Quality + 1080p**
-     ・生成開始（2〜4時間）
+  【2】右上「✓ 生成」→ Quality + 1080p
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
