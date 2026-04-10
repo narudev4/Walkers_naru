@@ -27,8 +27,8 @@
     },
     {
       "name": "lp-preview",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["http-server", "/tmp", "-p", "8091", "-c-1"],
+      "runtimeExecutable": "/usr/bin/python3",
+      "runtimeArgs": ["-m", "http.server", "8091", "-d", "/tmp/claude-preview"],
       "port": 8091
     }
   ]

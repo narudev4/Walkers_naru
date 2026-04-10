@@ -20,7 +20,7 @@ article.md
 script.md
   ↓ 👤 台本確認
   ↓ [STEP 3] 🤖 /yt-slides   ← 並列実行 →   [STEP 4] 🤖 /yt-voice
-slides.pptx                                  full.wav
+{slug}.pptx                                  full.wav
   ↓ 👤 スライド確認                              ↓ 👤 CTA末尾の音声確認
                                                ↓ [STEP 5] 🤖 /yt-split-audio
                                              scenes/*.wav
@@ -85,7 +85,7 @@ WebFetch or Chrome MCPで記事を取得し、Markdown化する。
 ```
 # 並列タスクA: スライド生成
 入力: script.md
-出力: output/youtube/{slug}/slides.pptx
+出力: output/youtube/{slug}/{slug}.pptx
 
 # 並列タスクB: 音声生成（ElevenLabs API）
 入力: script.md
@@ -97,7 +97,7 @@ WebFetch or Chrome MCPで記事を取得し、Markdown化する。
 ✅ STEP 3 完了: スライドを生成しました（{N}枚）
 ✅ STEP 4 完了: 音声を生成しました（{M}分{S}秒）
 
-📊 スライド: output/youtube/{slug}/slides.pptx
+📊 スライド: output/youtube/{slug}/{slug}.pptx
    （自動でKeynoteで開きます）
 🔊 音声: output/youtube/{slug}/audio/full.wav
    （自動でFinderで開きます）
@@ -207,7 +207,7 @@ YouTube概要欄用のチャプター一覧を生成し、台本の概要欄テ�
 
   【1】🤖 PPTXアップロード（自動）
      ・HeyGenにログイン済みの状態でターミナルで実行:
-       HEYGEN_SLUG={slug} HEYGEN_PPTX_PATH=output/youtube/{slug}/slides.pptx /Users/naru/.pyenv/versions/3.13.0/bin/python3 05_development/youtube/heygen-setup.py
+       HEYGEN_SLUG={slug} HEYGEN_PPTX_PATH=output/youtube/{slug}/{slug}.pptx /Users/naru/.pyenv/versions/3.13.0/bin/python3 05_development/youtube/heygen-setup.py
      ・HeyGenエディタが自動で開きます（Phase 0完了で停止）
      ・⚠ アップロード時「スライドの内容を編集可能な要素としてインポート」が出たら必ずOFFにすること
 
@@ -328,7 +328,7 @@ output/youtube/
 └── {slug}/
     ├── article.md                 # 記事テキスト
     ├── script.md                  # 台本
-    ├── slides.pptx                # スライド
+    ├── {slug}.pptx                # スライド
     └── audio/
         ├── full.wav               # 全体音声
         ├── full_pcm.wav           # PCM変換版（Whisper用）

@@ -130,11 +130,15 @@ import re
 sections = re.split(r'### 【', content)
 scene_markers = []
 for sec in sections[1:]:
-    # ナレーション本文の最初の文を取得
-    lines = [l for l in sec.split('\n') if l.strip() and not l.startswith('#') and not l.startswith('<!--') and l.strip() != '---']
-    if lines:
-        first_sentence = lines[1] if len(lines) > 1 else lines[0]  # ヘッダー行の次
-        scene_markers.append(first_sentence[:30])
+    # デュアルテキスト対応: 「**ナレーション:**」セクションがあればそこから抽出
+    narration_match = re.search(r'\*\*ナレーション:\*\*\s*\n(.+)', sec)
+    if narration_match:
+        first_sentence = narration_match.group(1).strip()[:30]
+    else:
+        # 旧フォーマット: ヘッダー行の次の行を取得
+        lines = [l for l in sec.split('\n') if l.strip() and not l.startswith('#') and not l.startswith('<!--') and l.strip() != '---' and not l.startswith('**スライド表示')]
+        first_sentence = (lines[1] if len(lines) > 1 else lines[0])[:30] if lines else ''
+    scene_markers.append(first_sentence)
 ```
 
 ### Phase 4: Whisperセグメントと台本の照合
