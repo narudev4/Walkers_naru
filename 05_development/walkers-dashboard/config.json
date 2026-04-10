@@ -1,7 +1,7 @@
 {
   "host": "127.0.0.1",
   "port": 8080,
-  "machineId": "yamaguchi-orenomac",
+  "machineId": "naru-macbook-air",
   "walkers_root": "../..",
   "refresh_debounce_sec": 30,
   "locale": "ja-JP",
@@ -10,7 +10,7 @@
   "skillhub_cache_ttl": 60,
   "cloudApi": {
     "url": "https://walkers-api.vercel.app",
-    "apiKey": ""
+    "apiKey": "d6d294e32e911214faf39098210f9897c0a3121e5ca75ef1da382884d7f9bd8f"
   },
   "mainAgent": {
     "cron": {
@@ -22,11 +22,13 @@
   },
   "sharedMachineMode": {
     "enabled": true,
-    "machineName": "yamaguchi-orenomac",
-    "description": "<YOUR_NAME>さんのMac (orenomac.local)",
+    "machineName": "naru-macbook-air",
+    "description": "naruのMacBook Air",
     "accessScope": "all",
     "allowedMachines": []
   },
   "cronNotifySpace": "",
-  "allowedSenders": []
+  "allowedSenders": [
+    "naru.hosoya@walker-s.co.jp"
+  ]
 }

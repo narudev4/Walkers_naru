@@ -47,12 +47,14 @@ Phase 1+2: 音声アップ＋アバター配置（自動 / Playwright CDP）
 | `HEYGEN_START` | no | 1 | 開始シーン番号（レジューム用） |
 | `HEYGEN_END` | no | 全シーン | 終了シーン番号 |
 | `HEYGEN_DRY` | no | 0 | "1"でドライラン |
+| `HEYGEN_VERIFY` | no | 0 | "1"でスイープ検証モード（アップロードせず全シーンの音声を検証） |
+| `HEYGEN_VERIFY_VISUAL` | no | 0 | "1"でclaude -p視覚検証を有効化（HEYGEN_VERIFY=1と併用） |
 
 ## 使い方
 
 ```bash
 # Phase 0: PPTXアップロード（browser-use CLI、ログイン済みプロファイル使用）
-HEYGEN_SLUG=what-is-make HEYGEN_PPTX_PATH=output/youtube/what-is-make/slides.pptx /Users/naru/.pyenv/versions/3.13.0/bin/python3 output/youtube/_shared/heygen-setup.py
+HEYGEN_SLUG=what-is-make HEYGEN_PPTX_PATH=output/youtube/what-is-make/what-is-make.pptx /Users/naru/.pyenv/versions/3.13.0/bin/python3 output/youtube/_shared/heygen-setup.py
 
 # Phase 1+2: 全シーン一括処理（音声アップ＋アバター配置）
 HEYGEN_SLUG=what-is-make /Users/naru/.pyenv/versions/3.13.0/bin/python3 output/youtube/_shared/heygen-setup.py
@@ -108,9 +110,30 @@ HEYGEN_SLUG=what-is-make HEYGEN_DRY=1 /Users/naru/.pyenv/versions/3.13.0/bin/pyt
 {
   "completed": [1, 2, 3],
   "failed": [4],
+  "verified": {
+    "1": {"filename": "scene01_title.wav", "method": "dom"},
+    "2": {"filename": "scene02_problem.wav", "method": "healed"}
+  },
+  "healed": [],
   "status": "stopped"
 }
 ```
+
+### 音声検証システム
+
+各シーンのアップロード直後にDOM検証を実行:
+1. 左パネルに表示された.wavファイル名を読み取り、期待値と照合
+2. ミスマッチ時は自己修復（音声削除→再アップロード→再検証、最大2回）
+3. 曖昧な場合は`claude -p`でスクリーンショット解析（`HEYGEN_VERIFY_VISUAL=1`時）
+
+スイープ検証モード（`HEYGEN_VERIFY=1`）で全シーン一括検証も可能。
+
+### PIDロック
+
+二重起動防止のため、起動時にロックファイルを作成。
+ロックファイル: `output/youtube/{slug}/heygen-setup.lock`
+
+**ad-hocスクリプトを/tmpに書いて実行しないこと** — 全ロジックはheygen-setup.pyに集約。
 
 ## アバター配置仕様
 
@@ -140,3 +163,5 @@ HEYGEN_SLUG=what-is-make HEYGEN_DRY=1 /Users/naru/.pyenv/versions/3.13.0/bin/pyt
 
 - HeyGenの同一ドラフトは複数タブで同時に開けない（"The draft is being edited"）
 - HeyGenのUI変更でDOM構造が変わるとスクリプト修正が必要
+- 音声伝播（HeyGenが後続シーンに自動コピー）→ 伝播チェック + ファイル名判別で対策済み
+- 二重起動でレースコンディション → PIDロックで対策済み
