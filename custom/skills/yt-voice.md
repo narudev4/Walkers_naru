@@ -147,9 +147,9 @@ for f in /tmp/chunk*.wav; do
 done
 
 # 2. CTAテンプレートをPCM版で準備（CRITICAL: cta_audio.wavは中身MP3なので絶対使わない）
-CTA_PCM="output/youtube/_shared/templates/cta_audio_pcm.wav"
+CTA_PCM="05_development/youtube/templates/cta_audio_pcm.wav"
 if [ ! -f "$CTA_PCM" ]; then
-    ffmpeg -y -i "output/youtube/_shared/templates/cta_audio.wav" -acodec pcm_s16le -ar 44100 -ac 1 "$CTA_PCM"
+    ffmpeg -y -i "05_development/youtube/templates/cta_audio.wav" -acodec pcm_s16le -ar 44100 -ac 1 "$CTA_PCM"
 fi
 
 # 3. 各チャンクの先頭/末尾の無音をトリム
@@ -174,7 +174,7 @@ import subprocess, glob, os
 # トリム済みチャンクファイルを取得（ソート）
 trimmed_chunks = sorted(glob.glob("/tmp/chunk*_pcm_trimmed.wav"))
 silence_pad = "/tmp/silence_pad.wav"
-cta_pcm = os.path.abspath("output/youtube/_shared/templates/cta_audio_pcm.wav")
+cta_pcm = os.path.abspath("05_development/youtube/templates/cta_audio_pcm.wav")
 slug_audio_dir = "output/youtube/{slug}/audio"
 
 # ffmpeg入力リストを構築: chunk1, silence, chunk2, silence, ..., chunkN, silence, CTA
@@ -228,7 +228,7 @@ for f in /tmp/chunk*_pcm.wav; do
 done
 
 # CTAテンプレートの秒数
-CTA_DUR=$(ffprobe -i output/youtube/_shared/templates/cta_audio_pcm.wav -show_entries format=duration -v quiet -of csv=p=0)
+CTA_DUR=$(ffprobe -i 05_development/youtube/templates/cta_audio_pcm.wav -show_entries format=duration -v quiet -of csv=p=0)
 echo "CTA template: ${CTA_DUR}秒"
 
 # 全体の秒数
@@ -250,15 +250,15 @@ echo "Expected: ${EXPECTED}秒 / Actual: ${FULL_DUR}秒 / Diff: ${DIFF}秒"
 
 ## CTAテンプレート
 
-- ファイル: `output/youtube/_shared/templates/cta_audio_pcm.wav`（PCM 44100Hz mono, 約1分45秒）
+- ファイル: `05_development/youtube/templates/cta_audio_pcm.wav`（PCM 44100Hz mono, 約1分45秒）
 - 内容: 末尾スライド1〜8の固定ナレーション（毎動画共通）
 - **毎回APIで生成しない。テンプレートを結合するだけ。**
 
 ### テンプレートが存在しない場合
 CTA台本テキストを**単独で1回のAPIコール**（2000文字以内）で生成し保存:
 ```bash
-mkdir -p output/youtube/_shared/templates/
-ffmpeg -y -i cta_raw.wav -acodec pcm_s16le -ar 44100 -ac 1 output/youtube/_shared/templates/cta_audio_pcm.wav
+mkdir -p 05_development/youtube/templates/
+ffmpeg -y -i cta_raw.wav -acodec pcm_s16le -ar 44100 -ac 1 05_development/youtube/templates/cta_audio_pcm.wav
 ```
 
 ### テンプレート再生成が必要な場合

@@ -207,13 +207,13 @@ YouTube概要欄用のチャプター一覧を生成し、台本の概要欄テ�
 
   【1】🤖 PPTXアップロード（自動）
      ・HeyGenにログイン済みの状態でターミナルで実行:
-       HEYGEN_SLUG={slug} HEYGEN_PPTX_PATH=output/youtube/{slug}/slides.pptx /Users/naru/.pyenv/versions/3.13.0/bin/python3 output/youtube/_shared/heygen-setup.py
+       HEYGEN_SLUG={slug} HEYGEN_PPTX_PATH=output/youtube/{slug}/slides.pptx /Users/naru/.pyenv/versions/3.13.0/bin/python3 05_development/youtube/heygen-setup.py
      ・HeyGenエディタが自動で開きます（Phase 0完了で停止）
      ・⚠ アップロード時「スライドの内容を編集可能な要素としてインポート」が出たら必ずOFFにすること
 
   【2】🤖 音声アップロード＋アバター位置調整（自動）
      ・HeyGenエディタが開いた状態で以下を実行:
-       HEYGEN_SLUG={slug} /Users/naru/.pyenv/versions/3.13.0/bin/python3 output/youtube/_shared/heygen-setup.py
+       HEYGEN_SLUG={slug} /Users/naru/.pyenv/versions/3.13.0/bin/python3 05_development/youtube/heygen-setup.py
      ・全シーンに音声をアップロードし、アバターを200x200・右上角に自動配置します
      ・途中から再開: HEYGEN_START={N} を追加
      ・ドライラン確認: HEYGEN_DRY=1 を追加
@@ -316,7 +316,7 @@ Ctrl+V で貼り付けできます。
 | WebFetch失敗 | Chrome MCP or Playwright MCPにフォールバック |
 | ElevenLabs APIキーなし | `credentials/elevenlabs_api_key.txt` を確認。なければユーザーにヒアリング |
 | ElevenLabs 5000文字超 | セクション遷移の位置で分割 → 複数APIコール → FFmpeg結合 |
-| CTA音声崩壊 | CTA部分だけ再生成。テンプレート音声（`output/youtube/_shared/templates/cta_audio_pcm.wav`）があればそれを使用 |
+| CTA音声崩壊 | CTA部分だけ再生成。テンプレート音声（`05_development/youtube/templates/cta_audio_pcm.wav`）があればそれを使用 |
 | Whisper分割精度が低い | 全セグメント一覧を出力し、手動でカットポイントを調整 |
 | スライド生成Pythonエラー | エラーを修正して再実行 |
 | PPTXがKeynoteで開けない | bash heredoc方式で再生成 |

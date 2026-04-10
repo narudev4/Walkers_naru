@@ -18,7 +18,7 @@ HeyGenへの台本入力は手動で行う。
 自前で再現すると位置・サイズ・フォントが微妙にずれて品質が下がる。
 
 ### 見本PPTX
-`output/youtube/_shared/template-slides.pptx`
+`05_development/youtube/template-slides.pptx`
 
 ### コピー対象
 - **冒頭5枚**: （※目次スライドは廃止。作成しない。）
@@ -205,7 +205,7 @@ def make_text_slide(dst_prs, ref_slide5, lines):
 ### Part 3: 末尾CTA（8枚・固定）
 
 テキストスライドと画像スライドが交互に並ぶ構成。
-画像は `output/youtube/_shared/cta-images/` に保存済みのものを使用。
+画像は `05_development/youtube/cta-images/` に保存済みのものを使用。
 
 | # | 種類 | 内容 | 画像ファイル |
 |---|------|------|------------|

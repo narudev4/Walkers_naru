@@ -59,7 +59,7 @@ CDP ChromeをPlaywright経由で操作し、全シーンに対して以下を自
 # HeyGenエディタをCDP Chrome上で開いた状態で実行:
 HEYGEN_SLUG=what-is-make HEYGEN_START=1 HEYGEN_END=33 \
   /Users/naru/.pyenv/versions/3.13.0/bin/python3 \
-  output/youtube/_shared/heygen-setup.py
+  05_development/youtube/heygen-setup.py
 ```
 
 ### 環境変数
@@ -206,6 +206,6 @@ req.requestEnd();
 
 | ファイル | 用途 |
 |---------|------|
-| `output/youtube/_shared/heygen-setup.py` | 自動化スクリプト本体（1100行） |
-| `output/youtube/_shared/heygen-automation-learnings.md` | 詳細な学習ログ |
+| `05_development/youtube/heygen-setup.py` | 自動化スクリプト本体（1100行） |
+| `05_development/youtube/heygen-automation-learnings.md` | 詳細な学習ログ |
 | `05_development/scripts/chrome-cdp-launcher.sh` | CDP Chrome起動/停止 |

@@ -62,9 +62,10 @@
 | `03_projects/` | 進行中プロジェクト（案件ごとにサブフォルダ） |
 | `04_sales/` | 営業・パイプライン管理 |
 | `05_development/` | 開発関連 |
+| `05_development/youtube/` | YouTube自動化スクリプト・テンプレート（heygen-setup.py等、Mac/Windows両対応） |
 | `06_learning/` | インプット・記事クリップ・学習メモ |
 | `credentials/` | API認証情報（.gitignoreで除外） |
-| `output/` | AI出力ファイル（trends / digest / articles） |
+| `output/` | AI出力ファイル（trends / digest / articles）※gitignore |
 | `output/gui/` | 動的生成GUI（HTML + JSON state） |
 | `05_development/gui-system/` | GUI共通テンプレート（JS/CSS） |
 | `sub-agents/` | サブエージェント定義（cron定期実行） |
