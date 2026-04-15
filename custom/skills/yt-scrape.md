@@ -6,18 +6,34 @@
 
 $ARGUMENTS に記事URLが渡される。
 
-- URLの場合: WebFetch で記事ページを取得
+- URLの場合: Chrome DevTools MCP で記事ページを取得
 - URLなしの場合: ユーザーにURLをヒアリング
 
 ## 処理フロー
 
-1. WebFetch で記事ページのHTMLを取得
-2. 本文テキストを抽出（ナビ・フッター・サイドバー除外）
-3. 見出し構造（h2/h3/h4）を保持してMarkdown化
-4. 画像のalt属性も取得（スライド内容の参考にする）
-5. メタ情報（title, description, keywords）を抽出
-6. `output/youtube/{slug}/article.md` に保存
-7. `open` コマンドでファイルを開く
+1. `mcp__chrome-devtools__navigate_page` で記事URLに遷移（JSレンダリング完了を待つ）
+2. `mcp__chrome-devtools__evaluate_script` で本文HTMLを取得:
+   ```js
+   document.querySelector('.post_content, main, article, .entry-content').innerHTML
+   ```
+3. 取得したHTMLを `/tmp/yt-scrape-temp.html` に保存（Write）
+4. MarkItDown でMarkdown変換:
+   ```bash
+   /Users/naru/.pyenv/versions/3.13.0/bin/python3 -c "from markitdown import MarkItDown; md = MarkItDown(); r = md.convert('/tmp/yt-scrape-temp.html'); print(r.text_content)"
+   ```
+5. メタ情報は `evaluate_script` で個別取得:
+   ```js
+   JSON.stringify({
+     title: document.title,
+     description: document.querySelector('meta[name="description"]')?.content || '',
+     keywords: document.querySelector('meta[name="keywords"]')?.content || '',
+     date: document.querySelector('time')?.dateTime || ''
+   })
+   ```
+6. Markdown出力を整形（frontmatter追加、ナビ残骸があれば除去）
+7. `projects/{slug}/article.md` に保存
+8. `/tmp/yt-scrape-temp.html` を削除
+9. `open` コマンドでファイルを開く
 
 ## 抽出対象
 
@@ -55,9 +71,14 @@ scraped_at: {取得日時}
 {本文Markdown}
 ```
 
+## 依存関係
+
+- Chrome DevTools MCP（`.mcp.json` で設定済み）
+- MarkItDown: `pip3 install 'markitdown[all]'`
+
 ## 出力先
 
-- `output/youtube/{slug}/article.md`
+- `projects/{slug}/article.md`
 - 完成後は `open` コマンドでファイルを開く
 
 ## 品質チェック
