@@ -290,6 +290,70 @@ def add_description(slide, text, top=1371600):
 #  本編スライド生成関数
 # ════════════════════════════════════════════════════════
 
+def make_hero_text_slide(prs, data):
+    """冒頭2,3枚用: CHARCOAL全面 + 白Bold太字センタリング
+
+    data["lines"] の構造で2パターン対応:
+      A) 2〜3行の短い問題提起（例: 「Claude Codeで / ネイティブアプリは作れるの？」）
+         → 全体を垂直中央・水平センターで大きく表示
+      B) 結論 + 【本動画の内容】見出し + ①〜④ の箇条書き
+         → 結論を上部センター、見出し+箇条書きをブロック中央配置（項目は左揃え）
+    """
+    slide = new_blank_slide(prs)
+    add_rect(slide, 0, 0, SLIDE_W, SLIDE_H, CHARCOAL)
+
+    lines = data.get("lines", "")
+    has_heading = "【本動画の内容】" in lines
+
+    if not has_heading:
+        # パターンA: シンプルセンタリング
+        add_textbox(slide, 0, 0, SLIDE_W, SLIDE_H,
+                    lines,
+                    font_size=Pt(36), bold=True, color=WHITE,
+                    alignment=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+        return slide
+
+    # パターンB: 結論 + 見出し + ①〜④
+    parts = lines.split("\n\n", 1)
+    conclusion = parts[0]
+    rest = parts[1] if len(parts) > 1 else ""
+
+    # 結論（上段センター、Bold）
+    add_textbox(slide, 0, 1200000, SLIDE_W, 700000,
+                conclusion,
+                font_size=Pt(28), bold=True, color=WHITE,
+                alignment=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+
+    # 見出し + ①〜④（結論の下、ブロック中央、項目は左揃え、行間広め）
+    rest_lines = rest.split("\n")
+    block_w = 6500000
+    block_left = (SLIDE_W - block_w) // 2
+    block_top = 2400000
+    block_h = SLIDE_H - block_top - 500000
+
+    txBox = slide.shapes.add_textbox(Emu(block_left), Emu(block_top), Emu(block_w), Emu(block_h))
+    tf = txBox.text_frame
+    tf.word_wrap = True
+    tf.auto_size = None
+    tf.margin_left = Emu(0); tf.margin_right = Emu(0)
+    tf.margin_top = Emu(0); tf.margin_bottom = Emu(0)
+
+    for i, line in enumerate(rest_lines):
+        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+        is_heading = line.startswith("【") and line.endswith("】")
+        p.alignment = PP_ALIGN.CENTER if is_heading else PP_ALIGN.LEFT
+        p.space_after = Pt(12)
+        run = p.add_run()
+        run.text = line
+        set_font(run, size=Pt(26), bold=True, color=WHITE)
+
+    body_pr = tf._txBody.find("{http://schemas.openxmlformats.org/drawingml/2006/main}bodyPr")
+    if body_pr is not None:
+        body_pr.set("anchor", "t")
+
+    return slide
+
+
 def make_section_title(prs, data):
     """セクションタイトルスライド（全面CHARCOAL + 番号 + タイトル）"""
     slide = new_blank_slide(prs)
@@ -757,9 +821,12 @@ def generate_pptx(json_path, output_path=None, template_path=None):
             copy_slide_replace_text(tpl_prs, 0, prs, replacements)
 
         elif stype == "text":
-            # テンプレートスライド5（チャンネル登録）からコピー、テキスト差し替え
             lines = sd.get("lines", "")
-            copy_slide_replace_text(tpl_prs, 4, prs, {"TextBox 2": lines})
+            if sd.get("style") == "hero":
+                make_hero_text_slide(prs, sd)
+            else:
+                # テンプレートスライド5（チャンネル登録）からコピー、テキスト差し替え
+                copy_slide_replace_text(tpl_prs, 4, prs, {"TextBox 2": lines})
 
         elif stype == "intro":
             # テンプレートスライド4をそのままコピー
