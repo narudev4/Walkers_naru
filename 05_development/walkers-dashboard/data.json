@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "refreshedAt": "2026-04-09T13:15:44",
+    "refreshedAt": "2026-04-10T15:40:30",
     "walkersRoot": "/Users/naru/Walkers_naru",
     "version": "1.0.0"
   },
@@ -113,9 +113,9 @@
       "name": "md-preview",
       "triggers": "",
       "phases": 2,
-      "lines": 110,
-      "size": 3962,
-      "modified": "2026-04-08T13:07:19"
+      "lines": 39,
+      "size": 1013,
+      "modified": "2026-04-09T15:23:49"
     },
     {
       "name": "meeting-minutes",
@@ -248,10 +248,10 @@
     {
       "name": "yt-heygen",
       "triggers": "",
-      "phases": 10,
-      "lines": 212,
-      "size": 8005,
-      "modified": "2026-04-08T16:43:44"
+      "phases": 11,
+      "lines": 248,
+      "size": 9820,
+      "modified": "2026-04-10T00:17:54"
     }
   ],
   "memories": {
@@ -343,7 +343,6 @@
       "notion",
       "playwright",
       "google-calendar",
-      "google-sheets",
       "gmail",
       "google-drive",
       "google-slides",
@@ -359,7 +358,9 @@
       "youtube",
       "youtube-analytics",
       "ubersuggest",
-      "clarity"
+      "chrome-devtools",
+      "clarity",
+      "google-sheets"
     ],
     "connectedServers": [
       "notion",
@@ -372,6 +373,8 @@
   "git": {
     "branch": "main",
     "commits": [
+      "e8161af chore: YourAI システム全体アップデート",
+      "36d9381 update: yt-slides/yt-produceスキルをJSON駆動エンジン方式に更新",
       "4f718ea update: yt-heygen Phase3にBGM設定の具体的手順を追加",
       "e0eef03 update: yt-heygenスキルをmoveable.request()方式に全面更新",
       "b4d48fa refactor: スキル形式を .claude/commands/ → .claude/skills/ に移行 (#1)",

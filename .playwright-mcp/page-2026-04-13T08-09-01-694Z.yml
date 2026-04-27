@@ -1,0 +1,533 @@
+- generic [active] [ref=e1]:
+  - banner:
+    - generic:
+      - link "croix":
+        - /url: http://stg.croix.asia
+        - img "croix"
+    - generic:
+      - paragraph: MENU
+  - generic [ref=e3]:
+    - link "EN" [ref=e4] [cursor=pointer]:
+      - /url: "#"
+      - generic [ref=e5]: EN
+    - link "JA" [ref=e6] [cursor=pointer]:
+      - /url: "#"
+      - generic [ref=e7]: JA
+  - main [ref=e8]:
+    - heading "News 新着情報" [level=3] [ref=e13]:
+      - generic [ref=e14]: News
+      - generic [ref=e15]: 新着情報
+    - generic [ref=e19]:
+      - generic [ref=e20]:
+        - generic [ref=e21]: 2025.05.30
+        - generic [ref=e22]: （お知らせ）
+      - heading "眠りが変われば、人生が変わる。 ｜ 眠りへ誘う「音」と「香り」の空間演出デバイス “nemcaro (ネムカロ)” GREENFUNDINGにてプロジェクト公開" [level=1] [ref=e23]
+      - generic [ref=e24]:
+        - heading "眠りの概念を変える。置くだけで始まる、音と香りの没入空間。 nemcaro (ネムカロ) は、特許技術3Dサウンドと医学博士等監修の癒やしの音楽で、睡眠の質を根本から進化させる。 スマホもBluetoothも要らない、新時代の“眠り専用”デバイス。" [level=2] [ref=e25]:
+          - text: 眠りの概念を変える。置くだけで始まる、音と香りの没入空間。
+          - text: nemcaro (ネムカロ) は、特許技術3Dサウンドと医学博士等監修の癒やしの音楽で、睡眠の質を根本から進化させる。
+          - text: スマホもBluetoothも要らない、新時代の“眠り専用”デバイス。
+        - paragraph [ref=e26]:
+          - iframe [ref=e27]:
+            - generic [active] [ref=f11e1]:
+              - generic "YouTube 動画プレーヤー" [ref=f11e3]
+              - generic [ref=f11e5]:
+                - generic:
+                  - generic:
+                    - button "動画を再生" [ref=f11e10] [cursor=pointer]
+                    - button "プレーヤー コントロールを非表示にする" [ref=f11e12] [cursor=pointer]
+                    - generic [ref=f11e14]:
+                      - generic [ref=f11e19]:
+                        - generic [ref=f11e20]:
+                          - link "「眠りが変われば、人生が変わる」 これ一台で３Ｄサラウンドと香りが眠りへ誘う あなたの寝室が大自然に変わる / 医学博士・理学博士監修による癒やしの音楽を収録 / 「音」と「香り」の空間演出デバイス" [ref=f11e21] [cursor=pointer]:
+                            - /url: https://www.youtube.com/watch?v=lWgedbAmiYY
+                          - link "nemcaro" [ref=f11e22] [cursor=pointer]:
+                            - /url: /channel/UCKYeSsx68m8IzOnrc3AE-Pg
+                            - generic [ref=f11e23]: nemcaro
+                        - generic [ref=f11e24]:
+                          - button [ref=f11e25] [cursor=pointer]
+                          - generic [ref=f11e27]:
+                            - generic: nemcaro
+                            - generic: チャンネル登録者数 20人
+                      - generic [ref=f11e28]:
+                        - button "共有" [ref=f11e31] [cursor=pointer]:
+                          - generic [ref=f11e35]:
+                            - img
+                        - link "YouTube で見る" [ref=f11e42] [cursor=pointer]:
+                          - /url: https://www.youtube.com/watch?v=lWgedbAmiYY
+                          - generic [ref=f11e45]:
+                            - text: 見る
+                            - img [ref=f11e47]:
+                              - generic [ref=f11e49]:
+                                - img
+        - paragraph [ref=e28]:
+          - link "GREEN FUNDINGクラウドファンディング プロジェクトページ" [ref=e29] [cursor=pointer]:
+            - /url: https://greenfunding.jp/portals/pages/nemcaro_8797
+        - paragraph [ref=e30]:
+          - link "https://greenfunding.jp/lab/projects/8797" [ref=e31] [cursor=pointer]:
+            - /url: https://greenfunding.jp/lab/projects/8797
+        - paragraph [ref=e32]
+        - heading "「眠りが変われば、人生が変わる。」" [level=3] [ref=e33]:
+          - strong [ref=e35]: 「眠りが変われば、人生が変わる。」
+        - paragraph [ref=e36]:
+          - text: 目覚めの重さを、もう当たり前にしない。
+          - text: 私たちクロアは、RELAX WORLDブランドとして、2万曲を超える癒やしの音楽を制作してきました。そして今、医学博士・理学博士とともに辿り着いたのが、“
+          - strong [ref=e37]: 眠るためだけに設計された音
+          - text: ”の世界。α波（※1）を最大限に引き出すサウンドと、心に深く染み込む自然音が、あなたの心身をそっと包み込みます。
+        - paragraph [ref=e38]:
+          - text: さらにnemcaro (ネムカロ) は、BluetoothもWi-Fiも使わない“
+          - strong [ref=e39]: 無接続
+          - text: ”の静けさ。
+          - text: スマホや通知に邪魔されることなく、音と香りの世界に身を委ねてください。
+          - strong [ref=e40]: 眠りが変われば、人生が変わる。
+        - paragraph [ref=e41]: (※1)リラックスしているときに優位になる脳波の一種。
+        - paragraph [ref=e42]
+        - paragraph [ref=e43]:
+          - strong [ref=e44]:
+            - generic [ref=e45]: nemcaro (ネムカロ) は、
+          - text: (1) 特許技術による3D音響システム、
+          - text: (2) 天然100％アロマを拡散するディフューザー、
+          - text: (3)医学博士等監修の癒やしの音源をUSBメモリーで搭載する、
+          - text: 「音」と「香り」で“深睡”空間をつくる、スマホ不要の“眠り専用”デバイス。
+        - paragraph [ref=e46]
+        - heading "スマホを手放し、“本物の休息”を取り戻す。" [level=3] [ref=e47]:
+          - strong [ref=e48]: スマホを手放し、“本物の休息”を取り戻す。
+        - paragraph [ref=e49]:
+          - text: 眠れない夜を繰り返す日々に、終止符を。
+          - text: nemcaroは、
+          - strong [ref=e50]: 音と香りの力で“デジタルオフ”の習慣を生み出し、質の高い眠りへと導くウェルネスデバイス
+          - text: です。
+        - paragraph [ref=e51]:
+          - text: 医学博士・理学博士が監修した癒やしのサウンドと、天然100%のアロマが心身を整え、
+          - text: スマホを手にしない静かな時間が、あなた本来のリズムを取り戻していきます。
+        - paragraph [ref=e52]:
+          - text: そして迎える朝。
+          - strong [ref=e53]: 「やっと、ぐっすり眠れた」――その実感こそが、nemcaroがもたらす最大の価値です。
+          - text: 眠りを変えれば、人生のリズムも変わっていく。まずは、今夜から。
+        - paragraph [ref=e54]:
+          - img [ref=e55]
+        - paragraph [ref=e56]
+        - heading "癒やしの音を、ここまで立体的(3D)に感じたことがありますか？" [level=3] [ref=e57]:
+          - strong [ref=e59]: 癒やしの音を、ここまで立体的(3D)に感じたことがありますか？
+        - paragraph [ref=e60]:
+          - text: nemcaroは、科学的研究に基づく癒やしの音楽を、
+          - strong [ref=e61]: 特許技術で“眠り専用3Dサウンド”として再構築
+          - text: 。
+          - text: たった1台とは思えないほど、音が空間を自在に巡り、あなたを優しく包み込みます。まるで耳元から、頭上、背後まで音が“存在する”新しい体験を。
+        - paragraph [ref=e62]:
+          - link [ref=e63] [cursor=pointer]:
+            - /url: http://stg.croix.asia/wp-content/uploads/2025/04/0cf5e93033206a4b699e72a0b63e3e57.gif
+        - paragraph [ref=e64]
+        - heading "音を“聞く”から、“感じる”へ。五感で没入する新次元の音響体験。" [level=3] [ref=e65]:
+          - strong [ref=e66]: 音を“聞く”から、“感じる”へ。五感で没入する新次元の音響体験。
+        - paragraph [ref=e67]:
+          - text: nemcaroに搭載された立体音響技術は、私たち人間が音の「時間差」「強弱」「周波数変化」から方向や距離を感じ取るメカニズムを応用。
+          - text: わずか1台のデバイスから、音が前後左右、上下、全方位に広がり、
+          - strong [ref=e68]: 空間そのものが“音の世界”に変わります。
+        - paragraph [ref=e69]:
+          - text: 思わず “何もない方向” に振り返りたくなるリアルな臨場感。
+          - text: 音の位置、奥行き、気配までを感じるような感覚は、もはや「聴く」という行為を超え、
+          - strong [ref=e70]: 心と身体で「感じる」音楽体験
+          - text: へと進化しています。
+        - paragraph [ref=e71]:
+          - link [ref=e72] [cursor=pointer]:
+            - /url: http://stg.croix.asia/wp-content/uploads/2025/04/d88f58952edb20e76fd78be6f952bdfa.jpg
+        - paragraph [ref=e73]
+        - heading "深い眠りが、あなたのすべてを整える。" [level=3] [ref=e74]:
+          - strong [ref=e75]: 深い眠りが、あなたのすべてを整える。
+        - paragraph [ref=e76]: nemcaroは、音を流すだけで空間を一瞬で“癒やしの眠り空間”へと変えるデバイス。
+        - paragraph [ref=e77]:
+          - text: 収録されたのは、医学博士監修による“澄んだ空気”や“夜空”を感じさせる音風景「Soundscape」。さらに、理学博士監修のもと、話題の
+          - strong [ref=e78]: ソルフェジオ周波数528Hz
+          - text: に、森・海・スパといった自然の癒やしを重ねた
+          - strong [ref=e79]: 3つの特別音源
+          - text: 「Forest」「Spa」「Ocean」を新収録。
+        - paragraph [ref=e80]:
+          - text: これらの音源は、
+          - strong [ref=e81]: レム睡眠・ノンレム睡眠の90分周期を超えて
+          - text: 、自然音が途切れることなく流れ続ける仕様。
+          - text: 眠りの深さと質を整えることで、
+          - strong [ref=e82]: 翌朝の集中力・気分・パフォーマンスすら変えていく
+          - text: 、目指しているのはそんな“眠りをデザインする音”です。
+        - paragraph [ref=e83]:
+          - link [ref=e84] [cursor=pointer]:
+            - /url: http://stg.croix.asia/wp-content/uploads/2025/04/nemcaro_0305_without-motion_2.gif
+        - paragraph [ref=e85]
+        - heading "神秘の周波数、528Hz。" [level=3] [ref=e86]:
+          - strong [ref=e87]: 神秘の周波数、528Hz。
+        - paragraph [ref=e88]: 古代の聖歌「グレゴリオ聖歌」にも使われたとされるソルフェジオ周波数は、数世紀にわたって人の心と身体に働きかけてきた“癒やしの音階”。
+        - paragraph [ref=e89]:
+          - text: なかでも528Hzは「奇跡の周波数」「愛の周波数」とも呼ばれ、音楽療法の分野でも注目されている特別な音です。
+          - text: 交感神経を鎮めて副交感神経を優位にし、
+          - strong [ref=e90]: 自律神経の乱れを整える
+          - text: ことで、
+          - strong [ref=e91]: 心と身体を深いリラックスへ導く
+          - text: 作用が期待されています。
+        - paragraph [ref=e92]: nemcaroでは、この528Hzをベースにした特別音源を独自制作。ストレスを和らげ、静かに心を整え、あなたに新しい夜を感じて頂きたい、そんな想いで制作しています。
+        - paragraph [ref=e93]
+        - heading "音の細部に、癒やしの思想を込めて。 こだわりの収録音源" [level=3] [ref=e94]:
+          - strong [ref=e95]: 音の細部に、癒やしの思想を込めて。
+          - strong [ref=e96]: こだわりの収録音源
+        - paragraph [ref=e97]:
+          - iframe [ref=e98]
+        - paragraph [ref=e99]: nemcaro USBメモリー収録予定音源 4種類 参考試聴ダイジェスト（各約15秒サンプル）
+        - paragraph [ref=e100]
+        - paragraph [ref=e101]:
+          - strong [ref=e102]: "[ Soundscape ]"
+          - text: 医学博士 板東浩先生 監修による、澄み切った空気や夜空などの音風景を連想させる癒やしの音楽
+        - paragraph [ref=e103]:
+          - strong [ref=e104]: "[ Forest ]"
+          - text: 理学博士 和合治久先生 監修による、ソルフェジオ周波数 528Hzの癒やしの音楽に、小鳥のさえずりなど森の自然音を追加ミックス
+        - paragraph [ref=e105]:
+          - strong [ref=e106]: "[ Spa ]"
+          - text: 理学博士 和合治久先生 監修による、ソルフェジオ周波数 528Hzの癒やしの音楽に、小川のせせらぎ自然音を追加ミックス
+        - paragraph [ref=e107]:
+          - strong [ref=e108]: "[ Ocean ]"
+          - text: 理学博士 和合治久先生 監修による、ソルフェジオ周波数 528Hzの癒やしの音楽に、砂浜に寄せる波の自然音を追加ミックス
+        - paragraph [ref=e109]
+        - paragraph [ref=e110]:
+          - link [ref=e111] [cursor=pointer]:
+            - /url: http://stg.croix.asia/wp-content/uploads/2025/04/55424b7ec5a82fb9e42e6918795b73bc.gif
+        - paragraph [ref=e112]
+        - heading "“音”と“香り”、どちらも本物。感性に寄り添う、ハイブリッド癒やし設計。" [level=3] [ref=e113]:
+          - strong [ref=e114]: “音”と“香り”、どちらも本物。感性に寄り添う、ハイブリッド癒やし設計。
+        - paragraph [ref=e115]:
+          - text: nemcaroは、聴覚と嗅覚を通じて眠りの質を根本から整えるために、
+          - strong [ref=e116]: 音にも香りにも、一切の妥協を許さない設計
+          - text: を貫きました。
+        - paragraph [ref=e117]:
+          - text: 使用するアロマは、
+          - strong [ref=e118]: 天然100%の精油のみ
+          - text: を厳選。化学合成物質に頼らず、植物本来の力が持つ“深い癒やし”を届けます。
+          - text: そしてこの一台で、心を鎮めるサウンドと、深く呼吸を誘う香りが融合し、
+          - strong [ref=e119]: 自宅がまるで高級スパのような極上空間に。
+        - paragraph [ref=e120]:
+          - text: さらに今回、各音源の世界観に合わせて調香した
+          - strong [ref=e121]: オリジナルアロマオイル
+          - text: を
+          - strong [ref=e122]: クラウドファンディング限定で、
+          - text: 支援者の皆さまへ特別にプレゼント。
+          - text: 新しい“音と香りの体験”を、セットであなたに。
+        - paragraph [ref=e123]:
+          - link [ref=e124] [cursor=pointer]:
+            - /url: http://stg.croix.asia/wp-content/uploads/2025/04/d3e163f9706942cbf8063ccf5f9cd1df.gif
+        - paragraph [ref=e125]
+        - heading "医学博士 板東 浩 推薦コメント" [level=3] [ref=e126]:
+          - strong [ref=e128]: 医学博士 板東 浩 推薦コメント
+        - generic [ref=e129]:
+          - text: 音楽には、秘めたる力の存在が長年にわたり認識されてきました。
+          - text: 私たちが気づかなくても、覚醒や前意識、無意識という各レベルにおいて、パワーを与えてくれているのです。
+        - generic [ref=e131]:
+          - text: 内科医である私は、ピアニストや音楽療法士としても活動し、音楽を通じて「豊かな人生を送る方法」を伝えています。また様々な場面で、良質な睡眠のために、適切な音楽を選んで活用することを推奨しています。
+          - text: 心を癒やす音楽を上手に生活に取り入れると、幸せホルモンがあなたを優しく包み込み、良い遺伝子が活動し始めます。
+        - generic [ref=e133]:
+          - text: この度「Soundscape」に収録される音楽では、北欧の澄みきった世界観を体験して頂けます。
+          - text: 静かに目を閉じて聴いてみてください。nemcaro の立体音響でそのサウンドスケープをより深く感じられ、あなたを健やかな眠りに誘ってくれることでしょう。
+          - text: ぐっすり寝ることが(sound sleep)、あなたの良きライフ（毎日、生命、人生）へつながっていくように祈っております。
+        - generic [ref=e135]: 「Soundscape」音楽監修： 板東 浩
+        - paragraph [ref=e136]
+        - heading [level=4] [ref=e137]
+        - heading "nemcaro(ネムカロ)の立体音響の秘密" [level=3] [ref=e138]:
+          - strong [ref=e139]: nemcaro(ネムカロ)の立体音響の秘密
+        - paragraph [ref=e140]: 大ヒット3Dサラウンドポータブルースピーカー『Cear pavé~シーイヤーパヴェ~』（20年以上にわたる開発経験に裏付けられた特許技術CearFieldを搭載）を生み出した音響のプロフェッショナル、シーイヤー株式会社様に技術協力・監修頂いています。
+        - blockquote [ref=e141]:
+          - paragraph [ref=e142]:
+            - generic [ref=e143]:
+              - link:
+                - /url: http://stg.croix.asia/wp-content/uploads/2025/05/95c939841714efe2ac50de4e54222d5b.jpg
+              - text: nemcaroプロジェクトに参画できたことを大変嬉しく思います。
+              - text: 試作品での検証を重ねながら、「柔らかな光と香り、癒やしに繋がる珠玉の音源が一体となった空間」を目指し、シーイヤー株式会社は音場制御技術『CearField』の調整を担当いたしました。
+              - text: 非常に心地よく、感動を与えるデバイスが誕生したと感じております。
+              - text: nemcaroを通して生み出される新しい癒やしの体験を皆様にお届けできれば幸いです。
+        - paragraph [ref=e144]:
+          - text: シーイヤー株式会社
+          - text: 代表取締役 村山 好孝
+        - paragraph [ref=e145]
+        - paragraph [ref=e146]:
+          - img [ref=e147]
+        - paragraph [ref=e148]
+        - heading "その名に込めたのは、“眠り”への愛。" [level=3] [ref=e149]:
+          - strong [ref=e150]: その名に込めたのは、“眠り”への愛。
+        - paragraph [ref=e151]:
+          - text: nemcaro（ネムカロ）という名前には、深い願いと想いが込められています。
+          - text: 九州地方の方言「眠かろ（＝眠たいでしょう）」をヒントに、「nemuri（眠り）」の響きをベースに命名。
+        - paragraph [ref=e152]:
+          - text: さらに、Nature（自然）／Emotion（感情）／Mind（心）の頭文字を内包し、
+          - strong [ref=e153]: caro
+          - text: はイタリア語で「愛しい」「大切な」という意味を持つ言葉。
+        - paragraph [ref=e154]:
+          - text: 心・感情・自然に寄り添い、大切な人や自分自身を“愛する眠り”を届けたい。
+          - text: nemcaroという名には、そんな想いが重なり合っています。
+          - text: ただ眠るだけじゃない、
+          - strong [ref=e155]: 人生を癒やす“体験”としての眠り
+          - text: を、あなたへ。
+        - paragraph [ref=e156]:
+          - img [ref=e157]
+        - paragraph [ref=e158]
+        - heading "オプション：眠りの為の関連商品" [level=3] [ref=e159]:
+          - strong [ref=e160]: オプション：眠りの為の関連商品
+        - heading "nemcaroロゴ入り・プレミアムアイマスク" [level=2] [ref=e161]:
+          - strong [ref=e163]: nemcaroロゴ入り・プレミアムアイマスク
+        - paragraph [ref=e164]:
+          - text: 眠りの時間を、さらにひとつ上のステージへ。
+          - text: このオリジナルアイマスクは、
+          - strong [ref=e165]: 目元にぴたりと寄り添うフィット感
+          - text: で、外部の光をしっかり遮断。
+          - text: 静かな暗闇が、より深い眠りへの入口をつくることを目指しています。
+        - paragraph [ref=e166]:
+          - text: 生地には、
+          - strong [ref=e167]: 特殊な天然鉱物とバイオフォトニクス技術を融合させた繊維
+          - text: を採用。
+          - text: 体温を活用して
+          - strong [ref=e168]: 遠赤外線エネルギー
+          - text: を発生させ、
+          - strong [ref=e169]: 目元をじんわり温める
+          - text: ことでリラックスタイムをより充実したものに導きます。
+        - paragraph [ref=e170]:
+          - strong [ref=e171]: nemcaroとの併用で、音・香り・肌感覚の“トリプル癒やし”
+          - text: 環境が完成。
+          - text: よく眠って1日を心地よく始めたい、そんなあなたにオススメしたい
+          - strong [ref=e172]: 特別仕様のアイマスク
+          - text: です。
+        - paragraph [ref=e173]
+        - heading "注目の繊維の中のテクノロジー。" [level=2] [ref=e174]:
+          - strong [ref=e176]: 注目の繊維の中のテクノロジー。
+        - paragraph [ref=e177]: INFRACYCLE®（インフラサイクル）は、アメリカ・LOW IMPACT社が開発した最先端の機能性素材。 赤外線を発する天然鉱物と、バイオフォトニクス技術による高機能粒子を繊維に練り込み、まるで“呼吸するように”働く特別なファブリックです。
+        - paragraph [ref=e178]: この素材は、私たちの身体から自然に放たれる赤外線エネルギーをキャッチし、増幅して再照射。 まるで身体に寄り添うようにじんわりと深部から温めることで、緊張をほぐすお手伝いを致します。
+        - paragraph [ref=e179]: nemcaroアイマスクをあなたの眠りの進化に是非お役立てください。
+        - paragraph [ref=e180]
+        - paragraph [ref=e181]: ※デザインは開発中のものです。画像の色は実際の製品と異なる場合があります。
+        - paragraph [ref=e182]
+        - paragraph [ref=e183]
+        - paragraph [ref=e184]
+        - heading "一般販売予定価格" [level=3] [ref=e185]:
+          - strong [ref=e187]: 一般販売予定価格
+        - paragraph [ref=e188]:
+          - text: nemcaro 本体 ： ¥34,800-（税込）
+          - text: 音源収録USBメモリー ： ¥2,480-（税込） ※各1点
+          - text: オリジナルアロマオイル ： ¥2,200-（税込） ※各1点
+          - text: nemcaro EYE-MASK ： ¥3,900-（税込）
+        - paragraph [ref=e189]
+        - heading "クラウドファンディング限定プレゼント付き「nemcaro基本セット」" [level=3] [ref=e190]:
+          - strong [ref=e191]: クラウドファンディング限定プレゼント付き「nemcaro基本セット」
+        - heading "USBメモリー&アロマオイル 1セットプレゼント！" [level=4] [ref=e192]:
+          - strong [ref=e193]: USBメモリー&アロマオイル 1セットプレゼント！
+        - paragraph [ref=e194]:
+          - strong [ref=e196]: "[ 48時間限定割 ]"
+          - text: 本体 35%OFF
+          - text: ¥34,800→
+          - strong [ref=e197]: ¥22,620（税込）
+          - text: ※6/1(日) 午前11:59まで
+        - paragraph [ref=e198]:
+          - strong [ref=e200]: "[ 超早割 ]"
+          - text: 本体 30%OFF
+          - text: ¥34,800→
+          - strong [ref=e201]: ¥24,360（税込）
+          - text: 100セット限定価格
+        - paragraph [ref=e202]:
+          - strong [ref=e204]: "[ 早割 ]"
+          - text: 本体 25%OFF
+          - text: ¥34,800
+          - strong [ref=e205]: → ¥26,100（税込）
+          - text: 500セット限定価格
+        - paragraph [ref=e206]:
+          - strong [ref=e208]: "[ GREEN割 ]"
+          - text: 本体 20%OFF
+          - text: ¥34,800→
+          - strong [ref=e209]: ¥27,840（税込）
+          - text: 1,000セット限定価格
+        - paragraph [ref=e210]:
+          - strong [ref=e212]: "[ Standard ]"
+          - strong [ref=e213]: ¥34,800（税込）
+          - text: セット数上限なし
+          - strong [ref=e214]
+          - strong [ref=e215]: ＜リターン内容＞
+          - strong [ref=e217]:
+            - text: nemcaro 本体
+            - text: "[ USBメモリー＆アロマオイル ] セット 1 種選択可"
+        - paragraph [ref=e218]:
+          - text: 計 4 種から 1 種お選び頂けます。
+          - text: (a) Soundscape セット
+          - text: (b) Forest セット
+          - text: (c) Spa セット
+          - text: (d) Ocean セット
+          - text: ※詳細は先述
+          - text: ※USB メモリーの音源とアロマオイルの香りはセットです。組み換えは出来ません。
+        - heading "クラウドファンディング限定プレゼント付き「nemcaro全部セット」" [level=3] [ref=e219]:
+          - strong [ref=e220]: クラウドファンディング限定プレゼント付き「nemcaro全部セット」
+        - paragraph [ref=e221]: (USBメモリー&アロマオイル 1セットプレゼントを含む）
+        - heading "USBメモリー＆アロマオイル 4種セット" [level=4] [ref=e222]:
+          - strong [ref=e223]: USBメモリー＆アロマオイル 4種セット
+        - paragraph [ref=e224]:
+          - strong [ref=e226]: "[ 全部セット 超早割 ]"
+          - text: 35%OFF
+          - text: ¥48,840→
+          - strong [ref=e227]: ¥31,746（税込）
+          - text: 100セット限定価格
+        - paragraph [ref=e228]:
+          - strong [ref=e230]: "[ 全部セット 早割 ]"
+          - text: 30%OFF
+          - text: ¥48,840
+          - strong [ref=e231]: → ¥34,188（税込）
+          - text: 300セット限定価格
+        - paragraph [ref=e232]:
+          - strong [ref=e234]: "[ 全部セット GREEN割 ]"
+          - text: 25%OFF
+          - text: ¥48,840→
+          - strong [ref=e235]: ¥36,630（税込）
+          - text: 500セット限定価格
+        - paragraph [ref=e236]:
+          - strong [ref=e238]: "[ 全部セット Standard ]"
+          - strong [ref=e239]: ¥48,840（税込）
+          - text: セット数上限なし
+        - paragraph [ref=e240]:
+          - strong [ref=e241]: ＜リターン内容＞
+          - strong [ref=e243]:
+            - text: nemcaro 本体
+            - text: "[ USBメモリー＆アロマオイル ] 4 種セット"
+          - text: (a) Soundscape セット
+          - text: (b) Forest セット
+          - text: (c) Spa セット
+          - text: (d) Ocean セット
+        - paragraph [ref=e244]
+        - heading "オプション「nemcaro EYE-MASK」は200個限定！" [level=3] [ref=e245]:
+          - strong [ref=e246]: オプション「nemcaro EYE-MASK」は200個限定！
+        - paragraph [ref=e247]:
+          - text: 今だけ限定でお得に「nemcaroアイマスク」が手に入ります。
+          - text: 上記の各セットに、以下の料金をプラスでご購入いただけます。
+        - paragraph [ref=e248]:
+          - strong [ref=e249]: 基本セット限定 計150セット→ ¥2,900（約25%OFF）
+          - strong [ref=e250]: 全部セット限定 計 50セット → ¥2,500（約35%OFF）
+        - paragraph [ref=e251]: ※アイマスクは上限200個
+        - paragraph [ref=e252]
+        - heading "※リターン配送予定月：2025 年 10月頃 ※配送は日本国内に限ります" [level=4] [ref=e253]:
+          - strong [ref=e254]:
+            - text: ※リターン配送予定月：2025 年 10月頃
+            - text: ※配送は日本国内に限ります
+        - paragraph [ref=e255]
+        - paragraph [ref=e256]:
+          - link "GREEN FUNDINGクラウドファンディング プロジェクトページ" [ref=e258] [cursor=pointer]:
+            - /url: https://greenfunding.jp/portals/pages/nemcaro_8797
+        - paragraph [ref=e259]:
+          - link "https://greenfunding.jp/lab/projects/8797" [ref=e260] [cursor=pointer]:
+            - /url: https://greenfunding.jp/lab/projects/8797
+        - paragraph [ref=e261]
+        - paragraph [ref=e262]:
+          - strong [ref=e263]: クラウドファンディング 2025/8/28(木) 午前11:59まで
+        - paragraph [ref=e264]
+    - generic [ref=e268]:
+      - textbox "Search" [ref=e269]
+      - button "search" [ref=e270] [cursor=pointer]:
+        - img "search" [ref=e271]
+    - generic [ref=e273]:
+      - heading "Pickup" [level=2] [ref=e274]:
+        - generic [ref=e275]: Pickup
+      - generic [ref=e276]:
+        - generic [ref=e277]:
+          - link "Musiora ミュジオラ -coming soon-" [ref=e278] [cursor=pointer]:
+            - /url: "#"
+            - paragraph [ref=e279]:
+              - generic [ref=e280]: Musiora
+              - generic [ref=e281]: ミュジオラ -coming soon-
+          - link "nemcaro ネムカロ" [ref=e282] [cursor=pointer]:
+            - /url: http://stg.croix.asia/works/nemcaro/
+            - paragraph [ref=e283]:
+              - generic [ref=e284]: nemcaro
+              - generic [ref=e285]: ネムカロ
+          - link "Relaxest リラクゼスト" [ref=e286] [cursor=pointer]:
+            - /url: https://relaxest.jp/?gad_source=1&gad_campaignid=23438734731&gbraid=0AAAAADKs12bOm465MtyfyC0W8klOhZdAI&gclid=CjwKCAiAj8LLBhAkEiwAJjbY7y3fvKS10ix2xA-VHQBqdNzasSJuDZemA7bSoQTruzl2KJwQHHjPFhoC4xkQAvD_BwE
+            - paragraph [ref=e287]:
+              - generic [ref=e288]: Relaxest
+              - generic [ref=e289]: リラクゼスト
+        - generic [ref=e290]:
+          - link "RELAX WORLD Plus 癒しと眠りのアプリ -coming soon-" [ref=e291] [cursor=pointer]:
+            - /url: "#"
+            - paragraph [ref=e292]:
+              - generic [ref=e293]: RELAX WORLD Plus
+              - generic [ref=e294]: 癒しと眠りのアプリ -coming soon-
+          - link "RELAX WORLD EC 癒やしと眠りのスペシャリティストア -coming soon-" [ref=e295] [cursor=pointer]:
+            - /url: "#"
+            - paragraph [ref=e296]:
+              - generic [ref=e297]: RELAX WORLD EC
+              - generic [ref=e298]: 癒やしと眠りのスペシャリティストア -coming soon-
+    - generic [ref=e300]:
+      - heading "Contact お問い合わせ" [level=2] [ref=e301]:
+        - generic [ref=e302]: Contact
+        - generic [ref=e303]: お問い合わせ
+      - generic [ref=e304]:
+        - paragraph [ref=e305]:
+          - text: 株式会社クロアへのお問い合わせは下記メールフォームにご入力のうえ、送信してください。
+          - text: Please fill out and submit the following mail form to contact croix Co.,Ltd.
+        - generic [ref=e306]:
+          - link "お問い合わせ" [ref=e307] [cursor=pointer]:
+            - /url: http://stg.croix.asia/contact
+            - generic [ref=e308]: お問い合わせ
+          - link "資料ダウンロード" [ref=e309] [cursor=pointer]:
+            - /url: ""
+            - generic [ref=e310]: 資料ダウンロード
+  - contentinfo [ref=e311]:
+    - generic [ref=e312]:
+      - generic [ref=e313]:
+        - link "CROIX" [ref=e314] [cursor=pointer]:
+          - /url: http://stg.croix.asia
+          - img "CROIX" [ref=e315]
+        - generic [ref=e316]:
+          - paragraph [ref=e317]: 株式会社クロア
+          - paragraph [ref=e318]: 〒153-0064 東京都目黒区下目黒3-7-2-7F
+          - paragraph [ref=e319]: TEL 03-5436-1960 / FAX 03-5436-1961
+          - paragraph [ref=e320]: 営業時間 10:00-18:30 （土・日・祝・弊社特別休日を除く）
+      - generic [ref=e321]:
+        - list [ref=e322]:
+          - listitem [ref=e323]:
+            - text: Services
+            - list [ref=e324]:
+              - listitem [ref=e325]:
+                - link "App & Digital Platform" [ref=e326] [cursor=pointer]:
+                  - /url: http://stg.croix.asia/service
+              - listitem [ref=e327]:
+                - link "Sound & Video" [ref=e328] [cursor=pointer]:
+                  - /url: http://stg.croix.asia/sound
+              - listitem [ref=e329]:
+                - link "Product & Smart Products" [ref=e330] [cursor=pointer]:
+                  - /url: http://stg.croix.asia/product
+              - listitem [ref=e331]:
+                - link "Wellness Station - Relaxest" [ref=e332] [cursor=pointer]:
+                  - /url: http://stg.croix.asia/relaxest
+          - listitem [ref=e333]:
+            - link "Works" [ref=e334] [cursor=pointer]:
+              - /url: http://stg.croix.asia/works
+        - list [ref=e335]:
+          - listitem [ref=e336]:
+            - link "Media" [ref=e337] [cursor=pointer]:
+              - /url: http://stg.croix.asia/media
+          - listitem [ref=e338]:
+            - link "News" [ref=e339] [cursor=pointer]:
+              - /url: http://stg.croix.asia/news
+          - listitem [ref=e340]:
+            - link "Company" [ref=e341] [cursor=pointer]:
+              - /url: http://stg.croix.asia/company
+          - listitem [ref=e342]:
+            - link "Access" [ref=e343] [cursor=pointer]:
+              - /url: http://stg.croix.asia/access
+          - listitem [ref=e344]:
+            - link "Sitemap" [ref=e345] [cursor=pointer]:
+              - /url: http://stg.croix.asia/sitemap
+      - generic [ref=e346]:
+        - generic [ref=e347]:
+          - link "Facebook" [ref=e348] [cursor=pointer]:
+            - /url: https://www.facebook.com/relaxworld.jp/
+            - img "Facebook" [ref=e349]
+          - link "Instagram" [ref=e350] [cursor=pointer]:
+            - /url: https://www.instagram.com/croix_relaxworld/
+            - img "Instagram" [ref=e351]
+          - link "YouTube" [ref=e352] [cursor=pointer]:
+            - /url: https://www.youtube.com/@RELAX_WORLD
+            - img "YouTube" [ref=e353]
+        - generic [ref=e354]:
+          - link "Sitemap" [ref=e355] [cursor=pointer]:
+            - /url: http://stg.croix.asia/sitemap
+          - link "個人情報保護方針" [ref=e356] [cursor=pointer]:
+            - /url: http://stg.croix.asia/cookie
+          - link "Privacy policy" [ref=e357] [cursor=pointer]:
+            - /url: http://stg.croix.asia/privacy
+        - paragraph [ref=e358]: © 2025 CROIX

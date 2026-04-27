@@ -1,0 +1,69 @@
+- generic:
+  - iframe [ref=e1]:
+    
+  - dialog [active] [ref=e3]:
+    - generic [ref=e4]:
+      - heading [level=2] [ref=e5]
+      - paragraph [ref=e6]
+    - generic [ref=e9]:
+      - img "HeyGen" [ref=e11]
+      - generic [ref=e12]:
+        - generic [ref=e13]:
+          - generic [ref=e15]:
+            - generic [ref=e17] [cursor=pointer]:
+              - button "Google で続ける。新しいタブで開きます" [ref=e19]:
+                - generic [ref=e21]:
+                  - img [ref=e23]
+                  - generic [ref=e30]: Google で続ける
+              - iframe
+            - img [ref=e32]
+            - generic [ref=e37]: Continue with Google
+          - button "Continue with Apple" [ref=e39]:
+            - img [ref=e41]
+            - generic [ref=e43]: Continue with Apple
+          - button "SSO Continue with SSO" [ref=e45]:
+            - generic [ref=e46]: SSO
+            - generic [ref=e47]: Continue with SSO
+          - button "Continue with email" [ref=e49]:
+            - img [ref=e51]
+            - generic [ref=e54]: Continue with email
+        - generic:
+          - generic:
+            - generic:
+              - img
+            - textbox "Enter your email"
+          - paragraph:
+            - text: We'll email you a secure
+            - strong: magic link
+            - text: .
+          - button "Send link" [disabled]:
+            - generic: Send link
+          - button "Use password instead"
+          - button "Back to other options"
+        - generic:
+          - generic:
+            - generic:
+              - img
+            - textbox "Enter your work email"
+          - button "Continue with SSO" [disabled]:
+            - generic: Continue with SSO
+          - button "Back to other options"
+        - generic:
+          - heading "Two-Factor Authentication" [level=3]
+          - paragraph: Enter the 6-digit code from your authenticator app
+          - paragraph
+          - generic:
+            - generic:
+              - img
+            - textbox "Enter 6-digit code"
+          - button "Verify" [disabled]:
+            - generic: Verify
+          - button "Back to login"
+      - generic [ref=e56]:
+        - text: HeyGen's
+        - link "Terms of Service" [ref=e57]:
+          - /url: https://www.heygen.com/terms
+        - text: and
+        - link "Privacy Policy" [ref=e58]:
+          - /url: https://www.heygen.com/privacy
+        - text: apply.

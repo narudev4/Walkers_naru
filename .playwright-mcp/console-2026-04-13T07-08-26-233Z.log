@@ -1,0 +1,123 @@
+[   16348ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://use.typekit.net/mbt8eig.js:0
+[   16536ms] [WARNING] [Meta pixel] 666078689403801 is unavailable on this website due to it's traffic permission settings. Go to https://www.facebook.com/business/help/572690630080597 to learn more. @ https://connect.facebook.net/en_US/fbevents.js:181
+[   25993ms] [WARNING] Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading @ https://maps.google.com/maps/api/js?key=AIzaSyDqbX3CV5noSLmwmbDIOlDMJPoOacStp_w:337
+[   26212ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://use.typekit.net/mbt8eig.js:0
+[   26261ms] [WARNING] [Meta pixel] 666078689403801 is unavailable on this website due to it's traffic permission settings. Go to https://www.facebook.com/business/help/572690630080597 to learn more. @ https://connect.facebook.net/en_US/fbevents.js:181
+[   26516ms] Uncaught InvalidValueError: Map: Expected mapDiv of type HTMLElement but was passed null.
+    at _.Wm (https://maps.google.com/maps/api/js?key=AIzaSyDqbX3CV5noSLmwmbDIOlDMJPoOacStp_w:203:398)
+    at _.rr (https://maps.google.com/maps/api/js?key=AIzaSyDqbX3CV5noSLmwmbDIOlDMJPoOacStp_w:282:277)
+    at initialize (https://croix.asia/common/javascripts/map_custmomize.js:119:10)
+    at onload (https://croix.asia/:782:52)
+[   39677ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://use.typekit.net/mbt8eig.js:0
+[   39682ms] [WARNING] [Meta pixel] 666078689403801 is unavailable on this website due to it's traffic permission settings. Go to https://www.facebook.com/business/help/572690630080597 to learn more. @ https://connect.facebook.net/en_US/fbevents.js:181
+[   41884ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://jnn-pa.googleapis.com/$rpc/google.internal.waa.v1.Waa/GenerateIT:0
+[   57035ms] [WARNING] [Meta pixel] 666078689403801 is unavailable on this website due to it's traffic permission settings. Go to https://www.facebook.com/business/help/572690630080597 to learn more. @ https://connect.facebook.net/en_US/fbevents.js:181
+[   57250ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://use.typekit.net/mbt8eig.js:0
+[   67607ms] [WARNING] Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading @ https://maps.google.com/maps/api/js?key=AIzaSyDqbX3CV5noSLmwmbDIOlDMJPoOacStp_w:337
+[   72632ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://use.typekit.net/mbt8eig.js:0
+[   72774ms] [WARNING] [Meta pixel] 666078689403801 is unavailable on this website due to it's traffic permission settings. Go to https://www.facebook.com/business/help/572690630080597 to learn more. @ https://connect.facebook.net/en_US/fbevents.js:181
+[   74471ms] Uncaught InvalidValueError: Map: Expected mapDiv of type HTMLElement but was passed null.
+    at _.Wm (https://maps.google.com/maps/api/js?key=AIzaSyDqbX3CV5noSLmwmbDIOlDMJPoOacStp_w:203:398)
+    at _.rr (https://maps.google.com/maps/api/js?key=AIzaSyDqbX3CV5noSLmwmbDIOlDMJPoOacStp_w:282:277)
+    at initialize (https://croix.asia/common/javascripts/map_custmomize.js:119:10)
+    at onload (https://croix.asia/:782:52)
+[   75604ms] [WARNING] [Meta pixel] 666078689403801 is unavailable on this website due to it's traffic permission settings. Go to https://www.facebook.com/business/help/572690630080597 to learn more. @ https://connect.facebook.net/en_US/fbevents.js:181
+[   76123ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://use.typekit.net/mbt8eig.js:0
+[   79496ms] [WARNING] Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading @ https://maps.google.com/maps/api/js?key=AIzaSyDqbX3CV5noSLmwmbDIOlDMJPoOacStp_w:337
+[   80493ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://use.typekit.net/mbt8eig.js:0
+[   80616ms] [WARNING] [Meta pixel] 666078689403801 is unavailable on this website due to it's traffic permission settings. Go to https://www.facebook.com/business/help/572690630080597 to learn more. @ https://connect.facebook.net/en_US/fbevents.js:181
+[   80860ms] Uncaught InvalidValueError: Map: Expected mapDiv of type HTMLElement but was passed null.
+    at _.Wm (https://maps.google.com/maps/api/js?key=AIzaSyDqbX3CV5noSLmwmbDIOlDMJPoOacStp_w:203:398)
+    at _.rr (https://maps.google.com/maps/api/js?key=AIzaSyDqbX3CV5noSLmwmbDIOlDMJPoOacStp_w:282:277)
+    at initialize (https://croix.asia/common/javascripts/map_custmomize.js:119:10)
+    at onload (https://croix.asia/:782:52)
+[   85138ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://use.typekit.net/mbt8eig.js:0
+[   85278ms] [WARNING] [Meta pixel] 666078689403801 is unavailable on this website due to it's traffic permission settings. Go to https://www.facebook.com/business/help/572690630080597 to learn more. @ https://connect.facebook.net/en_US/fbevents.js:181
+[   90979ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://use.typekit.net/mbt8eig.js:0
+[   91111ms] [WARNING] [Meta pixel] 666078689403801 is unavailable on this website due to it's traffic permission settings. Go to https://www.facebook.com/business/help/572690630080597 to learn more. @ https://connect.facebook.net/en_US/fbevents.js:181
+[   97989ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://jnn-pa.googleapis.com/$rpc/google.internal.waa.v1.Waa/GenerateIT:0
+[  109865ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://test:test2025@stg.croix.asia/news/relaxest_ebisu/:0
+[  110245ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://stg.croix.asia/favicon.ico:0
+[  112593ms] [WARNING] Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading @ https://maps.google.com/maps/api/js?key=AIzaSyDqbX3CV5noSLmwmbDIOlDMJPoOacStp_w:337
+[  112907ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://use.typekit.net/mbt8eig.js:0
+[  112912ms] [WARNING] [Meta pixel] 666078689403801 is unavailable on this website due to it's traffic permission settings. Go to https://www.facebook.com/business/help/572690630080597 to learn more. @ https://connect.facebook.net/en_US/fbevents.js:181
+[  113332ms] Uncaught InvalidValueError: Map: Expected mapDiv of type HTMLElement but was passed null.
+    at _.Wm (https://maps.google.com/maps/api/js?key=AIzaSyDqbX3CV5noSLmwmbDIOlDMJPoOacStp_w:203:398)
+    at _.rr (https://maps.google.com/maps/api/js?key=AIzaSyDqbX3CV5noSLmwmbDIOlDMJPoOacStp_w:282:277)
+    at initialize (https://croix.asia/common/javascripts/map_custmomize.js:119:10)
+    at onload (https://croix.asia/:782:52)
+[  116675ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://use.typekit.net/mbt8eig.js:0
+[  117000ms] [WARNING] [Meta pixel] 666078689403801 is unavailable on this website due to it's traffic permission settings. Go to https://www.facebook.com/business/help/572690630080597 to learn more. @ https://connect.facebook.net/en_US/fbevents.js:181
+[  161024ms] [ERROR] Access to CSS stylesheet at 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status. @ https://croix.asia/:0
+[  161024ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css:0
+[  161060ms] [WARNING] Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading @ https://maps.google.com/maps/api/js?key=AIzaSyDqbX3CV5noSLmwmbDIOlDMJPoOacStp_w:337
+[  161204ms] [ERROR] Access to font at 'https://fonts.gstatic.com/s/lato/v25/S6u_w4BMUTPHjxsI5wq_Gwftx9897g.woff2' from origin 'https://croix.asia' has been blocked by CORS policy: Request header field authorization is not allowed by Access-Control-Allow-Headers in preflight response. @ https://croix.asia/:0
+[  161204ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/s/lato/v25/S6u_w4BMUTPHjxsI5wq_Gwftx9897g.woff2:0
+[  161217ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Bold.woff2' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/:0
+[  161217ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Bold.woff2:0
+[  161226ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-DemiLight.woff2' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/:0
+[  161227ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-DemiLight.woff2:0
+[  161242ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.woff2' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/:0
+[  161242ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.woff2:0
+[  161250ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Regular.woff2' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/:0
+[  161250ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Regular.woff2:0
+[  161416ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-DemiLight.woff' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/:0
+[  161416ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-DemiLight.woff:0
+[  161417ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Bold.woff' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/:0
+[  161417ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Bold.woff:0
+[  161417ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.woff' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/:0
+[  161417ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.woff:0
+[  161417ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Regular.woff' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/:0
+[  161417ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Regular.woff:0
+[  161435ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://use.typekit.net/mbt8eig.js:0
+[  161557ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-DemiLight.otf' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/:0
+[  161558ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-DemiLight.otf:0
+[  161558ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Bold.otf' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/:0
+[  161558ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Bold.otf:0
+[  161559ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.otf' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/:0
+[  161559ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.otf:0
+[  161559ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Regular.otf' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/:0
+[  161559ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Regular.otf:0
+[  161685ms] [WARNING] [Meta pixel] 666078689403801 is unavailable on this website due to it's traffic permission settings. Go to https://www.facebook.com/business/help/572690630080597 to learn more. @ https://connect.facebook.net/en_US/fbevents.js:181
+[  161779ms] Uncaught InvalidValueError: Map: Expected mapDiv of type HTMLElement but was passed null.
+    at _.Wm (https://maps.google.com/maps/api/js?key=AIzaSyDqbX3CV5noSLmwmbDIOlDMJPoOacStp_w:203:398)
+    at _.rr (https://maps.google.com/maps/api/js?key=AIzaSyDqbX3CV5noSLmwmbDIOlDMJPoOacStp_w:282:277)
+    at initialize (https://croix.asia/common/javascripts/map_custmomize.js:119:10)
+    at onload (https://croix.asia/:782:52)
+[  164494ms] [ERROR] Access to CSS stylesheet at 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status. @ https://croix.asia/2025/05/30/nemcaro/:0
+[  164494ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css:0
+[  164724ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Regular.woff2' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/2025/05/30/nemcaro/:0
+[  164724ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Regular.woff2:0
+[  164724ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-DemiLight.woff2' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/2025/05/30/nemcaro/:0
+[  164724ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-DemiLight.woff2:0
+[  164725ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.woff2' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/2025/05/30/nemcaro/:0
+[  164725ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.woff2:0
+[  164726ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Bold.woff2' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/2025/05/30/nemcaro/:0
+[  164726ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Bold.woff2:0
+[  164781ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Regular.woff' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/2025/05/30/nemcaro/:0
+[  164781ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Regular.woff:0
+[  164782ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-DemiLight.woff' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/2025/05/30/nemcaro/:0
+[  164782ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-DemiLight.woff:0
+[  164789ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.woff' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/2025/05/30/nemcaro/:0
+[  164789ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.woff:0
+[  164789ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Bold.woff' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/2025/05/30/nemcaro/:0
+[  164790ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Bold.woff:0
+[  164834ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-DemiLight.otf' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/2025/05/30/nemcaro/:0
+[  164834ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-DemiLight.otf:0
+[  164834ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Regular.otf' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/2025/05/30/nemcaro/:0
+[  164834ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Regular.otf:0
+[  164844ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.otf' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/2025/05/30/nemcaro/:0
+[  164844ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.otf:0
+[  164844ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Bold.otf' from origin 'https://croix.asia' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/2025/05/30/nemcaro/:0
+[  164844ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Bold.otf:0
+[  165016ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://use.typekit.net/mbt8eig.js:0
+[  165027ms] [WARNING] [Meta pixel] 666078689403801 is unavailable on this website due to it's traffic permission settings. Go to https://www.facebook.com/business/help/572690630080597 to learn more. @ https://connect.facebook.net/en_US/fbevents.js:181
+[  165210ms] [ERROR] Access to font at 'https://fonts.gstatic.com/s/roboto/v48/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBHMdazQ.woff2' from origin 'https://www.youtube.com' has been blocked by CORS policy: Request header field authorization is not allowed by Access-Control-Allow-Headers in preflight response. @ https://www.youtube.com/embed/lWgedbAmiYY?si=egmjEzBciydwF-SH:0
+[  165211ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/s/roboto/v48/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBHMdazQ.woff2:0
+[  165210ms] [ERROR] Access to font at 'https://fonts.gstatic.com/s/roboto/v48/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBHMdazQ.woff2' from origin 'https://www.youtube.com' has been blocked by CORS policy: Request header field authorization is not allowed by Access-Control-Allow-Headers in preflight response. @ https://www.youtube.com/embed/lWgedbAmiYY?si=egmjEzBciydwF-SH:0
+[  165211ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/s/roboto/v48/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBHMdazQ.woff2:0
+[  171870ms] [ERROR] Access to font at 'https://fonts.gstatic.com/s/roboto/v48/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBHMdazQ.woff2' from origin 'https://www.youtube.com' has been blocked by CORS policy: Request header field authorization is not allowed by Access-Control-Allow-Headers in preflight response. @ https://www.youtube.com/embed/kmnMncstjcQ?si=7v_nfFHe1Sua_bTT:0
+[  171870ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/s/roboto/v48/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBHMdazQ.woff2:0
+[  208285ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://test:test2025@stg.croix.asia/news/nemcaro/:0
+[  208528ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://stg.croix.asia/favicon.ico:0
+[  228987ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://test:test2025@stg.croix.asia/:0

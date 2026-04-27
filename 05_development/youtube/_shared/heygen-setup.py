@@ -328,6 +328,46 @@ async def get_current_scene_id(page):
     }""")
 
 
+async def click_scene_by_timeline(page, scene_num):
+    """タイムラインのN番目のシーンサムネを実マウスクリック（1-based）。
+    React click吸収問題を避けるため、element.click() ではなく page.mouse.click(x,y) を使う。
+    左パネルのスクロール＋番号span検索に依存しないため、ビューポート差分や仮想スクロールに強い。
+    Returns: (True, scene_id) or (False, None)
+    """
+    for attempt in range(8):
+        result = await page.evaluate(f"""() => {{
+            const items = [...document.querySelectorAll('[data-scene-item]')];
+            if (items.length < {scene_num}) return {{ok: false, reason: 'not enough items', count: items.length}};
+            items.sort((a, b) => a.getBoundingClientRect().x - b.getBoundingClientRect().x);
+            const target = items[{scene_num} - 1];
+            target.scrollIntoView({{inline: 'center', block: 'nearest', behavior: 'instant'}});
+            const r = target.getBoundingClientRect();
+            const inView = r.x >= 0 && r.x + r.width <= window.innerWidth && r.y >= 0;
+            if (!inView) {{
+                return {{ok: false, reason: 'scrolled'}};
+            }}
+            return {{
+                ok: true,
+                scene_id: target.getAttribute('data-scene-id'),
+                cx: r.x + r.width / 2,
+                cy: r.y + r.height / 2,
+            }};
+        }}""")
+        if result.get('ok'):
+            await asyncio.sleep(0.4)
+            # 実マウスクリック（React click吸収を回避）
+            await page.mouse.click(result['cx'], result['cy'])
+            await asyncio.sleep(2.0)
+            return True, result.get('scene_id')
+        if result.get('reason') == 'scrolled':
+            await asyncio.sleep(0.6)
+            continue
+        # not enough items 等は即失敗
+        print(f"  [nav] timeline click failed: {result.get('reason')}", flush=True)
+        return False, None
+    return False, None
+
+
 # ===== 音声アップロード =====
 
 async def _read_right_panel_scene_num(page):
@@ -335,7 +375,7 @@ async def _read_right_panel_scene_num(page):
         for (const el of document.querySelectorAll('*')) {
             const t = el.textContent.trim();
             const r = el.getBoundingClientRect();
-            if (r.x > 1200 && r.width < 400 && r.height < 50) {
+            if (r.x > 1100 && r.width < 400 && r.height < 50) {
                 const m = t.match(/(?:シーン|Scene)\\s*(\\d+)/i);
                 if (m && parseInt(m[1]) > 0) return parseInt(m[1]);
             }
@@ -347,22 +387,18 @@ async def _read_right_panel_scene_num(page):
 async def click_next_unprocessed_script(page, expected_num=None):
     """左パネルで指定シーン(expected_num)の行をクリックする。
 
-    各行の左端にあるシーン番号 span (w≈20, text="N") を直接検索してクリック。
-    初回は左パネルコンテナを scrollTop=0 にリセットし、見つからなければ下へ
-    スクロールしながら探索する。
+    処理は常にシーン1→47の単調増加。現在のスクロール位置から番号 span (w≈20,
+    text="N") を検索してクリック。見つからなければ下へスクロールしながら探索する
+    （scrollTop=0 へのリセットはしない — 既処理シーン位置まで戻ると無駄）。
 
     戻り値: (True, heygen_scene_num) or (False, None)
     """
-    # 初回: 左パネルコンテナを scrollTop=0 にリセット
-    await page.evaluate("""() => {
-        const divs = [...document.querySelectorAll("div")];
-        const container = divs.find(d => {
-            const r = d.getBoundingClientRect();
-            return r.x < 30 && r.width > 300 && r.width < 700 && d.scrollHeight > d.clientHeight + 50;
-        });
-        if (container) container.scrollTop = 0;
-    }""")
-    await asyncio.sleep(0.6)
+    # 既にアクティブならナビ不要（create-v4 直後のシーン1など、番号 span が消えてる行）
+    if expected_num is not None:
+        current = await _read_right_panel_scene_num(page)
+        if current == expected_num:
+            print(f"  [nav] シーン{expected_num}は既にアクティブ — スキップ", flush=True)
+            return True, expected_num
 
     for attempt in range(30):
         result = await page.evaluate(f"""() => {{
@@ -642,7 +678,7 @@ async def verify_scene_audio_dom(page, scene_num, expected_filename):
         for (const el of document.querySelectorAll('*')) {
             const t = el.textContent.trim();
             const r = el.getBoundingClientRect();
-            if (r.x > 1200 && r.y < 120 && r.y > 50 && r.width < 400 && r.height < 30) {
+            if (r.x > 1100 && r.y < 120 && r.y > 50 && r.width < 400 && r.height < 30) {
                 const m = t.match(/(?:シーン|Scene)\\s*(\\d+)/i);
                 if (m) return parseInt(m[1]);
             }
@@ -1636,8 +1672,8 @@ async def main():
                 for (const el of document.querySelectorAll('*')) {
                     const t = el.textContent.trim();
                     const r = el.getBoundingClientRect();
-                    // 右パネル上部（x>1200, y<120, 小さい要素）
-                    if (r.x > 1200 && r.y < 120 && r.y > 50 && r.width < 400 && r.height < 30) {
+                    // 右パネル上部（x>1100, y<120, 小さい要素）
+                    if (r.x > 1100 && r.y < 120 && r.y > 50 && r.width < 400 && r.height < 30) {
                         const m = t.match(/(?:シーン|Scene)\\s*(\\d+)/i);
                         if (m) return parseInt(m[1]);
                     }
@@ -1661,18 +1697,25 @@ async def main():
             await page.keyboard.press("Escape")
             await asyncio.sleep(0.5)
 
-            # 左パネルのスクリプト行をクリックしてシーンに移動
-            # 番号検索は仮想スクロール境界(16+)で失敗するため、
-            # 「スクリプトを入力してください」未処理マーカーで次行を拾う
+            # 左パネルのスクリプト行をクリックしてシーンに移動（旧版同等の実績ある方式）
+            # click_scene_script は scene{NN}_ プレフィックス + 番号プレフィックス + シーン1アクティブ特殊処理を持つ
             print(f"  [nav] シーン{scene_num}に移動...", flush=True)
-            ok, heygen_num = await click_next_unprocessed_script(page, scene_num)
-            if not ok:
-                print(f"❌ シーン{scene_num}への移動失敗。中断。", flush=True)
-                progress["failed"].append(scene_num)
-                progress["status"] = "stopped"
-                save_progress(SLUG, progress)
-                break
-            if heygen_num is None or heygen_num != scene_num:
+            if not await click_scene_script(page, scene_num):
+                # フォールバック: タイムラインから直接クリック
+                print(f"  [nav] click_scene_script失敗 → タイムラインクリックにフォールバック", flush=True)
+                ok, _scene_id = await click_scene_by_timeline(page, scene_num)
+                if not ok:
+                    print(f"❌ シーン{scene_num}への移動失敗。中断。", flush=True)
+                    progress["failed"].append(scene_num)
+                    progress["status"] = "stopped"
+                    save_progress(SLUG, progress)
+                    break
+            # 右パネルから実際のシーン番号を読んで照合
+            await asyncio.sleep(0.5)
+            heygen_num = await read_heygen_scene_num(page)
+            if heygen_num is None:
+                print(f"  [nav] ⚠ シーン番号読み取り不能（続行）", flush=True)
+            elif heygen_num != scene_num:
                 print(f"⚠ HeyGenシーン{heygen_num} ≠ scene_num={scene_num} — ずれ懸念で中断", flush=True)
                 progress["failed"].append(scene_num)
                 progress["status"] = "stopped"

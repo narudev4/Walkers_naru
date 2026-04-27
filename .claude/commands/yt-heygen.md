@@ -59,7 +59,7 @@ CDP ChromeをPlaywright経由で操作し、全シーンに対して以下を自
 # HeyGenエディタをCDP Chrome上で開いた状態で実行:
 HEYGEN_SLUG=what-is-make HEYGEN_START=1 HEYGEN_END=33 \
   /Users/naru/.pyenv/versions/3.13.0/bin/python3 \
-  05_development/youtube/heygen-setup.py
+  05_development/youtube/_shared/heygen-setup.py
 ```
 
 ### 環境変数
@@ -120,10 +120,10 @@ req.requestEnd();
 
 ```bash
 # DOM検証のみ（高速、2-3分）
-HEYGEN_SLUG=xxx HEYGEN_VERIFY=1 python3 05_development/youtube/heygen-setup.py
+HEYGEN_SLUG=xxx HEYGEN_VERIFY=1 python3 05_development/youtube/_shared/heygen-setup.py
 
 # DOM + claude -p 視覚検証（8-10分）
-HEYGEN_SLUG=xxx HEYGEN_VERIFY=1 HEYGEN_VERIFY_VISUAL=1 python3 05_development/youtube/heygen-setup.py
+HEYGEN_SLUG=xxx HEYGEN_VERIFY=1 HEYGEN_VERIFY_VISUAL=1 python3 05_development/youtube/_shared/heygen-setup.py
 ```
 
 出力: `output/youtube/{slug}/heygen-verification-report.json`
@@ -242,6 +242,6 @@ HEYGEN_SLUG=xxx HEYGEN_VERIFY=1 HEYGEN_VERIFY_VISUAL=1 python3 05_development/yo
 
 | ファイル | 用途 |
 |---------|------|
-| `05_development/youtube/heygen-setup.py` | 自動化スクリプト本体（1100行） |
+| `05_development/youtube/_shared/heygen-setup.py` | 自動化スクリプト本体（1100行） |
 | `05_development/youtube/heygen-automation-learnings.md` | 詳細な学習ログ |
 | `05_development/scripts/chrome-cdp-launcher.sh` | CDP Chrome起動/停止 |

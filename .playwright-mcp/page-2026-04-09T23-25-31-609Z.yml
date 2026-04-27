@@ -1,0 +1,103 @@
+- generic [active] [ref=e1]:
+  - banner:
+    - navigation [ref=e2]:
+      - generic [ref=e3]:
+        - link "株式会社クロア" [ref=e5] [cursor=pointer]:
+          - /url: https://croix.asia/
+          - img "株式会社クロア" [ref=e6]
+        - generic [ref=e7]:
+          - list [ref=e8]:
+            - listitem [ref=e9]:
+              - button "事業内容" [ref=e10] [cursor=pointer]: 事業内容
+            - listitem [ref=e12]:
+              - button "メディア" [ref=e13] [cursor=pointer]
+            - listitem [ref=e14]:
+              - button "企業情報" [ref=e15] [cursor=pointer]: 企業情報
+            - listitem [ref=e17]:
+              - button "会社概要" [ref=e18] [cursor=pointer]: 会社概要
+            - listitem [ref=e20]:
+              - list [ref=e21]:
+                - listitem [ref=e22]: English
+                - listitem [ref=e23]:
+                  - link "日本語" [ref=e25] [cursor=pointer]:
+                    - /url: https://croix.asia/2025/01/01/2025_newyear/
+          - list [ref=e26]:
+            - listitem [ref=e27]:
+              - link [ref=e28] [cursor=pointer]:
+                - /url: https://www.youtube.com/@RELAX_WORLD
+                - generic [ref=e29]: 
+            - listitem [ref=e30]:
+              - link [ref=e31] [cursor=pointer]:
+                - /url: https://www.facebook.com/relaxworld.jp/
+                - generic [ref=e32]: 
+            - listitem [ref=e33]:
+              - link [ref=e34] [cursor=pointer]:
+                - /url: https://www.instagram.com/croix_relaxworld/
+            - listitem [ref=e35]:
+              - button "お問い合わせ" [ref=e36] [cursor=pointer]
+  - generic [ref=e39]:
+    - paragraph [ref=e40]: 2025年1月1日
+    - heading "2025年 新年あけましておめでとうございます。" [level=1] [ref=e41]
+  - list [ref=e44]:
+    - listitem [ref=e45]:
+      - link "ホーム" [ref=e46] [cursor=pointer]:
+        - /url: https://croix.asia
+    - listitem [ref=e47]:
+      - link "NEWS" [ref=e48] [cursor=pointer]:
+        - /url: https://croix.asia/news/
+    - listitem [ref=e49]: 2025年 新年あけましておめでとうございます。
+  - article [ref=e50]:
+    - generic [ref=e52]:
+      - generic [ref=e54]: 新年あけましておめでとうございます。
+      - generic [ref=e57]:
+        - generic [ref=e58]: 株式会社クロアは、ウェルビーイング・テクノロジー・カンパニーとして、
+        - generic [ref=e60]: 2025年も皆様に美しい眠りと癒やしの世界を RELAX WORLD ブランドにてお届け致します。
+      - generic:
+        - link:
+          - /url: https://croix.asia/wp-content/uploads/2024/12/2025_croix_nenga_movie_720.gif
+  - contentinfo [ref=e64]:
+    - generic [ref=e66]:
+      - generic [ref=e67]:
+        - heading [level=1] [ref=e68]:
+          - img [ref=e69]
+        - paragraph [ref=e70]:
+          - text: 株式会社クロア
+          - text: 〒153-0064 東京都目黒区下目黒3-7-2-7F
+          - text: TEL 03-5436-1960 / FAX 03-5436-1961
+          - text: 営業時間 10:00-18:30 （土・日・祝・弊社特別休日を除く）
+      - generic [ref=e71]:
+        - heading "事業内容" [level=1] [ref=e72]
+        - list [ref=e73]:
+          - listitem [ref=e74]:
+            - link "アプリ・オンライン事業" [ref=e75] [cursor=pointer]:
+              - /url: /project/music/
+          - listitem [ref=e76]:
+            - link "瞑想・睡眠コンテンツ事業" [ref=e77] [cursor=pointer]:
+              - /url: /project/media/
+          - listitem [ref=e78]:
+            - link "癒しのEC事業" [ref=e79] [cursor=pointer]:
+              - /url: /project/product/
+      - generic [ref=e80]:
+        - heading "企業情報" [level=1] [ref=e81]
+        - list [ref=e82]:
+          - listitem [ref=e83]:
+            - link "役員紹介" [ref=e84] [cursor=pointer]:
+              - /url: /corporate/executive-2/
+          - listitem [ref=e85]:
+            - link "企業理念" [ref=e86] [cursor=pointer]:
+              - /url: /corporate/philosophy/
+          - listitem [ref=e87]:
+            - link "組織図" [ref=e88] [cursor=pointer]:
+              - /url: /corporate/organization/
+      - generic [ref=e89]:
+        - heading "会社概要" [level=1] [ref=e90]
+        - list [ref=e91]:
+          - listitem [ref=e92]:
+            - link "会社概要" [ref=e93] [cursor=pointer]:
+              - /url: /company/
+          - listitem [ref=e94]:
+            - link "プライバシーポリシー" [ref=e95] [cursor=pointer]:
+              - /url: /privacy/
+    - generic [ref=e97]:
+      - paragraph [ref=e98]: Copyright © 2018 croix Co.,Ltd. All rights reserved.
+      - text: 

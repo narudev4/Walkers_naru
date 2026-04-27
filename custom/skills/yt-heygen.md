@@ -54,19 +54,19 @@ Phase 1+2: 音声アップ＋アバター配置（自動 / Playwright CDP）
 
 ```bash
 # Phase 0: PPTXアップロード（browser-use CLI、ログイン済みプロファイル使用）
-HEYGEN_SLUG=what-is-make HEYGEN_PPTX_PATH=output/youtube/what-is-make/what-is-make.pptx /Users/naru/.pyenv/versions/3.13.0/bin/python3 05_development/youtube/heygen-setup.py
+HEYGEN_SLUG=what-is-make HEYGEN_PPTX_PATH=output/youtube/what-is-make/what-is-make.pptx /Users/naru/.pyenv/versions/3.13.0/bin/python3 05_development/youtube/_shared/heygen-setup.py
 
 # Phase 1+2: 全シーン一括処理（音声アップ＋アバター配置）
-HEYGEN_SLUG=what-is-make /Users/naru/.pyenv/versions/3.13.0/bin/python3 05_development/youtube/heygen-setup.py
+HEYGEN_SLUG=what-is-make /Users/naru/.pyenv/versions/3.13.0/bin/python3 05_development/youtube/_shared/heygen-setup.py
 
 # 途中から再開
-HEYGEN_SLUG=what-is-make HEYGEN_START=15 /Users/naru/.pyenv/versions/3.13.0/bin/python3 05_development/youtube/heygen-setup.py
+HEYGEN_SLUG=what-is-make HEYGEN_START=15 /Users/naru/.pyenv/versions/3.13.0/bin/python3 05_development/youtube/_shared/heygen-setup.py
 
 # ドライラン（操作せず確認のみ）
-HEYGEN_SLUG=what-is-make HEYGEN_DRY=1 /Users/naru/.pyenv/versions/3.13.0/bin/python3 05_development/youtube/heygen-setup.py
+HEYGEN_SLUG=what-is-make HEYGEN_DRY=1 /Users/naru/.pyenv/versions/3.13.0/bin/python3 05_development/youtube/_shared/heygen-setup.py
 ```
 
-## 実装スクリプト: `05_development/youtube/heygen-setup.py`
+## 実装スクリプト: `05_development/youtube/_shared/heygen-setup.py`
 
 音声アップロードとアバター配置を統合した1ファイル。Playwright CDP接続で操作。
 

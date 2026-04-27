@@ -1,0 +1,6 @@
+=== YouTube Auto-Produce: Fri Apr 24 02:00:04 JST 2026 ===
+Starting claude with auto-produce prompt...
+Working directory: /Users/naru/Walkers_naru/05_development/youtube
+Playwright MCPの許可が必要です。ブラウザナビゲーションの許可をお願いします。もし別の方法（gspreadスクリプト等）でスプレッドシートにアクセスする方がよければ教えてください。
+
+=== Completed with exit code: 0 at Fri Apr 24 02:01:49 JST 2026 ===

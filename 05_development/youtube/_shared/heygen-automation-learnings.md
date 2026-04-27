@@ -226,3 +226,38 @@ Phase 0 は既に開いている HeyGen タブを再利用する設計。`ppt-to
 - `what-is-framer` で Phase 0 が全6ステップ完走、`create-v4/47a4443f...` URL 到達を確認（2026-04-23）
 - browser-use CLI 依存削除で、Phase 0 と Phase 1+2 が同じ `connect_over_cdp` ロジックに統一
 - 非標準CDPポート時は `HEYGEN_CDP_URL=http://localhost:<port>` で指定可能
+
+## 9. シーン1アクティブ状態罠 & scrollTopリセット削除（2026-04-23）
+
+### 9.1 create-v4 遷移直後、シーン1行は「番号 span が消えた展開状態」
+
+- Phase 0 完了 → `create-v4/...` に遷移した瞬間、**シーン1はアクティブ**で右パネルに「シーン1」が表示され、左パネルのシーン1行は展開プレースホルダ化している
+- このとき左パネル左端の番号 span は **2〜47 しか DOM に存在しない**（`textContent === "1"` の span が描画されない）
+- `click_next_unprocessed_script(page, expected_num=1)` の span 検索が永遠にヒットせず、末端までスクロールして「シーン1未検出」で失敗
+- DOM 検証で確認: reload 後 `left-edge number spans = [2, 3, ..., 47]`、`_read_right_panel_scene_num() = 1`、`"音声をアップロード"` ボタンが `x=68, y=162` で可視
+
+### 9.2 対策: 既アクティブ判定で early-return
+
+`click_next_unprocessed_script` 冒頭に追加:
+```python
+if expected_num is not None:
+    current = await _read_right_panel_scene_num(page)
+    if current == expected_num:
+        print(f"  [nav] シーン{expected_num}は既にアクティブ — スキップ", flush=True)
+        return True, expected_num
+```
+
+**なぜ sister 関数 `click_scene_script` では発生していなかったか**: そちらは L471-474 に「番号="1" かつ y<220 かつ "音声をアップロード" テキスト」という active 状態フォールバックが組まれていた。`click_next_unprocessed_script` にはこれがなかった。
+
+### 9.3 scrollTop=0 リセットは単調処理では無駄
+
+- main ループは `range(START_SCENE, end+1)` の**単調増加のみ**で、後戻りしない
+- 各 nav 呼び出しで scrollTop=0 に戻すと、既に処理済みのシーン位置を再スクロールすることになり ~0.6〜1s の純粋な無駄
+- 既存の「span 見つからなければ 400px 下スクロール」フォールバックで十分カバーできる
+- 削除した結果: 47 シーンで ~30〜50s 短縮、動作変化なし
+
+### 9.4 教訓
+
+- **アクティブ判定は右パネル読取が一次情報**。左パネルの DOM 構造（span 有無）はアクティブ状態で変わるので、左パネルだけ見て判断すると詰む
+- **sister 関数の違いを比較する**。同じ UI 操作をする関数が複数あり、片方だけにフォールバックが入っているケースは「過去に誰かが踏んだ罠の痕跡」。差分から仕様を逆引きする
+- **"末端までスクロール" は誤判定のサイン**。探索対象が「そこにある前提」ではないかを疑う

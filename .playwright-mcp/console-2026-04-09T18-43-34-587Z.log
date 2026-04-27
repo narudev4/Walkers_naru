@@ -1,0 +1,6 @@
+[    3510ms] [LOG] JQMIGRATE: Migrate is installed, version 3.4.1 @ http://stg.croix.asia/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1:1
+[   34674ms] [LOG] JQMIGRATE: Migrate is installed, version 3.4.1 @ http://stg.croix.asia/wp-admin/load-scripts.php?c=0&load%5Bchunk_0%5D=jquery-core,jquery-migrate,utils&ver=6.9.4:4
+[   36261ms] Unexpected token '<'
+[   36806ms] TypeError: Cannot read properties of null (reading 'addEventListener')
+    at dismissNotice (http://stg.croix.asia/wp-admin/:1066:17)
+    at http://stg.croix.asia/wp-admin/:1081:5

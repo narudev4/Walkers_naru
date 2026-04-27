@@ -1,0 +1,80 @@
+- generic [active] [ref=e1]:
+  - article [ref=e5]:
+    - heading "クロア、創業15周年で新たな癒やしの映像事業を発表！高画質ドローン動画でリラックス空間を提供。" [level=2] [ref=e6]
+    - list [ref=e8]:
+      - listitem [ref=e9]: 投稿日：2024年09月24日
+    - paragraph [ref=e10]: ウェルビーイング・テクノロジー事業を行なう株式会社クロアは、創業15周年を迎え、最新の高画質ドローン技術を活用した新たな映像事業を発表しました。新事業は、ヒーリングミュージックと高画質映像の融合により、視聴者に深いリラックスと癒やしを提供致します。特に、ストレス軽減や集中力向上を目指した機能性を持つこの映像は、オフィスやプライベート空間での利用に最適です。RELAX WORLDの公式YouTubeチャンネルでの配信を開始し、現代社会で求められるウェルビーイング体験をお届けします。
+    - paragraph [ref=e11]:
+      - strong [ref=e12]: 同時に、新たなクロアのパーパス（存在意義）も公表いたしました。
+    - paragraph [ref=e13]:
+      - strong [ref=e14]: A Harmony of Sleep, Healing, and Eastern Wisdom
+      - strong [ref=e15]: 眠りと癒やし、東洋の知恵の調和
+    - paragraph [ref=e16]
+    - paragraph [ref=e17]
+    - paragraph [ref=e18]: 私たちの音源制作事業と映像制作事業は、機能性を最優先し、専門家の監修や科学的エビデンスに基づく多角的な知見を取り入れています。この取り組みは、東洋の知恵と現代の技術の調和を通じて、心と身体のバランスを整えることを目指し、ウェルビーイング・テクノロジー事業のさらなる発展を推進します。
+    - paragraph [ref=e19]: 詳しくは下記よりご覧ください。
+    - paragraph [ref=e20]:
+      - text: プレスリリース(PR TIMES)：
+      - link "https://prtimes.jp/main/html/rd/p/000000503.000068516.html" [ref=e21] [cursor=pointer]:
+        - /url: https://prtimes.jp/main/html/rd/p/000000503.000068516.html
+      - text: プレスリリース(PressWalker)：
+      - link "https://presswalker.jp/press/55594" [ref=e22] [cursor=pointer]:
+        - /url: https://presswalker.jp/press/55594
+    - paragraph [ref=e23]:
+      - text: メディアページにて、
+      - text: 医学博士等による専門的なコラムや癒やしに関する多彩な情報を掲載開始致しました！
+      - link "https://croix.asia/magazine/" [ref=e24] [cursor=pointer]:
+        - /url: https://croix.asia/magazine/
+    - paragraph [ref=e25]
+    - paragraph [ref=e26]:
+      - link "RELAX WORLD YouTube CH" [ref=e27] [cursor=pointer]:
+        - /url: https://www.youtube.com/@RELAX_WORLD
+      - text: .
+    - paragraph [ref=e28]: RELAX WORLD公式YouTubeチャンネルで、高画質ドローン動画による浮遊感あふれる癒やしの空中散歩を配信開始！
+    - paragraph [ref=e29]
+  - contentinfo [ref=e30]:
+    - generic [ref=e32]:
+      - generic [ref=e33]:
+        - heading [level=1] [ref=e34]:
+          - img [ref=e35]
+        - paragraph [ref=e36]:
+          - text: 株式会社クロア
+          - text: 〒153-0064 東京都目黒区下目黒3-7-2-7F
+          - text: TEL 03-5436-1960 / FAX 03-5436-1961
+          - text: 営業時間 10:00-18:30 （土・日・祝・弊社特別休日を除く）
+      - generic [ref=e37]:
+        - heading "事業内容" [level=1] [ref=e38]
+        - list [ref=e39]:
+          - listitem [ref=e40]:
+            - link "アプリ・オンライン事業" [ref=e41] [cursor=pointer]:
+              - /url: /project/music/
+          - listitem [ref=e42]:
+            - link "瞑想・睡眠コンテンツ事業" [ref=e43] [cursor=pointer]:
+              - /url: /project/media/
+          - listitem [ref=e44]:
+            - link "癒しのEC事業" [ref=e45] [cursor=pointer]:
+              - /url: /project/product/
+      - generic [ref=e46]:
+        - heading "企業情報" [level=1] [ref=e47]
+        - list [ref=e48]:
+          - listitem [ref=e49]:
+            - link "役員紹介" [ref=e50] [cursor=pointer]:
+              - /url: /corporate/executive-2/
+          - listitem [ref=e51]:
+            - link "企業理念" [ref=e52] [cursor=pointer]:
+              - /url: /corporate/philosophy/
+          - listitem [ref=e53]:
+            - link "組織図" [ref=e54] [cursor=pointer]:
+              - /url: /corporate/organization/
+      - generic [ref=e55]:
+        - heading "会社概要" [level=1] [ref=e56]
+        - list [ref=e57]:
+          - listitem [ref=e58]:
+            - link "会社概要" [ref=e59] [cursor=pointer]:
+              - /url: /company/
+          - listitem [ref=e60]:
+            - link "プライバシーポリシー" [ref=e61] [cursor=pointer]:
+              - /url: /privacy/
+    - generic [ref=e63]:
+      - paragraph [ref=e64]: Copyright © 2018 croix Co.,Ltd. All rights reserved.
+      - text: 

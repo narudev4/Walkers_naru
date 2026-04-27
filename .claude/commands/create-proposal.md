@@ -11,15 +11,17 @@ $ARGUMENTS
 |---------|--------|------|
 | Step 1 | Read (built-in) | `memories/facts.md`、ローカル提案書・議事録の参照 |
 | Step 1 | Glob (built-in) | `03_projects/` 内の既存ドキュメント検索 |
-| Step 1 | `gcal_list_events` (Google Calendar MCP) | MTG情報（参加者・日時）取得 |
-| Step 1 | `google_drive_search` (自作Google MCP) | Geminiメモ・既存提案書の検索 |
-| Step 1 | `google_docs_get` (自作Google MCP) | Geminiメモ・ドキュメント本文取得 |
+| Step 1 | `get_events` (google-workspace MCP) | MTG情報（参加者・日時）取得 |
+| Step 1 | `search_drive_files` (google-workspace MCP) | Geminiメモ・既存提案書の検索 |
+| Step 1 | `get_doc_content` / `get_doc_as_markdown` (google-workspace MCP) | Geminiメモ・ドキュメント本文取得 |
 | Step 1 | `API-post-search` (Notion MCP) | 営業パイプライン等の案件情報取得 |
-| Step 3 | `google_drive_copy` (自作Google MCP) | テンプレートのコピー |
-| Step 3 | `google_drive_move_file` (自作Google MCP) | コピーを提案書フォルダに移動 |
-| Step 3 | `google_docs_batch_update` (自作Google MCP) | プレースホルダー置換（`replaceAllText`） |
-| Step 3 | `google_drive_search` (自作Google MCP) | 既存提案書の検索（更新時） |
+| Step 3 | `import_to_google_doc` (google-workspace MCP) | HTMLをGoogle Docs形式でアップロード・変換 |
+| Step 3 | `update_drive_file` (google-workspace MCP) | ファイルを提案書フォルダに移動（parents更新） |
+| Step 3 | `batch_update_doc` (google-workspace MCP) | スタイル再適用・追加編集 |
+| Step 3 | `search_drive_files` (google-workspace MCP) | 既存提案書の検索（更新時） |
 | Step 3 | Write (built-in) | ローカルバックアップ保存 |
+
+> **google-workspace MCPの共通パラメータ**: 全ツールで `user_google_email="naru.hosoya@walker-s.co.jp"` を必須で指定すること。
 
 ## 全体フロー
 
@@ -48,7 +50,7 @@ MTG実施 → ① 情報収集 → ② 骨子策定（承認必須） → ③ Go
 7. **予算感・スケジュール感**: クライアントから聞いている範囲で
 8. **MTG情報**: どのMTGがベースか
 9. **Geminiメモの有無**: Google MeetのGeminiメモがあるか
-   - ある場合 → `google_docs_get` でGoogle Docsから取得して要件を抽出
+   - ある場合 → `get_doc_content` または `get_doc_as_markdown` でGoogle Docsから取得して要件を抽出
    - ない場合 → ユーザーからの説明・メモをベースにする
 10. **追加の要件・参考資料**: 補足情報があれば
 
@@ -58,8 +60,8 @@ MTG実施 → ① 情報収集 → ② 骨子策定（承認必須） → ③ Go
 - **03_projects/{クライアント名}/**: 既存の提案書・議事録・要件メモを検索
   - あれば → ベースとして活用（版番号を付与: v2, v3...）
   - なければ → テンプレートから新規作成
-- `gcal_list_events(q="クライアント名", timeZone="Asia/Tokyo")` からMTG情報（参加者・日時・アジェンダ）を取得
-- **Geminiメモ** がある場合は `google_drive_search` で検索 → `google_docs_get` で取得し、要件・課題・次のステップを抽出
+- `get_events(user_google_email="naru.hosoya@walker-s.co.jp", query="クライアント名", time_zone="Asia/Tokyo")` からMTG情報（参加者・日時・アジェンダ）を取得
+- **Geminiメモ** がある場合は `search_drive_files` で検索 → `get_doc_content` または `get_doc_as_markdown` で取得し、要件・課題・次のステップを抽出
 - **Notion** に案件情報があれば取得（営業パイプライン等）
 
 ### 1-C: 情報の構造化
@@ -114,31 +116,58 @@ MTG実施 → ① 情報収集 → ② 骨子策定（承認必須） → ③ Go
 
 ---
 
-## Step 3: Google Docs作成（本文執筆）
+## Step 3: Google Docs作成（HTML/CSS → Google Drive変換）
 
 承認された骨子をもとにGoogle Docsで提案書を作成する。
 
-### 出力形式
-- **Google Docs** で作成する（ローカルMDではない）
-- `google_drive_copy` でテンプレートをコピー → `replaceAllText` でプレースホルダーを置換 → `google_drive_move_file` で提案書フォルダに移動
-- 既存の提案書を更新する場合は `google_drive_search` で検索 → `google_docs_get` で取得 → `google_docs_batch_update` で更新
+> **基本方針**: HTML/CSSで作成してからGoogle Docsに変換する。これがデフォルト手順。
+> `copy_drive_file` + `replaceAllText` はデザインが壊れる既知の問題があるため、使わない。
 
 ### Google Drive 格納先（必須）
 - **提案書フォルダID**: `1k5pmN_SCWyWhjG2lPM_PT5vdtPYh9BUS`
 - **URL**: https://drive.google.com/drive/folders/1k5pmN_SCWyWhjG2lPM_PT5vdtPYh9BUS
-- 新規作成した提案書は、作成後に必ずこのフォルダに移動する
-- `google_drive_move_file(fileId, folderId="1k5pmN_SCWyWhjG2lPM_PT5vdtPYh9BUS")` を使用
 
-### テンプレート使用（必須）
-- **テンプレートID**: `1SS_Xw7gGHPOpLj8x8lgUJr4gmJRE8OZUqSA7_4Fr5DA`
-- **URL**: https://docs.google.com/document/d/1SS_Xw7gGHPOpLj8x8lgUJr4gmJRE8OZUqSA7_4Fr5DA/edit
-- **手順**:
-  1. `google_drive_copy` でテンプレートをコピーし、命名規則に従ったタイトルを付ける
-  2. `google_drive_move_file` でコピーを提案書フォルダに移動する
-  3. `replaceAllText`（`google_docs_batch_update`）で `[プレースホルダー]` を骨子の内容に置換する
-  4. 不要なセクション（セクション5, 8等）があれば該当部分を削除する
-- **禁止**: `google_docs_create` で空ドキュメントを作ってテンプレ構造を手動再現すること（書式が失われる）
-- **禁止**: テンプレートを取得せずに執筆を開始すること
+### デザイン仕様（厳守）
+
+```
+メインカラー:     #2B323B（セクション見出し背景、テーブルヘッダー背景）
+アクセントカラー: #E98212（サブ見出しの左ボーダー）
+セクション見出し: 背景 #2B323B / 文字 白 / 14pt 太字 / padding: 8px 12px
+サブ見出し:       文字 #2B323B / 12pt 太字 / border-left: 4px solid #E98212 / padding-left: 10px
+本文:             11pt / color: #333333
+テーブルヘッダー: 背景 #2B323B / 文字 白 / 太字
+テーブル交互行:   白 / #F7F7F7
+フッター:         Copyright © 2026 Walkers. All Rights Reserved. / 中央 / italic / color: #888
+表紙:             右上に「Walkers」ロゴテキスト、中央揃えタイトル
+```
+
+### 作成手順
+
+**1. HTMLテンプレートをコピーして編集する**
+- **テンプレートファイル**: `output/proposals/_template.html`（デザイン・スタイルは全てここに定義済み）
+- コピー先: `output/proposals/YYYY-MM-DD_{クライアント名}.html`
+- **テンプレートのHTMLを直接編集する。`<style>` ブロックやインラインCSSには一切手を加えない**
+- `{{PLACEHOLDER}}` 形式のプレースホルダーを実際の内容に置き換えるだけ
+- 不要なセクションはそのセクションブロック（`<div class="section-header">〜次のsection-headerの直前まで`）ごと削除する
+- 会社概要テーブルの値はテンプレートに正しく入力済み。**絶対に書き換えない**
+
+**2. Google Driveにアップロード → Google Docsに変換**
+```
+import_to_google_doc(
+  user_google_email="naru.hosoya@walker-s.co.jp",
+  file_path="output/proposals/{ファイル名}.html",
+  document_title="【{クライアント名}様】{案件名}のご提案",
+  target_folder_id="1k5pmN_SCWyWhjG2lPM_PT5vdtPYh9BUS"
+)
+```
+> **CRITICAL**: `import_to_google_doc` はHTMLを自動的にGoogle Docs形式に変換してアップロードする。`target_folder_id` を指定することで直接提案書フォルダに配置される。
+
+**3. 変換後確認**
+- `get_doc_content` または `get_doc_as_markdown` でドキュメントを取得し、内容が正しく変換されているか確認する
+- 変換でスタイルが失われた箇所があれば `batch_update_doc` の `updateParagraphStyle` で再適用する
+  - 見出し背景色: `{red: 0.169, green: 0.196, blue: 0.231}` (#2B323B)
+  - アクセント色: `{red: 0.914, green: 0.51, blue: 0.071}` (#E98212)
+- その後 **Step 3.5（品質ゲート）** を実行する
 
 ### ファイル命名規則
 - 新規: `【{クライアント名}様】{案件名}のご提案`
@@ -168,21 +197,102 @@ Walkersの標準的な受注フローは以下の通り。提案書はこのフ�
 
 ---
 
+## Step 3.5: 品質ゲート（BLOCKING — ここを通過しないとStep 4に進めない）
+
+> **CRITICAL**: Step 3のドキュメント作成後、**ユーザーに完成報告する前に**以下を全て実行する。
+> 「チェックリストを確認する」ではなく「実際にツールを実行して検証する」。
+> 品質ゲートを通過しない限り、「提案書ができました」と言ってはならない。
+>
+> **絶対ルール — スクリーンショットなしの完成報告は禁止**:
+> Step 3.5-B のスクリーンショット撮影は省略不可。「APIレスポンスで確認済み」「おそらく正しい」等の理由でスクショを省略して報告することは禁止。スクショ画像を添付しない完成報告は未完成とみなす。
+
+### 3.5-A: テキスト検証（get_doc_content で全文取得して確認）
+
+**必ず実行するアクション**:
+1. `get_doc_content` または `get_doc_as_markdown` でドキュメント全文を取得する
+2. 以下の項目を**実際にテキスト検索して**確認する:
+
+| チェック項目 | 検索対象 | NG条件 | 対処 |
+|------------|---------|--------|------|
+| テンプレ指示文の残骸 | `※` で始まる文 | 1つでも残っている | 該当セクションごと削除 |
+| 【要入力】の数 | `【要入力】` | 3箇所以上 → ユーザーにリスト提示 | 金額以外は埋める |
+| テーブル行の重複 | 見積もり・スケジュールテーブル | 全行が同じ値 | セルを個別に再編集 |
+| 空の体制枠 | `：` だけの行 | 存在する | 削除 |
+| 代表者情報 | 会社概要セクション | 「古谷」が含まれる | テンプレ値に戻す |
+| セクション番号 | 各セクション見出し | 番号が飛んでいる | 振り直す |
+| 手紙調冒頭 | 冒頭の段落 | 「お世話になっております」等 | 提案概要に書き換え |
+| AI感のある文章 | 現状整理セクション | 「市場は年々拡大」等 | クライアント固有の課題に書き換え |
+| 造語・誤変換 | 全文 | 不自然な日本語 | 修正 |
+| プラン数 | 見積もりセクション | 3パターン以上 | 2パターン以下に絞る |
+| スケジュール空欄 | スケジュールテーブル | 「[期間]」「[作業内容]」が残っている | 概算でも具体的に記入 |
+
+3. NG項目があったら**この場で修正する**（ユーザーに報告する前に）
+4. 修正後、再度 `get_doc_content` で取得して修正が反映されたか確認する
+
+### 3.5-B: 見た目検証（Claude in Chrome でスクリーンショット）【省略禁止】
+
+**必ず実行するアクション**:
+1. `tabs_context_mcp` でタブ情報を取得する
+2. `navigate` で作成したGoogle DocsのURLを開く（Docsが完全に読み込まれるまで待つ）
+3. `computer` の `screenshot` でページ全体をキャプチャする（**表紙〜少なくとも3セクション分が見えるまでスクロールして複数枚撮影する**）
+4. スクリーンショットを目視確認し、以下を**1項目ずつ確認する**:
+
+   **デザイン確認（テンプレ比較）**:
+   - [ ] セクション見出しが **チャコール背景（#2B323B）+ 白文字** になっているか（グレーや黒一色はNG）
+   - [ ] サブ見出しに **オレンジ（#E98212）のボーダー** が付いているか
+   - [ ] テーブルヘッダーが **チャコール背景** になっているか（白地のままはNG）
+   - [ ] 表紙に **Walkersロゴ** が表示されているか
+   - [ ] フォントがサンセリフ系で統一されているか（明朝体混在はNG）
+
+   **構造確認**:
+   - [ ] レイアウトが崩れていないか（テーブルがページからはみ出していないか等）
+   - [ ] 空白ページ・空白セクションがないか
+   - [ ] 会社概要テーブルが正しく表示されているか
+
+5. デザインがテンプレと異なる場合（特に見出し背景色、ボーダー色）:
+   - `get_doc_content` で該当セクションの段落スタイル・背景色情報を確認する
+   - テンプレート（`1SS_Xw7gGHPOpLj8x8lgUJr4gmJRE8OZUqSA7_4Fr5DA`）を同じく取得し、スタイル値を比較する
+   - `batch_update_doc` でスタイルを正確に適用し直す
+   - 修正後、**必ず再スクリーンショットを撮って確認する**
+6. **「APIレスポンスだけ見て見た目OK」と判断することは禁止**
+7. **デザイン確認チェックリストを1項目でもパスしていない場合、修正なしに進めることは禁止**
+
+### 3.5-C: ゲート判定
+
+- 3.5-A と 3.5-B の**両方をパスした場合のみ** Step 4 に進める
+- 判定結果をユーザーへの報告に以下の形式で含める（**スクリーンショット画像を必ず添付する**）:
+  ```
+  ■ 品質ゲート結果:
+  - テキスト検証: ✅ 全項目パス（またはNG項目があり修正済み: {修正した項目}）
+  - デザイン検証（スクショ確認済み）:
+    - セクション見出し背景色（チャコール）: ✅ / ❌ 修正済み
+    - サブ見出しオレンジボーダー: ✅ / ❌ 修正済み
+    - テーブルヘッダー背景色: ✅ / ❌ 修正済み
+    - Walkersロゴ表示: ✅ / ❌ 修正済み
+    - レイアウト崩れなし: ✅ / ❌ 修正済み
+  - Google Docs URL: {URL}
+  ```
+  **スクリーンショット画像を添付しない報告は受け付けられない。必ず画像を添付すること。**
+
+---
+
 ## Step 4: レビュー・改訂サイクル
 
-1. ドラフトをユーザーに確認してもらう
+1. **品質ゲート結果 + スクリーンショット + Google Docs URL** をユーザーに提示する
 2. フィードバックをもとに修正
-3. 必要に応じて複数回のサイクル
+3. **改訂時も品質ゲート（Step 3.5）を再実行する**
 4. 金額・機密情報をユーザーが記入
 
 ---
 
 ## 提案書テンプレート
 
-**Google Docsテンプレート**: `1SS_Xw7gGHPOpLj8x8lgUJr4gmJRE8OZUqSA7_4Fr5DA`
-**URL**: https://docs.google.com/document/d/1SS_Xw7gGHPOpLj8x8lgUJr4gmJRE8OZUqSA7_4Fr5DA/edit
+**HTMLテンプレート（現行）**: `output/proposals/_template.html`
+- このファイルには正しいデザイン・スタイル・ロゴが全て含まれている
+- `{{PLACEHOLDER}}` を埋めて使う
+- **`copy_drive_file` + `replaceAllText` は使わない**（スタイルが壊れる既知の問題）
 
-> **CRITICAL**: Step 3 では必ず `google_drive_copy` でテンプレートをコピーしてから作業を開始すること。空ドキュメントを作って構造を手動再現してはならない（書式が失われハルシネーションの原因になる）。コピー後、`replaceAllText` でプレースホルダーを置換する。
+**旧Google Docsテンプレート（参照のみ）**: `1SS_Xw7gGHPOpLj8x8lgUJr4gmJRE8OZUqSA7_4Fr5DA`
 
 ### テンプレートのデザイン仕様（Walkersブランド準拠）
 - **メインカラー**: ダークチャコール `#2B323B`（セクション見出し背景、サブ見出しテキスト）
@@ -277,6 +387,16 @@ Google MeetのGeminiメモが提供された場合:
 ### NG-13: セクション番号の不統一
 - **実例**: 各提案書でセクション番号がバラバラ（補助金セクションの有無で後続番号がずれる）
 - **ルール**: 不要セクションを削除した場合は**残りのセクション番号を振り直す**。番号が飛ぶ（6→8等）のは体裁が悪い
+
+### NG-16: スクリーンショットなしの完成報告（CRITICAL）
+- **実例**: 提案書作成後に「Google DocsのURLは〇〇です。確認してください」とだけ報告し、スクリーンショットを添付しなかった
+- **ルール**: 完成報告には必ず `computer screenshot` で撮影したスクリーンショット画像を添付する。「デザイン確認しました」とテキストだけで報告することは禁止
+- **チェック**: Step 3.5-B を実行したか、報告メッセージに画像が添付されているか
+
+### NG-17: テンプレのデザインが反映されないまま報告（CRITICAL）
+- **実例**: セクション見出しが白背景＋黒テキストのまま（チャコール背景が消えている）、テーブルヘッダーが白地のままで報告された
+- **根本原因**: `copy_drive_file` でコピー後に `replaceAllText` を使うと段落スタイル（背景色等）が失われることがある
+- **ルール**: デザイン確認チェックリスト（3.5-B）の全項目をパスしてから報告する。スタイルが崩れている場合は `batch_update_doc` でスタイルを再適用してから報告する
 
 ### NG-14: 造語・誤変換の放置
 - **実例**: オーケーウェブの「順人期間」（4箇所）— 正しくは「順応期間」「習熟期間」または「オンボーディング期間」

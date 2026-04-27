@@ -10,15 +10,19 @@ from cdp import connect, goto
 
 CSS_RULE = """/* croix-migration: responsive media fix */
 .media_detail_content img,
-.media_detail_content iframe,
 .media_detail_content .wp-caption,
 .entry-content img,
-.entry-content iframe,
 .entry-content .wp-caption,
 article img,
-article iframe,
 article .wp-caption {
     max-width: 100% !important;
+    height: auto !important;
+}
+.media_detail_content iframe,
+.entry-content iframe,
+article iframe {
+    max-width: 100% !important;
+    aspect-ratio: 16 / 9;
     height: auto !important;
 }
 """

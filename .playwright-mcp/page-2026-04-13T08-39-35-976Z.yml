@@ -1,0 +1,200 @@
+- generic [active] [ref=e1]:
+  - banner:
+    - navigation [ref=e2]:
+      - generic [ref=e3]:
+        - link "株式会社クロア" [ref=e5] [cursor=pointer]:
+          - /url: https://croix.asia/
+          - img "株式会社クロア" [ref=e6]
+        - generic [ref=e7]:
+          - list [ref=e8]:
+            - listitem [ref=e9]:
+              - button "事業内容" [ref=e10] [cursor=pointer]: 事業内容
+            - listitem [ref=e12]:
+              - button "メディア" [ref=e13] [cursor=pointer]
+            - listitem [ref=e14]:
+              - button "企業情報" [ref=e15] [cursor=pointer]: 企業情報
+            - listitem [ref=e17]:
+              - button "会社概要" [ref=e18] [cursor=pointer]: 会社概要
+            - listitem [ref=e20]:
+              - list [ref=e21]:
+                - listitem [ref=e22]: English
+                - listitem [ref=e23]:
+                  - link "日本語" [ref=e25] [cursor=pointer]:
+                    - /url: https://croix.asia/2025/03/21/relaxest_ebisu/
+          - list [ref=e26]:
+            - listitem [ref=e27]:
+              - link [ref=e28] [cursor=pointer]:
+                - /url: https://www.youtube.com/@RELAX_WORLD
+                - generic [ref=e29]: 
+            - listitem [ref=e30]:
+              - link [ref=e31] [cursor=pointer]:
+                - /url: https://www.facebook.com/relaxworld.jp/
+                - generic [ref=e32]: 
+            - listitem [ref=e33]:
+              - link [ref=e34] [cursor=pointer]:
+                - /url: https://www.instagram.com/croix_relaxworld/
+            - listitem [ref=e35]:
+              - button "お問い合わせ" [ref=e36] [cursor=pointer]
+  - generic [ref=e39]:
+    - paragraph [ref=e40]: 2025年3月21日
+    - heading "「眠れる森の美女」をコンセプトにした美容鍼サロン「Relaxest(リラクゼスト)」、2025年3月22日に東京・恵比寿にて新規オープン" [level=1] [ref=e41]
+  - list [ref=e44]:
+    - listitem [ref=e45]:
+      - link "ホーム" [ref=e46] [cursor=pointer]:
+        - /url: https://croix.asia
+    - listitem [ref=e47]:
+      - link "NEWS" [ref=e48] [cursor=pointer]:
+        - /url: https://croix.asia/news/
+    - listitem [ref=e49]: 「眠れる森の美女」をコンセプトにした美容鍼サロン「Relaxest(リラクゼスト)」、2025年3月22日に東京・恵比寿にて新規オープン
+  - article [ref=e50]:
+    - generic [ref=e52]:
+      - paragraph [ref=e53]: ウェルビーイング・テクノロジー事業を展開する株式会社クロアは、まるで「眠れる森の美女」の物語のように、心と身体が目覚めるようなひとときを提供する美容鍼サロン「Relaxest」を、2025年3月22日に東京都渋谷区恵比寿南1丁目(恵比寿駅徒歩約5分)に新たにオープンいたします。
+      - paragraph [ref=e54]: 当サロンではこだわりのメニューで眠りと美しさを引き出す美容鍼施術をご提供。さらに、施術ルームに広がる音と香りにもこだわり、五感すべてで深くリラックスいただける極上の癒やし体験をお届けします。
+      - generic [ref=e55]:
+        - link [ref=e56] [cursor=pointer]:
+          - /url: https://croix.asia/wp-content/uploads/2025/03/0031_240311_2-scaled.jpeg
+          - img [ref=e57]
+        - paragraph [ref=e58]: 「Relaxest」店舗受付
+      - paragraph [ref=e59]
+      - paragraph [ref=e60]:
+        - strong [ref=e62]: ■サロンの特徴
+      - paragraph [ref=e63]:
+        - strong [ref=e64]: ●内側・外側から美しさを引き出す
+        - text: 美容鍼によるリフトアップ効果や肌トーンアップを促し、外見だけでなく、心の安らぎも手に入れることができます。
+      - paragraph [ref=e65]:
+        - strong [ref=e66]: ●眠りの質を高める美容鍼
+        - text: 「眠れる森の美女」の世界観を感じる空間で、美容鍼を通じて自律神経を整え、深い眠りとともに心身のリフレッシュを促進します。鍼を使った施術は、眠りの質向上を目指し、日々のストレスや疲労を解消します。
+      - paragraph [ref=e67]:
+        - strong [ref=e68]: ●異なる個室のテーマ
+        - text: サロン内には4つの個室があり、ルーム名は「Rose」「Aurora」「Forest」「Bliss」と各異なるテーマのお部屋となっております。
+      - paragraph [ref=e69]:
+        - strong [ref=e70]: ●美容鍼の専門施術
+        - text: 高い技術を持つ鍼灸師が一人ひとりに合わせた美容鍼施術を行い、顔のむくみ、リフトアップ、血行促進、肌質改善など、さまざまなお悩みに対応します。
+      - paragraph:
+        - link "サロン内4つの個室":
+          - /url: https://croix.asia/wp-content/uploads/2025/03/0045_240311-room_image-scaled.jpeg
+          - img "サロン内4つの個室" [ref=e71] [cursor=pointer]
+      - paragraph [ref=e72]
+      - paragraph [ref=e73]:
+        - strong [ref=e75]: すみれさんからのコメントが届いています！
+      - paragraph [ref=e76]:
+        - text: 3/10(月)に配信リリースとなりました新曲「Relaxest（リラクゼスト）」、聞いてもらえたかな？
+        - text: 私がイメージキャラクターをやらせていただく東京・恵比寿にオープンする、音楽と美容が一体となった新しい美容鍼サロン『Relaxest』のために作られた楽曲です。
+        - text: 「眠れる森の美女」をテーマにしたサロンで、私もオープンを楽しみにしていました。
+        - text: 小顔や美肌だけでなく肩こりや自律神経調整のコースやお得なコースもあるみたいなので、ぜひ行ってみてください！
+      - generic [ref=e77]:
+        - link "イメージキャラクター すみれ" [ref=e78] [cursor=pointer]:
+          - /url: https://croix.asia/wp-content/uploads/2025/03/aaa119257-scaled.jpeg
+          - img "イメージキャラクター すみれ" [ref=e79]
+        - paragraph [ref=e80]: イメージキャラクター すみれ
+      - paragraph [ref=e81]
+      - paragraph [ref=e82]:
+        - strong [ref=e84]: サロンのご予約はコチラから！
+        - text: ・『Relaxest（リラクゼスト）』公式LINE：
+        - link "https://lin.ee/ZUrb0C0" [ref=e85] [cursor=pointer]:
+          - /url: https://lin.ee/ZUrb0C0
+        - text: ・『Relaxest（リラクゼスト）』公式ホットペッパービューティー：
+        - link "https://beauty.hotpepper.jp/kr/slnH000732876/" [ref=e86] [cursor=pointer]:
+          - /url: https://beauty.hotpepper.jp/kr/slnH000732876/
+      - paragraph [ref=e87]
+      - paragraph [ref=e88]:
+        - strong [ref=e90]: ■眠れる美容鍼灸サロン「Relaxest恵比寿」
+        - text: 公式サイト：https://relaxest.jp
+        - text: 住所：東京都渋谷区恵比寿南1-17-15 VORT恵比寿Ⅵ 2F-A
+      - paragraph [ref=e91]:
+        - text: 【詳細情報】
+        - text: ・『Relaxest（リラクゼスト）』公式サイト：
+        - link "https://relaxest.jp" [ref=e92] [cursor=pointer]:
+          - /url: https://relaxest.jp
+        - text: ・『Relaxest（リラクゼスト）』公式Youtubeチャンネル：
+        - link "https://youtu.be/f0zaihAy7nA" [ref=e93] [cursor=pointer]:
+          - /url: https://youtu.be/f0zaihAy7nA
+        - text: ・『Relaxest（リラクゼスト）』公式Instagram：
+        - link "https://www.instagram.com/relaxest_ebisu/" [ref=e94] [cursor=pointer]:
+          - /url: https://www.instagram.com/relaxest_ebisu/
+        - text: ・『Relaxest（リラクゼスト）』公式LINE：
+        - link "https://lin.ee/ZUrb0C0" [ref=e95] [cursor=pointer]:
+          - /url: https://lin.ee/ZUrb0C0
+        - text: ・すみれ 公式Instagram：
+        - link "https://www.instagram.com/sumire808" [ref=e96] [cursor=pointer]:
+          - /url: https://www.instagram.com/sumire808
+      - paragraph [ref=e97]
+      - paragraph [ref=e98]:
+        - strong [ref=e100]: すみれ「Relaxest」の楽曲配信中！
+      - paragraph [ref=e101]: 2025年3月10日より Apple Music、Amazon Music、Spotifyほか各配信サイトにて配信開始 となりました。また、JOYSOUNDでのカラオケ配信も同日スタート。すみれが主演する美容鍼サロン『Relaxest（リラクゼスト）』のコンセプトムービーの映像をバックにカラオケを楽しめます。
+      - paragraph [ref=e102]: 新曲『Relaxest』で、すみれの透明感あふれる歌声とともに、心地よいリラクゼーションの世界をお楽しみください。Apple Music、Amazon Musicにて、話題の立体音響ドルビーアトモスでお楽しみいただけます。
+      - paragraph [ref=e103]:
+        - text: 作品詳細
+        - text: ▶
+        - link "https://www.sugarcandy.jp/release/sumire/scdd-1801" [ref=e104] [cursor=pointer]:
+          - /url: https://www.sugarcandy.jp/release/sumire/scdd-1801
+        - text: タイトル：Relaxest
+        - text: アーティスト：Sumire
+        - text: 配信中：2025年3月10日(月)リリース
+        - text: レーベル：Sugar Candy
+        - text: YouTubeで簡単試聴▶
+        - link "https://lnk.to/wtv8JVZG57" [ref=e105] [cursor=pointer]:
+          - /url: https://lnk.to/wtv8JVZG57
+        - text: 配信サービス⼀覧▶
+        - link "https://lnk.to/aMqMEOmF57" [ref=e106] [cursor=pointer]:
+          - /url: https://lnk.to/aMqMEOmF57
+        - text: 各配信サイトにてミュージックビデオも同時公開！
+      - generic [ref=e107]:
+        - link [ref=e108] [cursor=pointer]:
+          - /url: https://croix.asia/wp-content/uploads/2024/12/Relaxest_jacket-scaled.jpg
+          - img [ref=e109]
+        - paragraph [ref=e110]: SUMIRE / Relaxest
+      - paragraph [ref=e111]
+      - paragraph [ref=e112]: コンセプトムービーは、『Relaxest（リラクゼスト）』公式YouTubeチャンネルにて公開中。その世界観を、ぜひお楽しみください。
+      - paragraph [ref=e113]:
+        - iframe [ref=e114]:
+          
+      - paragraph [ref=e115]:
+        - link "Sumire | Relaxest Concept Movie" [ref=e116] [cursor=pointer]:
+          - /url: https://youtu.be/f0zaihAy7nA
+  - contentinfo [ref=e117]:
+    - generic [ref=e119]:
+      - generic [ref=e120]:
+        - heading [level=1] [ref=e121]:
+          - img [ref=e122]
+        - paragraph [ref=e123]:
+          - text: 株式会社クロア
+          - text: 〒153-0064 東京都目黒区下目黒3-7-2-7F
+          - text: TEL 03-5436-1960 / FAX 03-5436-1961
+          - text: 営業時間 10:00-18:30 （土・日・祝・弊社特別休日を除く）
+      - generic [ref=e124]:
+        - heading "事業内容" [level=1] [ref=e125]
+        - list [ref=e126]:
+          - listitem [ref=e127]:
+            - link "アプリ・オンライン事業" [ref=e128] [cursor=pointer]:
+              - /url: /project/music/
+          - listitem [ref=e129]:
+            - link "瞑想・睡眠コンテンツ事業" [ref=e130] [cursor=pointer]:
+              - /url: /project/media/
+          - listitem [ref=e131]:
+            - link "癒しのEC事業" [ref=e132] [cursor=pointer]:
+              - /url: /project/product/
+      - generic [ref=e133]:
+        - heading "企業情報" [level=1] [ref=e134]
+        - list [ref=e135]:
+          - listitem [ref=e136]:
+            - link "役員紹介" [ref=e137] [cursor=pointer]:
+              - /url: /corporate/executive-2/
+          - listitem [ref=e138]:
+            - link "企業理念" [ref=e139] [cursor=pointer]:
+              - /url: /corporate/philosophy/
+          - listitem [ref=e140]:
+            - link "組織図" [ref=e141] [cursor=pointer]:
+              - /url: /corporate/organization/
+      - generic [ref=e142]:
+        - heading "会社概要" [level=1] [ref=e143]
+        - list [ref=e144]:
+          - listitem [ref=e145]:
+            - link "会社概要" [ref=e146] [cursor=pointer]:
+              - /url: /company/
+          - listitem [ref=e147]:
+            - link "プライバシーポリシー" [ref=e148] [cursor=pointer]:
+              - /url: /privacy/
+    - generic [ref=e150]:
+      - paragraph [ref=e151]: Copyright © 2018 croix Co.,Ltd. All rights reserved.
+      - text: 

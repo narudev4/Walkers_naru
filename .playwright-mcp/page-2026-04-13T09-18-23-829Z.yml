@@ -1,0 +1,192 @@
+- generic [active] [ref=e1]:
+  - banner:
+    - generic:
+      - link "croix":
+        - /url: http://stg.croix.asia
+        - img "croix"
+    - generic:
+      - paragraph: MENU
+  - generic [ref=e3]:
+    - link "EN" [ref=e4] [cursor=pointer]:
+      - /url: "#"
+      - generic [ref=e5]: EN
+    - link "JA" [ref=e6] [cursor=pointer]:
+      - /url: "#"
+      - generic [ref=e7]: JA
+  - main [ref=e8]:
+    - heading "News 新着情報" [level=3] [ref=e13]:
+      - generic [ref=e14]: News
+      - generic [ref=e15]: 新着情報
+    - generic [ref=e19]:
+      - generic [ref=e20]:
+        - generic [ref=e21]: 2024.12.13
+        - generic [ref=e22]: （お知らせ）
+      - heading "美容鍼サロン『Relaxest』のイメージキャラクターに「すみれ」を迎え、オリジナル楽曲『Relaxest』を歌い上げるコンセプトムービーを公開！" [level=1] [ref=e23]
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - img [ref=e26]
+          - paragraph [ref=e27]: 『Relaxest』のイメージキャラクター「すみれ」
+        - heading "「すみれ」が奏でる至高の癒やしと美 – 極上の香りと音に包まれるラグジュアリーな美容体験" [level=3] [ref=e28]:
+          - strong [ref=e29]: 「すみれ」が奏でる至高の癒やしと美 – 極上の香りと音に包まれるラグジュアリーな美容体験
+        - paragraph [ref=e30]: ウェルビーイング・テクノロジー事業を展開する株式会社クロアは、2025年2月、東京・恵比寿に新規オープン予定の美容鍼サロン『Relaxest（リラクゼスト）』のイメージキャラクターに、女優で歌手の「すみれ」を起用しました。この起用を記念し、ブルーノ・マーズやTWICEなどの楽曲提供やプロデュースを手掛けたトラックメーカーチームが制作したオリジナル楽曲『Relaxest』を「すみれ」が歌唱し、主演として出演するサロンのコンセプトムービーを公開致しました。
+        - paragraph [ref=e31]
+        - paragraph [ref=e32]:
+          - strong [ref=e33]: 透明感あふれる美しさが映し出すサロンの魅力
+        - paragraph [ref=e34]: 今回公開されたコンセプトムービーでは、「すみれ」が持つ透明感と洗練された美しさが、サロンの世界観を鮮やかに映し出しています。バックグラウンドで流れる楽曲『Relaxest』は、心地よいリラクゼーションを誘うメロディと繊細なアレンジが特徴で、サロンのブランドメッセージを優美に描き出しています。
+        - paragraph [ref=e35]
+        - paragraph [ref=e36]:
+          - strong [ref=e37]: 白を基調とした洗練された空間で心身をリフレッシュ
+        - paragraph [ref=e38]: 『Relaxest』は、現代人の美と健康を総合的にサポートするため、「眠れる森の美女」をテーマに掲げ、極上の癒しと美を追求した美容鍼サロンです。白を基調とした高級感あふれる内装に加え、国家資格を持つ施術者によるオーダーメイド施術を通じて、心身をリフレッシュする特別な空間を提供します。
+        - paragraph [ref=e39]
+        - paragraph [ref=e40]:
+          - strong [ref=e41]: 「心と体の美しさ」を届ける独自の癒やし体験
+        - paragraph [ref=e42]: 『Relaxest』は、東洋医学、音、香りを巧みに融合させた独自のリラクゼーション体験を通じて、訪れるすべての方に「心と体の美しさ」をお届けすることを目指しています。すみれさんをイメージキャラクターに迎え、ラグジュアリーな空間と最先端の美容鍼技術を組み合わせ、多くの方々に新しい美と健康のライフスタイルを提案してまいります。
+        - generic [ref=e43]:
+          - img [ref=e44]
+          - paragraph [ref=e45]: SUMIRE / Relaxest
+        - paragraph [ref=e46]: このコンセプトムービーは、『Relaxest（リラクゼスト）』公式YouTubeチャンネルにて公開が始まりました。その世界観を、ぜひお楽しみください。
+        - paragraph [ref=e47]:
+          - iframe [ref=e48]
+        - paragraph [ref=e49]: Sumire | Relaxest Concept Movie
+        - paragraph [ref=e50]: 【詳細情報】
+        - paragraph [ref=e51]:
+          - text: ・株式会社クロア 公式サイト：
+          - link "https://croix.asia" [ref=e52] [cursor=pointer]:
+            - /url: http://stg.croix.asia/
+        - paragraph [ref=e53]:
+          - text: ・『Relaxest（リラクゼスト）』公式サイト：
+          - link "https://relaxest.jp/" [ref=e54] [cursor=pointer]:
+            - /url: https://relaxest.jp/
+          - text: （準備中）
+        - paragraph [ref=e55]:
+          - text: ・『Relaxest（リラクゼスト）』公式Youtubeチャンネル：
+          - link "https://youtu.be/f0zaihAy7nA" [ref=e56] [cursor=pointer]:
+            - /url: https://youtu.be/f0zaihAy7nA
+        - paragraph [ref=e57]:
+          - text: ・『Relaxest（リラクゼスト）』公式Instagram：
+          - link "https://www.instagram.com/relaxest_ebisu/" [ref=e58] [cursor=pointer]:
+            - /url: https://www.instagram.com/relaxest_ebisu/
+        - paragraph [ref=e59]:
+          - text: ・『Relaxest（リラクゼスト）』公式LINE：
+          - link "https://lin.ee/ZUrb0C0" [ref=e60] [cursor=pointer]:
+            - /url: https://lin.ee/ZUrb0C0
+        - paragraph [ref=e61]:
+          - text: ・すみれ 公式サイト：
+          - link "https://sumire808.amebaownd.com/" [ref=e62] [cursor=pointer]:
+            - /url: https://sumire808.amebaownd.com/
+    - generic [ref=e66]:
+      - textbox "Search" [ref=e67]
+      - button "search" [ref=e68] [cursor=pointer]:
+        - img "search" [ref=e69]
+    - generic [ref=e71]:
+      - heading "Pickup" [level=2] [ref=e72]:
+        - generic [ref=e73]: Pickup
+      - generic [ref=e74]:
+        - generic [ref=e75]:
+          - link "Musiora ミュジオラ -coming soon-" [ref=e76] [cursor=pointer]:
+            - /url: "#"
+            - paragraph [ref=e77]:
+              - generic [ref=e78]: Musiora
+              - generic [ref=e79]: ミュジオラ -coming soon-
+          - link "nemcaro ネムカロ" [ref=e80] [cursor=pointer]:
+            - /url: http://stg.croix.asia/works/nemcaro/
+            - paragraph [ref=e81]:
+              - generic [ref=e82]: nemcaro
+              - generic [ref=e83]: ネムカロ
+          - link "Relaxest リラクゼスト" [ref=e84] [cursor=pointer]:
+            - /url: https://relaxest.jp/?gad_source=1&gad_campaignid=23438734731&gbraid=0AAAAADKs12bOm465MtyfyC0W8klOhZdAI&gclid=CjwKCAiAj8LLBhAkEiwAJjbY7y3fvKS10ix2xA-VHQBqdNzasSJuDZemA7bSoQTruzl2KJwQHHjPFhoC4xkQAvD_BwE
+            - paragraph [ref=e85]:
+              - generic [ref=e86]: Relaxest
+              - generic [ref=e87]: リラクゼスト
+        - generic [ref=e88]:
+          - link "RELAX WORLD Plus 癒しと眠りのアプリ -coming soon-" [ref=e89] [cursor=pointer]:
+            - /url: "#"
+            - paragraph [ref=e90]:
+              - generic [ref=e91]: RELAX WORLD Plus
+              - generic [ref=e92]: 癒しと眠りのアプリ -coming soon-
+          - link "RELAX WORLD EC 癒やしと眠りのスペシャリティストア -coming soon-" [ref=e93] [cursor=pointer]:
+            - /url: "#"
+            - paragraph [ref=e94]:
+              - generic [ref=e95]: RELAX WORLD EC
+              - generic [ref=e96]: 癒やしと眠りのスペシャリティストア -coming soon-
+    - generic [ref=e98]:
+      - heading "Contact お問い合わせ" [level=2] [ref=e99]:
+        - generic [ref=e100]: Contact
+        - generic [ref=e101]: お問い合わせ
+      - generic [ref=e102]:
+        - paragraph [ref=e103]:
+          - text: 株式会社クロアへのお問い合わせは下記メールフォームにご入力のうえ、送信してください。
+          - text: Please fill out and submit the following mail form to contact croix Co.,Ltd.
+        - generic [ref=e104]:
+          - link "お問い合わせ" [ref=e105] [cursor=pointer]:
+            - /url: http://stg.croix.asia/contact
+            - generic [ref=e106]: お問い合わせ
+          - link "資料ダウンロード" [ref=e107] [cursor=pointer]:
+            - /url: ""
+            - generic [ref=e108]: 資料ダウンロード
+  - contentinfo [ref=e109]:
+    - generic [ref=e110]:
+      - generic [ref=e111]:
+        - link "CROIX" [ref=e112] [cursor=pointer]:
+          - /url: http://stg.croix.asia
+          - img "CROIX" [ref=e113]
+        - generic [ref=e114]:
+          - paragraph [ref=e115]: 株式会社クロア
+          - paragraph [ref=e116]: 〒153-0064 東京都目黒区下目黒3-7-2-7F
+          - paragraph [ref=e117]: TEL 03-5436-1960 / FAX 03-5436-1961
+          - paragraph [ref=e118]: 営業時間 10:00-18:30 （土・日・祝・弊社特別休日を除く）
+      - generic [ref=e119]:
+        - list [ref=e120]:
+          - listitem [ref=e121]:
+            - text: Services
+            - list [ref=e122]:
+              - listitem [ref=e123]:
+                - link "App & Digital Platform" [ref=e124] [cursor=pointer]:
+                  - /url: http://stg.croix.asia/service
+              - listitem [ref=e125]:
+                - link "Sound & Video" [ref=e126] [cursor=pointer]:
+                  - /url: http://stg.croix.asia/sound
+              - listitem [ref=e127]:
+                - link "Product & Smart Products" [ref=e128] [cursor=pointer]:
+                  - /url: http://stg.croix.asia/product
+              - listitem [ref=e129]:
+                - link "Wellness Station - Relaxest" [ref=e130] [cursor=pointer]:
+                  - /url: http://stg.croix.asia/relaxest
+          - listitem [ref=e131]:
+            - link "Works" [ref=e132] [cursor=pointer]:
+              - /url: http://stg.croix.asia/works
+        - list [ref=e133]:
+          - listitem [ref=e134]:
+            - link "Media" [ref=e135] [cursor=pointer]:
+              - /url: http://stg.croix.asia/media
+          - listitem [ref=e136]:
+            - link "News" [ref=e137] [cursor=pointer]:
+              - /url: http://stg.croix.asia/news
+          - listitem [ref=e138]:
+            - link "Company" [ref=e139] [cursor=pointer]:
+              - /url: http://stg.croix.asia/company
+          - listitem [ref=e140]:
+            - link "Access" [ref=e141] [cursor=pointer]:
+              - /url: http://stg.croix.asia/access
+          - listitem [ref=e142]:
+            - link "Sitemap" [ref=e143] [cursor=pointer]:
+              - /url: http://stg.croix.asia/sitemap
+      - generic [ref=e144]:
+        - generic [ref=e145]:
+          - link "Facebook" [ref=e146] [cursor=pointer]:
+            - /url: https://www.facebook.com/relaxworld.jp/
+            - img "Facebook" [ref=e147]
+          - link "Instagram" [ref=e148] [cursor=pointer]:
+            - /url: https://www.instagram.com/croix_relaxworld/
+            - img "Instagram" [ref=e149]
+          - link "YouTube" [ref=e150] [cursor=pointer]:
+            - /url: https://www.youtube.com/@RELAX_WORLD
+            - img "YouTube" [ref=e151]
+        - generic [ref=e152]:
+          - link "Sitemap" [ref=e153] [cursor=pointer]:
+            - /url: http://stg.croix.asia/sitemap
+          - link "個人情報保護方針" [ref=e154] [cursor=pointer]:
+            - /url: http://stg.croix.asia/cookie
+          - link "Privacy policy" [ref=e155] [cursor=pointer]:
+            - /url: http://stg.croix.asia/privacy
+        - paragraph [ref=e156]: © 2025 CROIX

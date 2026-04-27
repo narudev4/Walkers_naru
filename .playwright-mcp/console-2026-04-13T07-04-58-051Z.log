@@ -1,0 +1,8 @@
+[    1272ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.woff2' from origin 'https://croix.asia' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/2025/11/28/croix-studyjam/:0
+[    1272ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.woff2:0
+[    1321ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.woff' from origin 'https://croix.asia' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/2025/11/28/croix-studyjam/:0
+[    1321ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.woff:0
+[    1373ms] [ERROR] Access to font at 'https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.otf' from origin 'https://croix.asia' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://croix.asia/2025/11/28/croix-studyjam/:0
+[    1373ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Medium.otf:0
+[    1408ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://use.typekit.net/mbt8eig.js:0
+[    1979ms] [WARNING] [Meta pixel] 666078689403801 is unavailable on this website due to it's traffic permission settings. Go to https://www.facebook.com/business/help/572690630080597 to learn more. @ https://connect.facebook.net/en_US/fbevents.js:181

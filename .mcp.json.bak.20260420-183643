@@ -1,0 +1,164 @@
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>"
+      }
+    },
+    "notion": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@notionhq/notion-mcp-server"
+      ],
+      "env": {
+        "OPENAPI_MCP_HEADERS": "{\"Authorization\":\"Bearer <NOTION_TOKEN>\",\"Notion-Version\":\"2022-06-28\"}"
+      }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
+    },
+    "google-workspace": {
+      "command": "uvx",
+      "args": [
+        "workspace-mcp",
+        "--tool-tier",
+        "complete"
+      ],
+      "env": {
+        "GOOGLE_OAUTH_CLIENT_ID": "50225068293-cegd575k9cpj1kqvj6usfn2aug8bakas.apps.googleusercontent.com",
+        "GOOGLE_OAUTH_CLIENT_SECRET": "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",
+        "USER_GOOGLE_EMAIL": "naru.hosoya@walker-s.co.jp",
+        "GOOGLE_MCP_CREDENTIALS_DIR": "/Users/naru/Walkers_naru/credentials/workspace-mcp"
+      }
+    },
+    "twitter": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@enescinar/twitter-mcp"
+      ],
+      "env": {
+        "API_KEY": "<YOUR_API_KEY>",
+        "API_SECRET_KEY": "<YOUR_API_KEY>",
+        "ACCESS_TOKEN": "<YOUR_TOKEN>",
+        "ACCESS_TOKEN_SECRET": "<YOUR_SECRET>"
+      }
+    },
+    "ssh-xserver": {
+      "command": "npx",
+      "args": [
+        "ssh-client-mcp",
+        "--host",
+        "xs067728.xsrv.jp",
+        "--port",
+        "10022",
+        "--user",
+        "xs067728",
+        "--key",
+        "~/.ssh/xserver_xs067728"
+      ]
+    },
+    "codex-cli": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "codex-mcp-server"
+      ],
+      "env": {
+        "OPENAI_API_KEY": "<YOUR_API_KEY>"
+      }
+    },
+    "misoca": {
+      "command": "node",
+      "args": [
+        "<YOUR_PATH>"
+      ]
+    },
+    "ahrefs": {
+      "type": "http",
+      "url": "https://api.ahrefs.com/mcp/mcp",
+      "headers": {
+        "Authorization": "Bearer <API_TOKEN>"
+      }
+    },
+    "note-post": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@gonuts555/note-post-mcp@latest"
+      ]
+    },
+    "gsc": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-server-gsc"
+      ],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "./credentials/gsc-service-account.json"
+      }
+    },
+    "google-analytics": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-server-google-analytics"
+      ],
+      "env": {
+        "GOOGLE_CLIENT_EMAIL": "claudecode@notional-impact-323103.iam.gserviceaccount.com",
+        "GOOGLE_PRIVATE_KEY": "<YOUR_API_KEY>",
+        "GA_PROPERTY_ID": "297212277"
+      }
+    },
+    "youtube": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@kirbah/mcp-youtube"
+      ],
+      "env": {
+        "YOUTUBE_API_KEY": "<YOUR_API_KEY>"
+      }
+    },
+    "youtube-analytics": {
+      "command": "node",
+      "args": [
+        "./05_development/mcp-youtube-analytics/index.js"
+      ]
+    },
+    "ubersuggest": {
+      "command": "node",
+      "args": [
+        "./05_development/mcp-ubersuggest/src/index.js"
+      ],
+      "env": {
+        "UBERSUGGEST_JWT_TOKEN": "<YOUR_TOKEN>"
+      }
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "chrome-devtools-mcp@latest",
+        "--autoConnect"
+      ]
+    },
+    "clarity": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@microsoft/clarity-mcp-server",
+        "--clarity_api_token=eyJhbGciOiJSUzI1NiIsImtpZCI6IjQ4M0FCMDhFNUYwRDMxNjdEOTRFMTQ3M0FEQTk2RTcyRDkwRUYwRkYiLCJ0eXAiOiJKV1QifQ.eyJqdGkiOiIwN2NlNjU1YS00MmY2LTQwMzMtYTJiMS1lNWFlYWYxMWIxOGYiLCJzdWIiOiIxNTU1NTk5Nzc3ODkwODk0Iiwic2NvcGUiOiJEYXRhLkV4cG9ydCIsIm5iZiI6MTc3MjA5NTY2MSwiZXhwIjo0OTI1Njk1NjYxLCJpYXQiOjE3NzIwOTU2NjEsImlzcyI6ImNsYXJpdHkiLCJhdWQiOiJjbGFyaXR5LmRhdGEtZXhwb3J0ZXIifQ.PveAb4eNYrGxemS0T04X75rr-FjhrOEOKqhO30ucvjgbtoxe2eoIoVizPzjquLNwp80EGis7PMsB7QHPziIWitpzmUMuN40DvuqcVKFMymHOYKYGBzKRwz-5SdWvGcun5XGY5DUfqhXHyCdwiv_uBZ4b6bi_ciFqjvUwvts5HrjqEQS0cDhq_ukrfdjDwe6NPOPbUgcoTB9RIYUDoa_CEuqznsn6iWlgoqRz7Bez0iDjEBLyRzA6ExgzSsrW2V6zS16PBwYeTxdOzp6pTOhJD3s3cOUz8YsszsNT_olPouBsPioZKjjYkbbsXLcI5kNxl3VNmFo1JsRx1pnIIj27-g"
+      ]
+    }
+  }
+}

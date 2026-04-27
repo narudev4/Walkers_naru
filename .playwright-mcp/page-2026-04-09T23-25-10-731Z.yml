@@ -1,0 +1,145 @@
+- generic [active] [ref=e1]:
+  - banner:
+    - link "croix" [ref=e3] [cursor=pointer]:
+      - /url: http://stg.croix.asia
+      - img "croix" [ref=e4]
+    - paragraph [ref=e8] [cursor=pointer]: MENU
+  - generic [ref=e10]:
+    - link "EN" [ref=e11] [cursor=pointer]:
+      - /url: "#"
+      - generic [ref=e12]: EN
+    - link "JA" [ref=e13] [cursor=pointer]:
+      - /url: "#"
+      - generic [ref=e14]: JA
+  - main [ref=e15]:
+    - heading "News 新着情報" [level=3] [ref=e20]:
+      - generic [ref=e21]: News
+      - generic [ref=e22]: 新着情報
+    - generic [ref=e26]:
+      - generic [ref=e27]:
+        - generic [ref=e28]: 2025.01.01
+        - generic [ref=e29]: （お知らせ）
+      - heading "2025年 新年あけましておめでとうございます。" [level=1] [ref=e30]
+      - generic [ref=e31]:
+        - generic [ref=e33]: 新年あけましておめでとうございます。
+        - generic [ref=e36]:
+          - generic [ref=e37]: 株式会社クロアは、ウェルビーイング・テクノロジー・カンパニーとして、
+          - generic [ref=e39]: 2025年も皆様に美しい眠りと癒やしの世界を RELAX WORLD ブランドにてお届け致します。
+        - link [ref=e42] [cursor=pointer]:
+          - /url: http://stg.croix.asia/wp-content/uploads/2026/03/2025_croix_nenga_movie_720.gif
+    - generic [ref=e48]:
+      - textbox "Search" [ref=e49]
+      - button "search" [ref=e50] [cursor=pointer]:
+        - img "search" [ref=e51]
+    - generic [ref=e53]:
+      - heading "Pickup" [level=2] [ref=e54]:
+        - generic [ref=e55]: Pickup
+      - generic [ref=e56]:
+        - generic [ref=e57]:
+          - link "Musiora ミュジオラ -coming soon-" [ref=e58] [cursor=pointer]:
+            - /url: "#"
+            - paragraph [ref=e59]:
+              - generic [ref=e60]: Musiora
+              - generic [ref=e61]: ミュジオラ -coming soon-
+          - link "nemcaro ネムカロ" [ref=e62] [cursor=pointer]:
+            - /url: http://stg.croix.asia/works/nemcaro/
+            - paragraph [ref=e63]:
+              - generic [ref=e64]: nemcaro
+              - generic [ref=e65]: ネムカロ
+          - link "Relaxest リラクゼスト" [ref=e66] [cursor=pointer]:
+            - /url: https://relaxest.jp/?gad_source=1&gad_campaignid=23438734731&gbraid=0AAAAADKs12bOm465MtyfyC0W8klOhZdAI&gclid=CjwKCAiAj8LLBhAkEiwAJjbY7y3fvKS10ix2xA-VHQBqdNzasSJuDZemA7bSoQTruzl2KJwQHHjPFhoC4xkQAvD_BwE
+            - paragraph [ref=e67]:
+              - generic [ref=e68]: Relaxest
+              - generic [ref=e69]: リラクゼスト
+        - generic [ref=e70]:
+          - link "RELAX WORLD Plus 癒しと眠りのアプリ -coming soon-" [ref=e71] [cursor=pointer]:
+            - /url: "#"
+            - paragraph [ref=e72]:
+              - generic [ref=e73]: RELAX WORLD Plus
+              - generic [ref=e74]: 癒しと眠りのアプリ -coming soon-
+          - link "RELAX WORLD EC 癒やしと眠りのスペシャリティストア -coming soon-" [ref=e75] [cursor=pointer]:
+            - /url: "#"
+            - paragraph [ref=e76]:
+              - generic [ref=e77]: RELAX WORLD EC
+              - generic [ref=e78]: 癒やしと眠りのスペシャリティストア -coming soon-
+    - generic [ref=e80]:
+      - heading "Contact お問い合わせ" [level=2] [ref=e81]:
+        - generic [ref=e82]: Contact
+        - generic [ref=e83]: お問い合わせ
+      - generic [ref=e84]:
+        - paragraph [ref=e85]:
+          - text: 株式会社クロアへのお問い合わせは下記メールフォームにご入力のうえ、送信してください。
+          - text: Please fill out and submit the following mail form to contact croix Co.,Ltd.
+        - generic [ref=e86]:
+          - link "お問い合わせ" [ref=e87] [cursor=pointer]:
+            - /url: http://stg.croix.asia/contact
+            - generic [ref=e88]: お問い合わせ
+          - link "資料ダウンロード" [ref=e89] [cursor=pointer]:
+            - /url: ""
+            - generic [ref=e90]: 資料ダウンロード
+  - contentinfo [ref=e91]:
+    - generic [ref=e92]:
+      - generic [ref=e93]:
+        - link "CROIX" [ref=e94] [cursor=pointer]:
+          - /url: http://stg.croix.asia
+          - img "CROIX" [ref=e95]
+        - generic [ref=e96]:
+          - paragraph [ref=e97]: 株式会社クロア
+          - paragraph [ref=e98]: 〒153-0064 東京都目黒区下目黒3-7-2-7F
+          - paragraph [ref=e99]: TEL 03-5436-1960 / FAX 03-5436-1961
+          - paragraph [ref=e100]: 営業時間 10:00-18:30 （土・日・祝・弊社特別休日を除く）
+      - generic [ref=e101]:
+        - list [ref=e102]:
+          - listitem [ref=e103]:
+            - text: Services
+            - list [ref=e104]:
+              - listitem [ref=e105]:
+                - link "App & Digital Platform" [ref=e106] [cursor=pointer]:
+                  - /url: http://stg.croix.asia/service
+              - listitem [ref=e107]:
+                - link "Sound & Video" [ref=e108] [cursor=pointer]:
+                  - /url: http://stg.croix.asia/sound
+              - listitem [ref=e109]:
+                - link "Product & Smart Products" [ref=e110] [cursor=pointer]:
+                  - /url: http://stg.croix.asia/product
+              - listitem [ref=e111]:
+                - link "Wellness Station - Relaxest" [ref=e112] [cursor=pointer]:
+                  - /url: http://stg.croix.asia/relaxest
+          - listitem [ref=e113]:
+            - link "Works" [ref=e114] [cursor=pointer]:
+              - /url: http://stg.croix.asia/works
+        - list [ref=e115]:
+          - listitem [ref=e116]:
+            - link "Media" [ref=e117] [cursor=pointer]:
+              - /url: http://stg.croix.asia/media
+          - listitem [ref=e118]:
+            - link "News" [ref=e119] [cursor=pointer]:
+              - /url: http://stg.croix.asia/news
+          - listitem [ref=e120]:
+            - link "Company" [ref=e121] [cursor=pointer]:
+              - /url: http://stg.croix.asia/company
+          - listitem [ref=e122]:
+            - link "Access" [ref=e123] [cursor=pointer]:
+              - /url: http://stg.croix.asia/access
+          - listitem [ref=e124]:
+            - link "Sitemap" [ref=e125] [cursor=pointer]:
+              - /url: http://stg.croix.asia/sitemap
+      - generic [ref=e126]:
+        - generic [ref=e127]:
+          - link "Facebook" [ref=e128] [cursor=pointer]:
+            - /url: https://www.facebook.com/relaxworld.jp/
+            - img "Facebook" [ref=e129]
+          - link "Instagram" [ref=e130] [cursor=pointer]:
+            - /url: https://www.instagram.com/croix_relaxworld/
+            - img "Instagram" [ref=e131]
+          - link "YouTube" [ref=e132] [cursor=pointer]:
+            - /url: https://www.youtube.com/@RELAX_WORLD
+            - img "YouTube" [ref=e133]
+        - generic [ref=e134]:
+          - link "Sitemap" [ref=e135] [cursor=pointer]:
+            - /url: http://stg.croix.asia/sitemap
+          - link "個人情報保護方針" [ref=e136] [cursor=pointer]:
+            - /url: http://stg.croix.asia/cookie
+          - link "Privacy policy" [ref=e137] [cursor=pointer]:
+            - /url: http://stg.croix.asia/privacy
+        - paragraph [ref=e138]: © 2025 CROIX

@@ -28,8 +28,10 @@ ARTICLES = [
 
 async def check_one(page, slug, stg_id, out):
     url = f"http://stg.croix.asia/news/{slug}/"
-    await goto(page, url)
-    await asyncio.sleep(2)
+    print(f"  [{stg_id}] nav...", flush=True)
+    await page.goto(url, wait_until="domcontentloaded", timeout=20000)
+    await asyncio.sleep(1.5)
+    print(f"  [{stg_id}] evaluating...", flush=True)
 
     info = await page.evaluate("""
         () => {
@@ -145,9 +147,18 @@ async def check_one(page, slug, stg_id, out):
 
     # Screenshot
     shot_path = f"{SHOT_DIR}/{stg_id}_{slug}_1440.png"
-    await page.screenshot(path=shot_path, full_page=True)
-    out.append(f"\n📸 `{shot_path}`\n")
-    print(f"  ✓ {stg_id} {slug}")
+    print(f"  [{stg_id}] screenshot...", flush=True)
+    try:
+        await asyncio.wait_for(page.screenshot(path=shot_path, full_page=True), timeout=30)
+        out.append(f"\n`{shot_path}`\n")
+    except Exception as e:
+        out.append(f"\nscreenshot error: {e}\n")
+        print(f"  [{stg_id}] screenshot FAIL: {e}", flush=True)
+    print(f"  [{stg_id}] done", flush=True)
+
+    # Save report incrementally after each article
+    with open(REPORT, "w") as f:
+        f.write("\n".join(out))
 
 
 async def main():
@@ -162,10 +173,10 @@ async def main():
 
         for stg_id, slug in ARTICLES:
             try:
-                await check_one(page, slug, stg_id, out)
+                await asyncio.wait_for(check_one(page, slug, stg_id, out), timeout=90)
             except Exception as e:
                 out.append(f"\n## {stg_id} {slug} — ERROR: {e}\n")
-                print(f"  ✗ {stg_id}: {e}")
+                print(f"  x {stg_id}: {e}", flush=True)
 
         with open(REPORT, "w") as f:
             f.write("\n".join(out))

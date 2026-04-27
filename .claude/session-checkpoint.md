@@ -2,47 +2,42 @@
 
 > このファイルはAIが自動更新する。新セッションで「前回の続きから」と言えば復旧に使われる。
 
-Updated: 2026-04-13 17:30
+Updated: 2026-04-14 (Phase 0完了直後)
 
 ## Current Task
 
-**LINE Webhookクライアントコミュニケーション監視システム構築。LINEグループのやりとりをNeonDB(Postgres)に保存し、Claudeから参照可能にする。**
+**YouTube動画制作: `claudecode-security` の yt-heygen STEP6。Phase 0 (PPTXアップロード) 完了、Phase 1+2 (音声アップ+アバター配置) 未実施。**
 
 ## Progress
 
-- [x] LINE公式アカウント作成 → Messaging API有効化
-- [x] Channel Secret / Channel Access Token 発行済み
-- [x] Webhook有効化、グループ参加許可ON、自動応答OFF
-- [x] botをクライアントLINEグループに招待済み
-- [x] NeonDB プロジェクト作成（walkers-comms / sparkling-cake-36347387）
-- [x] messagesテーブル + インデックス作成済み
-- [ ] Vercelにwebhookエンドポイント作成（Hono）
-- [ ] LINE署名検証（HMAC-SHA256）
-- [ ] LINE Profile APIでdisplayName取得
-- [ ] NeonDBへのメッセージ書き込み
-- [ ] Vercelデプロイ + LINE Developer ConsoleにWebhook URL設定
-- [ ] 動作確認（テストメッセージ → DB記録確認）
+- [x] yt-scrape / yt-script / yt-slides / yt-voice / yt-split-audio 完了
+- [x] Phase 0: PPTXアップロード → アバター選択 → Create Video → エディタ遷移
+- [ ] Phase 1+2: 全40シーンの音声アップ＋アバター配置（200x200右上）
+- [ ] 背景BGM設定（Corporate/Upbeat、Volume 3%、Loop ON）
+- [ ] 動画生成ボタン押下（手動）
+- [ ] STEP7 yt-thumbnail / STEP8 yt-upload
 
 ## Key Context
 
-- **プラン**: `.claude/plans/humble-wiggling-treehouse.md` に詳細あり
-- **NeonDB**: プロジェクトID `sparkling-cake-36347387`, DB `neondb`
-- **NeonDB接続**: `postgresql://neondb_owner:***@ep-nameless-art-aj4zyzye-pooler.c-3.us-east-2.aws.neon.tech/neondb`
-- **構成**: LINE → Vercel (Hono) → LINE Profile API + NeonDB
-- **DBスキーマ**: messages(id, event_timestamp, group_id, user_id, display_name, message_type, message_text, platform, raw_event, created_at)
-- **将来構想**: Gmail/Slack統合、AIコンテキストレイヤー（Claudeが「A社のMTGで何話す？」に答えられる）
-- **LINE注意**: webhookでは名前取れない。userId → Profile APIで別途取得が必要
-- **ワークツリー**: 使用予定（まだ未作成）
-- **プロジェクトパス**: `05_development/line-webhook/`
+- **プロジェクトパス**: `05_development/youtube/projects/claudecode-security/`
+- **シーン数**: 40（`audio/scenes/scene01_*.wav` 〜 `scene40_*.wav`）
+- **HeyGenエディタURL**: `https://app.heygen.com/create-v4/3f2bc7b0223c46628146a253f9fcee17`
+- **選択アバター**: 本番用：山口鳳汰(背景リアル&スーツ見えるver)
+- **Phase 0の注意**: setup.py の自動Speaker notes選択はFAIL。アバター選択も `button.click()` (browser-use click) は反応せず、`imgs[0].click()` + card.click() のDOM直叩きで成功した
+
+## Files Modified
+
+なし（HeyGen側の操作のみ）
 
 ## Next Steps
 
-1. ワークツリーで `05_development/line-webhook/` を作成
-2. Hono + @neondatabase/serverless でwebhookエンドポイント実装
-3. Vercelデプロイ → LINE Developer ConsoleにWebhook URL設定
-4. テスト送信で動作確認
+1. ユーザー確認: Phase 1+2 実行してよいか
+2. 実行コマンド: `HEYGEN_SLUG=claudecode-security /Users/naru/.pyenv/versions/3.13.0/bin/python3 _shared/heygen-setup.py`
+3. 完走後、HeyGenで背景BGM設定 → 動画生成 → ダウンロード
+4. STEP7 yt-thumbnail、STEP8 yt-upload へ
 
 ## 注意
 
-- LINE webhookはリアルタイム配信のみ。過去メッセージ取得APIなし
-- 今日中にグループチャットが始まるため急ぎでデプロイ必要
+- HeyGenのドラフトは複数タブ同時編集不可。別タブで開かないこと
+- Phase 1+2が失敗したら `projects/claudecode-security/heygen-setup-progress.json` でレジューム可
+- setup.py の本番用アバタークリック問題は learnings にまだ未追記（次回追記検討）

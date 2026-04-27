@@ -1,0 +1,227 @@
+- generic [active] [ref=e1]:
+  - banner:
+    - generic:
+      - link "croix":
+        - /url: http://stg.croix.asia
+        - img "croix"
+    - generic:
+      - paragraph: MENU
+  - generic [ref=e3]:
+    - link "EN" [ref=e4] [cursor=pointer]:
+      - /url: "#"
+      - generic [ref=e5]: EN
+    - link "JA" [ref=e6] [cursor=pointer]:
+      - /url: "#"
+      - generic [ref=e7]: JA
+  - main [ref=e8]:
+    - heading "News 新着情報" [level=3] [ref=e13]:
+      - generic [ref=e14]: News
+      - generic [ref=e15]: 新着情報
+    - generic [ref=e19]:
+      - generic [ref=e20]:
+        - generic [ref=e21]: 2024.11.05
+        - generic [ref=e22]: （お知らせ）
+      - heading "AI生成による瞑想音楽サービス「itakeru.com」正式オープン：リアルタイムで心身の調和を促す新体験" [level=1] [ref=e23]
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - img [ref=e26]
+          - paragraph [ref=e27]: itakeru.com
+        - paragraph [ref=e28]:
+          - strong [ref=e30]: クロアが最新AI技術で提供する個別最適化された瞑想音楽、内なる宇宙との深いつながりをサポート
+        - paragraph [ref=e31]: ウェルビーイング・テクノロジー事業を行なう株式会社クロアは、AIが生成する瞑想音楽をリアルタイムで提供するウェブサイト「itakeru.com」を、２０２４年１１月５日に正式オープンしました。本サイトは、ユーザーの心の状態に合わせてAIが無限に音楽を生成し、瞑想やビジュアライゼーションをサポートします。
+        - paragraph [ref=e32]: 「itakeru.com」は、ユーザー一人ひとりに適応した音楽体験を通じて、深い自己探求の旅を可能にします。スマートフォンやPCなど様々なデバイスからアクセス可能で、シンプルな操作性により、誰でも直感的に瞑想を楽しむことができます。自然音や環境音を取り入れる機能も備え、心と体を穏やかな状態へと導きます。
+        - paragraph [ref=e33]: サイト名「五十猛(itakeru)」は、日本神話に登場する自然と調和を象徴する神「五十猛命（いたけるのみこと）」に由来します。AI生成の音楽を通じ、ユーザーが内なる自然とつながり、心の豊かさを育むことを目指しています。クロアは今後、ユーザーのフィードバックをもとにさらなるパーソナライズ機能や他のウェルネスサービスとの連携を進め、心の健康促進に貢献していきます。
+        - paragraph [ref=e34]:
+          - text: 詳細は公式サイト（
+          - link "https://itakeru.com/" [ref=e35] [cursor=pointer]:
+            - /url: https://itakeru.com/
+          - text: ）をご覧ください。
+        - paragraph [ref=e36]
+        - heading "サイトの特長：" [level=2] [ref=e37]:
+          - strong [ref=e38]: サイトの特長：
+        - generic [ref=e39]:
+          - figure
+          - figure [ref=e40]: 音楽生成時のビジュアライザー
+        - paragraph [ref=e41]
+        - paragraph [ref=e42]:
+          - strong [ref=e43]: ① 直感的で使いやすいインターフェース
+        - list [ref=e44]:
+          - listitem [ref=e45]: シンプルなデザインで、どなたでも簡単にアクセス可能
+          - listitem [ref=e46]: 再生ボタンでリアルタイム瞑想音楽の再生・停止
+          - listitem [ref=e47]: 「Ambience On/Off」ボタンで自然音や環境音を切り替え
+        - paragraph [ref=e48]:
+          - strong [ref=e49]: ② いつでもどこでも利用可能
+        - list [ref=e50]:
+          - listitem [ref=e51]: スマートフォン、タブレット、PCなど、あらゆるデバイスに対応
+          - listitem [ref=e52]: 場所を選ばず瞑想を楽しむことが可能
+        - paragraph [ref=e53]:
+          - strong [ref=e54]: ③ AIがリアルタイム瞑想音楽を生成
+        - list [ref=e55]:
+          - listitem [ref=e56]: ユーザーの瞑想リズムや心の状態に合わせて、常に新しい音楽を生成
+          - listitem [ref=e57]: 音楽が無限に流れ続け、深いリラクゼーション体験を提供
+        - paragraph [ref=e58]:
+          - strong [ref=e59]: ④ 個人の内面に向き合う深い瞑想体験
+        - list [ref=e60]:
+          - listitem [ref=e61]: 瞑想やビジュアライゼーションを通じ、ユーザーを意識の深層へと導く
+          - listitem [ref=e62]: 音楽が単なるBGMではなく、自己探求の旅のパートナーとなる
+        - paragraph [ref=e63]
+        - paragraph [ref=e64]:
+          - text: 詳細は公式サイト（
+          - link "https://itakeru.com/" [ref=e65] [cursor=pointer]:
+            - /url: https://itakeru.com/
+          - text: ）をご覧ください。
+        - separator [ref=e66]
+        - heading "開発背景：" [level=2] [ref=e67]:
+          - strong [ref=e68]: 開発背景：
+        - paragraph [ref=e69]:
+          - text: 現代社会では多くの人がストレスや不安に悩まされています。
+          - text: 瞑想がその解消に効果的であることは広く認識されていますが、日常生活の忙しさの中で心を落ち着けるための音楽を手軽に利用できる機会は限られています。
+        - paragraph [ref=e70]: 株式会社クロアは、誰もがいつでも簡単に瞑想に取り組める環境を提供するため、AI技術を活用したこのリアルタイム瞑想音楽サービス「itakeru.com」を開発しました。
+        - separator [ref=e71]
+        - heading "今後の展開：" [level=2] [ref=e72]:
+          - strong [ref=e73]: 今後の展開：
+        - paragraph [ref=e74]: このリアルタイム瞑想音楽サービスを通じて、より多くの人々が自分自身とのつながりを深め、心の健康を保つことができる世界を目指しています。今後は、ユーザーのフィードバックをもとに、さらにパーソナライズされた機能の追加や、他のウェルネスサービスとの連携を進めてまいります。
+        - separator [ref=e75]
+        - heading "「itakeru.com」命名意図：" [level=2] [ref=e76]:
+          - strong [ref=e77]: 「itakeru.com」命名意図：
+        - figure [ref=e79]:
+          - img [ref=e80]
+        - paragraph [ref=e81]:
+          - text: 「
+          - strong [ref=e82]: 五十猛(itakeru)
+          - text: 」というサイト名は、日本神話に登場する神「五十猛命（いたけるのみこと）」に由来します。五十猛命は、スサノオノミコトの息子であり、樹木や森の神として知られています。彼は大地に木々を植えることで自然の豊かさをもたらし、生命と調和する環境を創り出したとされています。
+        - paragraph [ref=e83]: この名前を瞑想音楽サイトに採用した背景には、五十猛命の役割と自然への関与が深く関係しています。瞑想は、内なる静寂と自然とのつながりを感じる行為であり、五十猛命が大地に植えた木々のように、ユーザーが自己探求の旅を通じて成長し、心の豊かさを育むことを象徴しています。
+        - paragraph [ref=e84]:
+          - strong [ref=e85]: 自然との調和と成長
+        - paragraph [ref=e86]: 五十猛命が木々を植えて自然の調和を生み出したように、このサイトでは、ユーザーがAI生成の音楽を通じて内なる自然と深く調和し、心を育む環境を提供します。
+        - paragraph [ref=e87]:
+          - strong [ref=e88]: 個々のユーザーに適応した体験
+        - paragraph [ref=e89]: 五十猛命が各地に多種多様な木々を植えたように、このサイトもユーザー一人ひとりに合わせたパーソナライズされた音楽体験を提供します。瞑想やビジュアライゼーションを通じ、個人の成長や変容をサポートします。
+        - paragraph [ref=e90]:
+          - strong [ref=e91]: 新たな可能性を開く門
+        - paragraph [ref=e92]: 五十猛命が自然界に新たな命をもたらしたように、「五十猛」はユーザーにとって自己発見や意識の新たな扉を開く役割を果たします。AIが作り出す音楽は、日常から離れ、深い瞑想の旅へと誘います。
+        - paragraph [ref=e93]: このように、日本神話の五十猛命が象徴する「自然とのつながり」と「成長」の概念が瞑想音楽の目的と重なることから、「五十猛(itakeru)」と名付けられました。
+        - separator [ref=e94]
+        - heading "「itakeru.com」" [level=2] [ref=e95]:
+          - strong [ref=e96]: 「itakeru.com」
+        - paragraph [ref=e97]:
+          - text: 詳細は公式サイト（
+          - link "https://itakeru.com/" [ref=e98] [cursor=pointer]:
+            - /url: https://itakeru.com/
+          - text: ）をご覧ください。
+    - generic [ref=e102]:
+      - textbox "Search" [ref=e103]
+      - button "search" [ref=e104] [cursor=pointer]:
+        - img "search" [ref=e105]
+    - generic [ref=e107]:
+      - heading "Pickup" [level=2] [ref=e108]:
+        - generic [ref=e109]: Pickup
+      - generic [ref=e110]:
+        - generic [ref=e111]:
+          - link "Musiora ミュジオラ -coming soon-" [ref=e112] [cursor=pointer]:
+            - /url: "#"
+            - paragraph [ref=e113]:
+              - generic [ref=e114]: Musiora
+              - generic [ref=e115]: ミュジオラ -coming soon-
+          - link "nemcaro ネムカロ" [ref=e116] [cursor=pointer]:
+            - /url: http://stg.croix.asia/works/nemcaro/
+            - paragraph [ref=e117]:
+              - generic [ref=e118]: nemcaro
+              - generic [ref=e119]: ネムカロ
+          - link "Relaxest リラクゼスト" [ref=e120] [cursor=pointer]:
+            - /url: https://relaxest.jp/?gad_source=1&gad_campaignid=23438734731&gbraid=0AAAAADKs12bOm465MtyfyC0W8klOhZdAI&gclid=CjwKCAiAj8LLBhAkEiwAJjbY7y3fvKS10ix2xA-VHQBqdNzasSJuDZemA7bSoQTruzl2KJwQHHjPFhoC4xkQAvD_BwE
+            - paragraph [ref=e121]:
+              - generic [ref=e122]: Relaxest
+              - generic [ref=e123]: リラクゼスト
+        - generic [ref=e124]:
+          - link "RELAX WORLD Plus 癒しと眠りのアプリ -coming soon-" [ref=e125] [cursor=pointer]:
+            - /url: "#"
+            - paragraph [ref=e126]:
+              - generic [ref=e127]: RELAX WORLD Plus
+              - generic [ref=e128]: 癒しと眠りのアプリ -coming soon-
+          - link "RELAX WORLD EC 癒やしと眠りのスペシャリティストア -coming soon-" [ref=e129] [cursor=pointer]:
+            - /url: "#"
+            - paragraph [ref=e130]:
+              - generic [ref=e131]: RELAX WORLD EC
+              - generic [ref=e132]: 癒やしと眠りのスペシャリティストア -coming soon-
+    - generic [ref=e134]:
+      - heading "Contact お問い合わせ" [level=2] [ref=e135]:
+        - generic [ref=e136]: Contact
+        - generic [ref=e137]: お問い合わせ
+      - generic [ref=e138]:
+        - paragraph [ref=e139]:
+          - text: 株式会社クロアへのお問い合わせは下記メールフォームにご入力のうえ、送信してください。
+          - text: Please fill out and submit the following mail form to contact croix Co.,Ltd.
+        - generic [ref=e140]:
+          - link "お問い合わせ" [ref=e141] [cursor=pointer]:
+            - /url: http://stg.croix.asia/contact
+            - generic [ref=e142]: お問い合わせ
+          - link "資料ダウンロード" [ref=e143] [cursor=pointer]:
+            - /url: ""
+            - generic [ref=e144]: 資料ダウンロード
+  - contentinfo [ref=e145]:
+    - generic [ref=e146]:
+      - generic [ref=e147]:
+        - link "CROIX" [ref=e148] [cursor=pointer]:
+          - /url: http://stg.croix.asia
+          - img "CROIX" [ref=e149]
+        - generic [ref=e150]:
+          - paragraph [ref=e151]: 株式会社クロア
+          - paragraph [ref=e152]: 〒153-0064 東京都目黒区下目黒3-7-2-7F
+          - paragraph [ref=e153]: TEL 03-5436-1960 / FAX 03-5436-1961
+          - paragraph [ref=e154]: 営業時間 10:00-18:30 （土・日・祝・弊社特別休日を除く）
+      - generic [ref=e155]:
+        - list [ref=e156]:
+          - listitem [ref=e157]:
+            - text: Services
+            - list [ref=e158]:
+              - listitem [ref=e159]:
+                - link "App & Digital Platform" [ref=e160] [cursor=pointer]:
+                  - /url: http://stg.croix.asia/service
+              - listitem [ref=e161]:
+                - link "Sound & Video" [ref=e162] [cursor=pointer]:
+                  - /url: http://stg.croix.asia/sound
+              - listitem [ref=e163]:
+                - link "Product & Smart Products" [ref=e164] [cursor=pointer]:
+                  - /url: http://stg.croix.asia/product
+              - listitem [ref=e165]:
+                - link "Wellness Station - Relaxest" [ref=e166] [cursor=pointer]:
+                  - /url: http://stg.croix.asia/relaxest
+          - listitem [ref=e167]:
+            - link "Works" [ref=e168] [cursor=pointer]:
+              - /url: http://stg.croix.asia/works
+        - list [ref=e169]:
+          - listitem [ref=e170]:
+            - link "Media" [ref=e171] [cursor=pointer]:
+              - /url: http://stg.croix.asia/media
+          - listitem [ref=e172]:
+            - link "News" [ref=e173] [cursor=pointer]:
+              - /url: http://stg.croix.asia/news
+          - listitem [ref=e174]:
+            - link "Company" [ref=e175] [cursor=pointer]:
+              - /url: http://stg.croix.asia/company
+          - listitem [ref=e176]:
+            - link "Access" [ref=e177] [cursor=pointer]:
+              - /url: http://stg.croix.asia/access
+          - listitem [ref=e178]:
+            - link "Sitemap" [ref=e179] [cursor=pointer]:
+              - /url: http://stg.croix.asia/sitemap
+      - generic [ref=e180]:
+        - generic [ref=e181]:
+          - link "Facebook" [ref=e182] [cursor=pointer]:
+            - /url: https://www.facebook.com/relaxworld.jp/
+            - img "Facebook" [ref=e183]
+          - link "Instagram" [ref=e184] [cursor=pointer]:
+            - /url: https://www.instagram.com/croix_relaxworld/
+            - img "Instagram" [ref=e185]
+          - link "YouTube" [ref=e186] [cursor=pointer]:
+            - /url: https://www.youtube.com/@RELAX_WORLD
+            - img "YouTube" [ref=e187]
+        - generic [ref=e188]:
+          - link "Sitemap" [ref=e189] [cursor=pointer]:
+            - /url: http://stg.croix.asia/sitemap
+          - link "個人情報保護方針" [ref=e190] [cursor=pointer]:
+            - /url: http://stg.croix.asia/cookie
+          - link "Privacy policy" [ref=e191] [cursor=pointer]:
+            - /url: http://stg.croix.asia/privacy
+        - paragraph [ref=e192]: © 2025 CROIX

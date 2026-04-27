@@ -7,7 +7,7 @@ WP admin. Profile 4 cookies are persisted on this Chrome instance.
 import asyncio
 from playwright.async_api import async_playwright, Browser, BrowserContext, Page
 
-CDP_URL = "http://localhost:65300"
+CDP_URL = "http://localhost:9222"
 
 
 async def connect():

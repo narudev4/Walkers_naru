@@ -1,0 +1,27 @@
+{
+  "_comment": "このファイルをプロジェクトルートに .mcp.json としてコピーし、下記の手順で認証してください。",
+  "_setup": [
+    "1. 05_development/mcp-google/ で `npm install` を実行",
+    "2. Google Cloud Console で OAuth クライアントID（デスクトップアプリ）を作成し、credentials.json を 05_development/mcp-google/ に配置",
+    "3. `node 05_development/mcp-google/auth.js` を実行してブラウザで認証 → token.json が自動生成される",
+    "4. このファイルのパスを自分の環境に合わせて書き換え",
+    "5. Claude Code を再起動"
+  ],
+  "mcpServers": {
+    "google": {
+      "type": "stdio",
+      "command": "/usr/local/bin/node",
+      "args": ["/FULL/PATH/TO/YOUR/PROJECT/05_development/mcp-google/index.js"],
+      "env": {}
+    },
+    "notion_optional": {
+      "_note": "Notion連携は任意。営業パイプラインをNotionで管理している場合のみ設定する",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@notionhq/notion-mcp-server"],
+      "env": {
+        "OPENAPI_MCP_HEADERS": "{\"Authorization\":\"Bearer YOUR_NOTION_TOKEN_HERE\",\"Notion-Version\":\"2022-06-28\"}"
+      }
+    }
+  }
+}

@@ -1,0 +1,233 @@
+- generic [active] [ref=e1]:
+  - banner:
+    - navigation [ref=e2]:
+      - generic [ref=e3]:
+        - link "株式会社クロア" [ref=e5] [cursor=pointer]:
+          - /url: https://croix.asia/
+          - img "株式会社クロア" [ref=e6]
+        - generic [ref=e7]:
+          - list [ref=e8]:
+            - listitem [ref=e9]:
+              - button "事業内容" [ref=e10] [cursor=pointer]: 事業内容
+            - listitem [ref=e12]:
+              - button "メディア" [ref=e13] [cursor=pointer]
+            - listitem [ref=e14]:
+              - button "企業情報" [ref=e15] [cursor=pointer]: 企業情報
+            - listitem [ref=e17]:
+              - button "会社概要" [ref=e18] [cursor=pointer]: 会社概要
+            - listitem [ref=e20]:
+              - list [ref=e21]:
+                - listitem [ref=e22]: English
+                - listitem [ref=e23]:
+                  - link "日本語" [ref=e25] [cursor=pointer]:
+                    - /url: https://croix.asia/2026/03/16/nemcaro-apparel-team-launch/
+          - list [ref=e26]:
+            - listitem [ref=e27]:
+              - link [ref=e28] [cursor=pointer]:
+                - /url: https://www.youtube.com/@RELAX_WORLD
+                - generic [ref=e29]: 
+            - listitem [ref=e30]:
+              - link [ref=e31] [cursor=pointer]:
+                - /url: https://www.facebook.com/relaxworld.jp/
+                - generic [ref=e32]: 
+            - listitem [ref=e33]:
+              - link [ref=e34] [cursor=pointer]:
+                - /url: https://www.instagram.com/croix_relaxworld/
+            - listitem [ref=e35]:
+              - button "お問い合わせ" [ref=e36] [cursor=pointer]
+  - generic [ref=e39]:
+    - paragraph [ref=e40]: 2026年3月16日
+    - heading "ウェルビーイング企業クロア、元・東京スタイル代表ら参画の睡眠ブランド「nemcaro」アパレルチーム発足" [level=1] [ref=e41]
+  - list [ref=e44]:
+    - listitem [ref=e45]:
+      - link "ホーム" [ref=e46] [cursor=pointer]:
+        - /url: https://croix.asia
+    - listitem [ref=e47]:
+      - link "NEWS" [ref=e48] [cursor=pointer]:
+        - /url: https://croix.asia/news/
+    - listitem [ref=e49]: ウェルビーイング企業クロア、元・東京スタイル代表ら参画の睡眠ブランド「nemcaro」アパレルチーム発足
+  - article [ref=e50]:
+    - generic [ref=e52]:
+      - heading "東京スタイル出身の中核メンバーが集結“眠りのためのスリープウェア”開発プロジェクト始動" [level=2] [ref=e53]
+      - paragraph [ref=e54]
+      - paragraph [ref=e55]:
+        - strong [ref=e57]: 睡眠を“着る”という新しいウェルネス体験へ。
+      - paragraph [ref=e58]: ウェルビーイング・テクノロジー事業を展開する株式会社クロア（本社：東京都目黒区、代表取締役社長：戸部田 馬準）は、睡眠ウェルネスブランド「nemcaro（ネムカロ）」のアパレル事業強化のため、専門チームを発足しました。本チームには、株式会社東京スタイル（現TSIホールディングス）の元代表取締役社長 山田康夫氏 を顧問に迎え、同社出身のMD・デザイナーなど経験豊富なメンバーが参画。機能性素材とファッションデザインを融合した “眠りのためのスリープウェア” の開発を本格的にスタートします。
+      - paragraph [ref=e59]
+      - heading "■ nemcaroの原点" [level=2] [ref=e60]
+      - paragraph [ref=e61]:
+        - strong [ref=e62]: 音から始まった睡眠ウェルネスブランド
+      - figure [ref=e64]:
+        - img [ref=e65]
+      - paragraph [ref=e66]: nemcaroは、クロアが長年培ってきたウェルビーイング事業の知見をもとに誕生した睡眠ウェルネスブランドです。クロアはこれまで、ヒーリング音楽や自然映像などのコンテンツ制作を通じて、瞑想・睡眠・リラクゼーション領域のデジタルコンテンツを世界に向けて提供してきました。その技術と知見を融合し、2025年には 立体音響による睡眠体験を提供するデバイスを発表。クラウドファンディングでは目標の400％を超える支持を獲得し、2026年3月29日には一般発売を予定しています。
+      - paragraph [ref=e67]:
+        - strong [ref=e68]: nemcaroは
+      - paragraph [ref=e69]:
+        - strong [ref=e70]:
+          - text: 音
+          - text: 映像
+          - text: 香り
+          - text: 素材
+      - paragraph [ref=e71]: を融合し、都市生活者の睡眠環境をトータルで再設計するブランドとして展開しています。
+      - paragraph [ref=e72]:
+        - link "👉 眠りのためのウェルネス・デバイス「nemcaro」関連情報はコチラ" [ref=e73] [cursor=pointer]:
+          - /url: https://prtimes.jp/main/action.php?run=html&page=searchkey&search_word=%E3%82%AF%E3%83%AD%E3%82%A2+nemcaro
+      - paragraph [ref=e74]:
+        - text: 👉
+        - link "nemcaro 販売ECサイト「RELAX WORLD」" [ref=e75] [cursor=pointer]:
+          - /url: https://relaxworld.jp/
+      - paragraph [ref=e76]
+      - heading "■ スリープウェア開発" [level=2] [ref=e77]
+      - paragraph [ref=e78]:
+        - strong [ref=e79]: “眠りを着る”という新しいアプローチ
+      - figure "休息環境をトータルに整える新たな睡眠ソリューション" [ref=e81]:
+        - img [ref=e82]
+        - generic [ref=e83]: 休息環境をトータルに整える新たな睡眠ソリューション
+      - paragraph [ref=e84]: 今回発足したアパレルチームでは、睡眠時の快適性と回復をサポートする スリープウェアおよびルームウェア の開発を進めます。
+      - paragraph [ref=e85]: 単なる機能性衣料ではなく
+      - paragraph [ref=e86]:
+        - strong [ref=e87]:
+          - text: ・快適な睡眠環境をサポート
+          - text: ・日常生活にも溶け込むデザイン
+          - text: ・長時間着用できる着心地
+      - paragraph [ref=e88]: を両立するウェルネス・アパレルを目指しています。
+      - separator [ref=e89]
+      - heading "■ 機能性素材" [level=2] [ref=e90]
+      - paragraph [ref=e91]:
+        - strong [ref=e92]: 天然植物由来繊維「curefilo®」
+      - paragraph [ref=e93]:
+        - text: 素材には、天然植物由来成分を繊維に練り込んだ機能性素材
+        - strong [ref=e94]: 「curefilo（キュアフィーロ）」
+        - text: を採用。
+      - figure "植物由来の繊維で調子を整える “curefilo”" [ref=e96]:
+        - img [ref=e97]
+        - generic [ref=e98]: 植物由来の繊維で調子を整える “curefilo”
+      - paragraph [ref=e99]: 特徴
+      - paragraph [ref=e100]:
+        - strong [ref=e101]:
+          - text: ・高い通気性
+          - text: ・保湿性
+          - text: ・抗菌防臭性
+          - text: ・洗濯耐久性
+      - paragraph [ref=e102]: を備え、睡眠時の快適な身体環境をサポートします。
+      - paragraph [ref=e103]: 同素材は日本各地の野生植物から抽出された成分を繊維に練り込んだ設計で、洗濯を繰り返しても機能性が持続する特徴があります。
+      - separator [ref=e104]
+      - heading "■ B2B展開" [level=2] [ref=e105]
+      - paragraph [ref=e106]:
+        - strong [ref=e107]: 医療・ウェルネス分野への提案
+      - paragraph [ref=e108]: nemcaroアパレルでは、一般医療機器対応を視野に入れた素材・設計の研究も進めています。
+      - paragraph [ref=e109]: 今後は以下の分野への展開を想定しています。
+      - paragraph [ref=e110]:
+        - strong [ref=e111]:
+          - text: ・医療機関 / クリニック
+          - text: ・宿泊施設 / リトリート施設
+          - text: ・スポーツ / リカバリー施設
+          - text: ・企業向けウェルネスサービス
+      - paragraph [ref=e112]:
+        - strong [ref=e113]: ・ヘルスケアアプリとの連携プロダクト
+      - paragraph [ref=e114]:
+        - text: 衣服を単なるファッションではなく
+        - text: “回復環境を整えるインフラ” として提案していきます。
+      - separator [ref=e115]
+      - heading "■ 開発プロセス" [level=2] [ref=e116]
+      - paragraph [ref=e117]:
+        - strong [ref=e118]: 座談会によるユーザー検証
+      - figure "睡眠ウェアに関する意見交換を行ったユーザー座談会の様子" [ref=e120]:
+        - img [ref=e121]
+        - generic [ref=e122]: 睡眠ウェアに関する意見交換を行ったユーザー座談会の様子
+      - paragraph [ref=e123]: 2026年2月12日には、開発サンプルを用いた座談会を開催。
+      - paragraph [ref=e124]: モデルやターゲット層の女性参加者を招き
+      - paragraph [ref=e125]:
+        - strong [ref=e126]:
+          - text: ・着用感
+          - text: ・肌触り
+          - text: ・生活シーン
+          - text: ・デザイン
+      - paragraph [ref=e127]: などについて詳細なヒアリングを実施しました。
+      - paragraph [ref=e128]: 実際の生活シーンを想定した検証を進めています。
+      - separator [ref=e129]
+      - heading "■ nemcaroが目指すもの" [level=2] [ref=e130]
+      - paragraph [ref=e131]:
+        - strong [ref=e132]: 睡眠を「生活デザイン」へ
+      - paragraph [ref=e133]: 現代社会では、慢性的な睡眠不足や疲労が大きな社会課題となっています。
+      - paragraph [ref=e134]: nemcaroは
+      - paragraph [ref=e135]:
+        - strong [ref=e136]:
+          - text: テクノロジー
+          - text: デザイン
+          - text: 自然素材
+      - paragraph [ref=e137]:
+        - text: を融合させることで単なる睡眠補助ではなく
+        - text: 生活そのものを整えるウェルネスブランドの確立を目指しています。
+      - separator [ref=e138]
+      - heading "■ クロアの強みと市場背景" [level=2] [ref=e139]
+      - paragraph [ref=e140]:
+        - strong [ref=e141]: ウェルビーイング領域で独自のポジション
+      - paragraph [ref=e142]: 株式会社クロアは、音・映像・研究を軸としたウェルビーイング事業を展開しています。
+      - paragraph [ref=e143]:
+        - strong [ref=e144]:
+          - text: ・ヒーリング音楽などの音楽IP
+          - text: ・自然映像と音楽を融合した映像コンテンツ
+          - text: ・医学・脳科学に基づく研究・エビデンス
+      - paragraph [ref=e145]: といった資産を基盤に、睡眠や瞑想、集中、ストレスケアなどの分野で事業を展開しています。世界的に Wellbeing × Sound の市場は拡大しており、特に デジタル音楽 × 健康領域 は今後大きな成長が期待されています。
+      - paragraph [ref=e146]: 睡眠ウェルネスブランド「nemcaro」は、こうした事業基盤から生まれました。今回のアパレル事業は、立体音響デバイスを起点とした睡眠ソリューションをさらに拡張するもので、デバイス・コンテンツ・サービスと並ぶ重要な柱として今後国内外へ展開していく予定です。
+      - heading "クロアの各コンテンツ" [level=3] [ref=e147]
+      - paragraph [ref=e148]:
+        - text: ◎
+        - link "RELAX WORLD YouTube Ch.（癒やし関連の自社オリジナル動画のコンテンツ公開）" [ref=e149] [cursor=pointer]:
+          - /url: https://www.youtube.com/@RELAX_WORLD
+        - text: ◎
+        - link "クロアヒーリングレーベル（ヒーリング関連の自社オリジナル作品の音楽レーベル）" [ref=e150] [cursor=pointer]:
+          - /url: https://www.croixhealing.com/
+        - text: ◎
+        - link "コラム（ウェルビーイングに関連した医学博士等によるコラムページ）" [ref=e151] [cursor=pointer]:
+          - /url: https://croix.asia/magazine
+      - separator [ref=e152]
+      - heading "■ 山田康夫（ex. ㈱東京スタイル代表取締役社長)" [level=2] [ref=e153]
+      - paragraph [ref=e154]: 1976年に東京スタイル（現TSIホールディングス）に入社、東京スタイルの常務取締役職や監査役、ナノ・ユニバース会長を経て、2012年にTSIホールディングス取締役、14年3月から東京スタイル代表取締役社長を務めた。
+  - contentinfo [ref=e155]:
+    - generic [ref=e157]:
+      - generic [ref=e158]:
+        - heading [level=1] [ref=e159]:
+          - img [ref=e160]
+        - paragraph [ref=e161]:
+          - text: 株式会社クロア
+          - text: 〒153-0064 東京都目黒区下目黒3-7-2-7F
+          - text: TEL 03-5436-1960 / FAX 03-5436-1961
+          - text: 営業時間 10:00-18:30 （土・日・祝・弊社特別休日を除く）
+      - generic [ref=e162]:
+        - heading "事業内容" [level=1] [ref=e163]
+        - list [ref=e164]:
+          - listitem [ref=e165]:
+            - link "アプリ・オンライン事業" [ref=e166] [cursor=pointer]:
+              - /url: /project/music/
+          - listitem [ref=e167]:
+            - link "瞑想・睡眠コンテンツ事業" [ref=e168] [cursor=pointer]:
+              - /url: /project/media/
+          - listitem [ref=e169]:
+            - link "癒しのEC事業" [ref=e170] [cursor=pointer]:
+              - /url: /project/product/
+      - generic [ref=e171]:
+        - heading "企業情報" [level=1] [ref=e172]
+        - list [ref=e173]:
+          - listitem [ref=e174]:
+            - link "役員紹介" [ref=e175] [cursor=pointer]:
+              - /url: /corporate/executive-2/
+          - listitem [ref=e176]:
+            - link "企業理念" [ref=e177] [cursor=pointer]:
+              - /url: /corporate/philosophy/
+          - listitem [ref=e178]:
+            - link "組織図" [ref=e179] [cursor=pointer]:
+              - /url: /corporate/organization/
+      - generic [ref=e180]:
+        - heading "会社概要" [level=1] [ref=e181]
+        - list [ref=e182]:
+          - listitem [ref=e183]:
+            - link "会社概要" [ref=e184] [cursor=pointer]:
+              - /url: /company/
+          - listitem [ref=e185]:
+            - link "プライバシーポリシー" [ref=e186] [cursor=pointer]:
+              - /url: /privacy/
+    - generic [ref=e188]:
+      - paragraph [ref=e189]: Copyright © 2018 croix Co.,Ltd. All rights reserved.
+      - text: 

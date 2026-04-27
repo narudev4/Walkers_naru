@@ -30,6 +30,13 @@
       "runtimeExecutable": "/usr/bin/python3",
       "runtimeArgs": ["-m", "http.server", "8091", "-d", "/tmp/claude-preview"],
       "port": 8091
+    },
+    {
+      "name": "squat-stickk",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": ["-c", "cd /Users/naru/Walkers_naru/output/deploy/squat-stickk && npm run dev"],
+      "port": 3000,
+      "autoPort": true
     }
   ]
 }

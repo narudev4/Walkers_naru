@@ -25,21 +25,22 @@ case "${1:-start}" in
     echo "Copying Profile 4..."
     rm -rf "$CDP_DIR"
     mkdir -p "$CDP_DIR/Default"
-    # 必要なファイルだけコピー（Cookies, Login Data, Local State等）
-    rsync -a --exclude='Cache' --exclude='Code Cache' --exclude='Service Worker' \
+    # 必要なファイルだけコピー（Cookies, Login Data, Local State, IndexedDB等）
+    # IndexedDB は HeyGen 等の認証トークン格納に必須なので除外しない
+    rsync -a --exclude='Cache' --exclude='Code Cache' \
       --exclude='GPUCache' --exclude='GrShaderCache' --exclude='ShaderCache' \
-      --exclude='blob_storage' --exclude='IndexedDB' --exclude='File System' \
+      --exclude='blob_storage' \
       "$SRC_PROFILE/Profile 4/" "$CDP_DIR/Default/"
     cp "$SRC_PROFILE/Local State" "$CDP_DIR/" 2>/dev/null
 
-    echo "Starting headless Chrome on port $CDP_PORT..."
+    echo "Starting Chrome on port $CDP_PORT (non-headless for HeyGen compatibility)..."
     "$CHROME" \
-      --headless=new \
       --remote-debugging-port=$CDP_PORT \
+      --remote-allow-origins=* \
       --user-data-dir="$CDP_DIR" \
       --profile-directory="Default" \
       --no-first-run \
-      --disable-gpu \
+      --no-default-browser-check \
       --disable-sync \
       &>/dev/null &
     echo $! > "$PID_FILE"
