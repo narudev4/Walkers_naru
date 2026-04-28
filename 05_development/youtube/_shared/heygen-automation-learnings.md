@@ -261,3 +261,32 @@ if expected_num is not None:
 - **アクティブ判定は右パネル読取が一次情報**。左パネルの DOM 構造（span 有無）はアクティブ状態で変わるので、左パネルだけ見て判断すると詰む
 - **sister 関数の違いを比較する**。同じ UI 操作をする関数が複数あり、片方だけにフォールバックが入っているケースは「過去に誰かが踏んだ罠の痕跡」。差分から仕様を逆引きする
 - **"末端までスクロール" は誤判定のサイン**。探索対象が「そこにある前提」ではないかを疑う
+
+## 10. nav 速度最適化 α+β（2026-04-28）
+
+### 10.1 背景
+ユーザーが nav のスクロール時間を体感し「scroll が遅い、辞めたい」とリクエスト。検証で「scroll-free な click は React の actionability check 制約で不可」と判明したため、scroll は残しつつ周辺の固定 wait と scroll behavior を圧縮した。
+
+### 10.2 効果
+scene 20→30 の 11 シーン処理で **約 22 秒/シーン**（最適化前は約 42 秒/シーン）。**約 50% 短縮**。
+
+### 10.3 変更箇所
+| 関数 | 変更内容 |
+|------|---------|
+| `click_scene_by_timeline` | α: `scroll_into_view_if_needed()` を JS の `el.scrollIntoView({behavior: 'instant', block: 'nearest', inline: 'center'})` に置換（smooth → instant）／ β: sleep 0.3→0.05、2.0→0.5、0.6→0.2 |
+| `click_next_unprocessed_script` | β: sleep 0.3→0.1、ポーリング間隔 0.4→0.15、0.5→0.15 |
+| `click_scene_script` | β: `if scroll_try == 0: scrollTop = 0` を **削除**（main loop は単調増加で戻る必要なし。9.3 と同じ理屈の click_scene_script 版未対応箇所）／ sleep 2.5→0.5、0.3→0.1 |
+
+### 10.4 検証済み・不採用のアプローチ
+| 案 | 結果 |
+|----|------|
+| Playwright `click(force=True)` | scroll 自体は Playwright が auto-scroll するため消えない |
+| `el.click()` (DOM API) | scroll は消えるが React click handler が発火せずシーン未切替 |
+| `dispatchEvent(MouseEvent)` | scroll が起きる |
+
+→ React の actionability 制約を回避できないため、scroll-free 化は断念。代わりに scroll を instant 化＋wait 圧縮で約半分にした。
+
+### 10.5 教訓
+- **「scroll が遅い」の真因は scroll 距離より scroll の behavior（smooth）と前後の固定 wait**。爆速 instant に変えるだけで体感が大きく変わる
+- **scroll を消す ≠ scroll behavior を変える**。後者の方が現実的に効く
+- **sleep 値はキリよく短くするより、UI が安定する最小値を実機で探る**。今回は polling 間隔 0.15s が安定上限

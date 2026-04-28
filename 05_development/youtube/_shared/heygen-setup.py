@@ -2,6 +2,13 @@
 """
 HeyGen セットアップ: PPTXアップロード + 音声アップロード + アバター配置 統合スクリプト
 
+⚠ このファイルは速度最適化済み (2026-04-28、α+β)。詳細は heygen-automation-learnings.md Section 10。
+   - α: scrollIntoView を smooth → instant 化（click_scene_by_timeline）
+   - β: nav 周辺の sleep を圧縮（2.5→0.5、0.3→0.1 等）
+   - β: click_scene_script の scrollTop=0 リセットを廃止（main loop は単調増加）
+   無検証で sleep 値を増やしたり scrollIntoView を戻したりすると nav 速度が約2倍劣化する。
+   変更したい場合は実機検証してから learnings.md に追記すること。
+
 使い方:
   # 作業ディレクトリ: 05_development/youtube/
   # Phase 0: PPTXアップロード（ドラフト作成）
@@ -329,42 +336,42 @@ async def get_current_scene_id(page):
 
 
 async def click_scene_by_timeline(page, scene_num):
-    """タイムラインのN番目のシーンサムネを実マウスクリック（1-based）。
-    React click吸収問題を避けるため、element.click() ではなく page.mouse.click(x,y) を使う。
-    左パネルのスクロール＋番号span検索に依存しないため、ビューポート差分や仮想スクロールに強い。
+    """タイムラインのN番目のシーンを Playwright locator().click() でクリック（1-based）。
+
+    旧版は page.mouse.click(x,y) を使っていたが、これはキャンバスは変わるが左パネルを
+    更新しない罠あり（学びノート 6章）→ scene 16+ で「Add audio」が前のシーンに残った
+    左パネルに対して動き、別シーンに音声をアップしてしまう（ズレ事故）。
+
+    locator().click() は仮想スクロールされたシーンでも左パネルを更新する。
+
     Returns: (True, scene_id) or (False, None)
     """
     for attempt in range(8):
-        result = await page.evaluate(f"""() => {{
+        # 視覚順（x昇順）にソートしたシーンIDリストを取得
+        scene_ids = await page.evaluate("""() => {
             const items = [...document.querySelectorAll('[data-scene-item]')];
-            if (items.length < {scene_num}) return {{ok: false, reason: 'not enough items', count: items.length}};
             items.sort((a, b) => a.getBoundingClientRect().x - b.getBoundingClientRect().x);
-            const target = items[{scene_num} - 1];
-            target.scrollIntoView({{inline: 'center', block: 'nearest', behavior: 'instant'}});
-            const r = target.getBoundingClientRect();
-            const inView = r.x >= 0 && r.x + r.width <= window.innerWidth && r.y >= 0;
-            if (!inView) {{
-                return {{ok: false, reason: 'scrolled'}};
-            }}
-            return {{
-                ok: true,
-                scene_id: target.getAttribute('data-scene-id'),
-                cx: r.x + r.width / 2,
-                cy: r.y + r.height / 2,
-            }};
-        }}""")
-        if result.get('ok'):
-            await asyncio.sleep(0.4)
-            # 実マウスクリック（React click吸収を回避）
-            await page.mouse.click(result['cx'], result['cy'])
-            await asyncio.sleep(2.0)
-            return True, result.get('scene_id')
-        if result.get('reason') == 'scrolled':
-            await asyncio.sleep(0.6)
+            return items.map(el => el.getAttribute('data-scene-id'));
+        }""")
+        if not scene_ids or len(scene_ids) < scene_num:
+            print(f"  [nav] timeline: data-scene-item が {len(scene_ids)} 個しか見つからない (要 {scene_num})", flush=True)
+            return False, None
+
+        target_id = scene_ids[scene_num - 1]
+        target = page.locator(f'[data-scene-id="{target_id}"]').first
+        try:
+            # α: smooth → instant スクロールで時間短縮（Playwright デフォルトは smooth）
+            await target.evaluate(
+                "el => el.scrollIntoView({behavior: 'instant', block: 'nearest', inline: 'center'})"
+            )
+            await asyncio.sleep(0.05)  # β: 0.3 → 0.05
+            await target.click(timeout=5000)
+            await asyncio.sleep(0.5)   # β: 2.0 → 0.5
+            return True, target_id
+        except Exception as e:
+            print(f"  [nav] locator().click() 試行{attempt+1}失敗: {e}", flush=True)
+            await asyncio.sleep(0.2)   # β: 0.6 → 0.2
             continue
-        # not enough items 等は即失敗
-        print(f"  [nav] timeline click failed: {result.get('reason')}", flush=True)
-        return False, None
     return False, None
 
 
@@ -441,13 +448,13 @@ async def click_next_unprocessed_script(page, expected_num=None):
             click_y = result['y']
             print(f"  [nav] シーン{expected_num}番号ヒット y={click_y} (numX={result.get('numX')} w={result.get('numW')})", flush=True)
             await page.mouse.click(result['x'], click_y)
-            await asyncio.sleep(0.3)
+            await asyncio.sleep(0.1)   # β: 0.3 → 0.1
 
-            # 右パネルのシーン番号をポーリング（最大6秒）
+            # 右パネルのシーン番号をポーリング（最大6秒、間隔短縮）
             heygen_num = None
             deadline = asyncio.get_event_loop().time() + 6.0
             while asyncio.get_event_loop().time() < deadline:
-                await asyncio.sleep(0.4)
+                await asyncio.sleep(0.15)  # β: 0.4 → 0.15
                 heygen_num = await _read_right_panel_scene_num(page)
                 if heygen_num == expected_num:
                     break
@@ -456,11 +463,11 @@ async def click_next_unprocessed_script(page, expected_num=None):
                 print(f"  [nav] HeyGenシーン{heygen_num}に移動 ✓", flush=True)
                 return True, heygen_num
             print(f"  [nav] 期待{expected_num} ≠ 実際{heygen_num} — リトライ", flush=True)
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.15)  # β: 0.5 → 0.15
             continue
 
         if result.get('scrolled'):
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.15)  # β: 0.5 → 0.15
             continue
 
         if result.get('exhausted'):
@@ -512,8 +519,8 @@ async def click_scene_script(page, scene_num):
             }}
 
             if (container) {{
-                if ({scroll_try} === 0) container.scrollTop = 0;
-                else container.scrollTop += 400;
+                // β: scrollTop=0 リセットは廃止（main loopは単調増加、戻る必要なし）
+                container.scrollTop += 400;
                 // scrollHeightの95%を超えたら停止（「シーンを追加」ボタン誤クリック防止）
                 if (container.scrollTop > container.scrollHeight * 0.95) {{
                     return {{found: false, scrolled: false}};
@@ -525,11 +532,11 @@ async def click_scene_script(page, scene_num):
 
         if result and result.get('found'):
             await page.mouse.click(result['x'], result['y'])
-            await asyncio.sleep(2.5)
+            await asyncio.sleep(0.5)   # β: 2.5 → 0.5
             return True
 
         if result and result.get('scrolled'):
-            await asyncio.sleep(0.3)
+            await asyncio.sleep(0.1)   # β: 0.3 → 0.1
             continue
         break
 
