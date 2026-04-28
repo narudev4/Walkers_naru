@@ -68,6 +68,7 @@ PRONUNCIATION_MAP = {
     'DataTalks.Club': 'データトークスドットクラブ',
     'npm': 'エヌピーエム',
     'pip': 'ピップ',
+    'env': 'えんぶ',
     'AI': 'エーアイ',
     'API': 'エーピーアイ',
     'CLI': 'シーエルアイ',
@@ -296,9 +297,14 @@ def find_last_word_end(segments, start_seg, end_seg):
     return last
 
 
-def cut_scene(full_wav, start, end, outpath):
-    """1段階目：粗切り → 2段階目：silenceremove で末尾の真の無音をトリム。"""
-    tmp = outpath.with_suffix('.raw.wav')
+def cut_scene(full_wav, start, end, outpath, skip_tail_trim=False):
+    """1段階目：粗切り → 2段階目：silenceremove で末尾の真の無音をトリム。
+
+    skip_tail_trim=True の場合は粗切りのみ（最終シーン用）。
+    最終シーンに silenceremove をかけると、発話末尾のフェードアウトが -50dB を
+    切って削られ「ご清聴ありがとうござ」のように語尾が切れる事故が発生する。
+    """
+    tmp = outpath.with_suffix('.raw.wav') if not skip_tail_trim else outpath
     cmd1 = [
         "ffmpeg", "-y", "-i", str(full_wav),
         "-ss", f"{start:.3f}", "-to", f"{end:.3f}",
@@ -308,6 +314,8 @@ def cut_scene(full_wav, start, end, outpath):
     if r.returncode != 0:
         print(f"❌ {outpath.name} (raw): {r.stderr[-300:]}")
         return False
+    if skip_tail_trim:
+        return True
     cmd2 = [
         "ffmpeg", "-y", "-i", str(tmp),
         "-af", f"areverse,silenceremove=start_periods=1:start_silence={SILENCE_MIN_DURATION}:start_threshold={SILENCE_THRESHOLD_DB}dB,areverse",
@@ -399,6 +407,9 @@ def main():
         idx = scene['idx']
         start = scene['cut_time']
         # 終端 = 次シーンの最後の単語 end + buffer（次シーンが無ければ full_dur）
+        # 最終シーンは Whisper が「した」の発音中盤で word.end を返すため、
+        # last_word_end + buffer で切ると「ござ」あたりで途切れて聞こえる事故が発生する。
+        # ElevenLabs 由来の自然なフェード余韻まで残すため、最終シーンは full_dur 固定。
         if i + 1 < len(sorted_scenes):
             next_seg = sorted_scenes[i + 1]['seg_idx']
             last_word_end = find_last_word_end(segments, scene['seg_idx'], next_seg)
@@ -407,14 +418,15 @@ def main():
             else:
                 end = min(last_word_end + LAST_WORD_BUFFER, sorted_scenes[i + 1]['cut_time'])
         else:
-            last_word_end = find_last_word_end(segments, scene['seg_idx'], len(segments))
-            end = min(last_word_end + LAST_WORD_BUFFER, full_dur) if last_word_end else full_dur
+            end = full_dur
 
         outpath = scenes_dir / f"scene{idx:02d}.wav"
-        if cut_scene(full_wav, start, end, outpath):
+        is_last = (i == len(sorted_scenes) - 1)
+        if cut_scene(full_wav, start, end, outpath, skip_tail_trim=is_last):
             actual = get_duration(outpath)
             m, s = int(start // 60), start % 60
-            print(f"  ✅ scene{idx:02d}.wav  {m:>2d}:{s:05.2f}〜  ({actual:5.2f}s)  [{scene['confidence']}]")
+            tail_note = " [no-trim]" if is_last else ""
+            print(f"  ✅ scene{idx:02d}.wav  {m:>2d}:{s:05.2f}〜  ({actual:5.2f}s)  [{scene['confidence']}]{tail_note}")
             ok += 1
         else:
             print(f"  ❌ scene{idx:02d}.wav: 切り出し失敗")
