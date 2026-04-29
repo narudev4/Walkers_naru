@@ -185,52 +185,75 @@ def copy_slide_replace_text(src_prs, src_idx, dst_prs, replacements):
     """テンプレートスライドをコピーし、テキストを差し替える
 
     replacements: dict of {shape_name: new_text}
+
+    挙動:
+    - テンプレの最初のパラグラフのフォント設定（size/bold/color/name）を全行に継承
+    - 改行で複数行を入力した場合も全行で同じフォント
+    - ①〜⑨ で始まる行は左寄せ + 左インデント（動画の趣旨スライドの内容リスト用）
     """
+    from pptx.enum.text import PP_ALIGN
+    from pptx.util import Inches as _Inches
+
     dst_slide = copy_slide(src_prs, src_idx, dst_prs)
 
     for shape in dst_slide.shapes:
         if shape.name in replacements and shape.has_text_frame:
             new_text = replacements[shape.name]
             tf = shape.text_frame
-            # 既存のパラグラフのフォント情報を保持しつつテキスト差し替え
+
+            # テンプレ最初のパラグラフからフォント設定を取得（全行に適用）
+            template_font = {'name': None, 'size': None, 'bold': None, 'color': None}
+            template_alignment = None
+            if tf.paragraphs:
+                src_p = tf.paragraphs[0]
+                template_alignment = src_p.alignment
+                if src_p.runs:
+                    src_run = src_p.runs[0]
+                    template_font['name'] = src_run.font.name
+                    template_font['size'] = src_run.font.size
+                    template_font['bold'] = src_run.font.bold
+                    if src_run.font.color and src_run.font.color.type is not None:
+                        try:
+                            template_font['color'] = src_run.font.color.rgb
+                        except AttributeError:
+                            pass
+
             new_lines = new_text.split("\n")
             for i, line in enumerate(new_lines):
                 if i < len(tf.paragraphs):
                     p = tf.paragraphs[i]
                 else:
                     p = tf.add_paragraph()
-                    # 前のパラグラフからフォーマットをコピー
-                    if tf.paragraphs:
-                        src_p = tf.paragraphs[0]
-                        p.alignment = src_p.alignment
-                        if src_p.runs:
-                            p.line_spacing = src_p.line_spacing
 
-                # runsをクリアして新テキストを設定
-                if p.runs:
-                    # 既存runのフォント情報を保持
-                    ref_run = p.runs[0]
-                    ref_font_name = ref_run.font.name
-                    ref_font_size = ref_run.font.size
-                    ref_font_bold = ref_run.font.bold
-                    ref_font_color = ref_run.font.color.rgb if ref_run.font.color and ref_run.font.color.type is not None else None
-
-                    # 全runsを削除
-                    for r in p.runs:
-                        r._r.getparent().remove(r._r)
-
-                    run = p.add_run()
-                    run.text = line
-                    run.font.name = ref_font_name
-                    if ref_font_size:
-                        run.font.size = ref_font_size
-                    if ref_font_bold is not None:
-                        run.font.bold = ref_font_bold
-                    if ref_font_color:
-                        run.font.color.rgb = ref_font_color
+                # ①〜⑨ で始まる行は左揃え + 左インデント
+                # 「3行ブロックを左揃えで揃え、ブロック自体は画面中央寄りに見せる」設計。
+                # 1.5 inch は手動修正版（見本）に近い経験値。
+                if line and line[0] in '①②③④⑤⑥⑦⑧⑨':
+                    p.alignment = PP_ALIGN.LEFT
+                    # python-pptx の Paragraph には left_indent プロパティが無いので
+                    # XML 属性 marL を直接設定（EMU単位、1 inch = 914400 EMU）
+                    pPr = p._p.get_or_add_pPr()
+                    pPr.set('marL', str(int(_Inches(2.1))))
+                    pPr.set('indent', '0')
                 else:
-                    run = p.add_run()
-                    run.text = line
+                    if template_alignment is not None:
+                        p.alignment = template_alignment
+
+                # runsを全削除
+                for r in list(p.runs):
+                    r._r.getparent().remove(r._r)
+
+                run = p.add_run()
+                run.text = line
+                if template_font['name']:
+                    run.font.name = template_font['name']
+                if template_font['size']:
+                    run.font.size = template_font['size']
+                if template_font['bold'] is not None:
+                    run.font.bold = template_font['bold']
+                if template_font['color']:
+                    run.font.color.rgb = template_font['color']
+                if not template_font['size']:
                     set_font(run, size=Pt(24), color=WHITE)
 
             # 余分なパラグラフを削除
@@ -745,21 +768,20 @@ def generate_pptx(json_path, output_path=None, template_path=None):
         print(f"  Slide {i+1}: type={stype}")
 
         if stype == "title":
-            # テンプレートスライド1からコピー、テキスト差し替え
+            # テンプレートスライド1からコピー、タイトルのみ差し替え
+            # （タグ・サブタイトルは廃止：冒頭離脱率対策・yt-script SKILL.md 参照）
             title_text = sd.get("title", "")
-            tag = sd.get("tag", "")
-            subtitle = sd.get("subtitle", "")
             replacements = {}
-            if tag:
-                replacements["TextBox 2"] = tag  # 【実例あり】等
             if title_text:
                 replacements["TextBox 3"] = title_text
             copy_slide_replace_text(tpl_prs, 0, prs, replacements)
 
         elif stype == "text":
-            # テンプレートスライド5（チャンネル登録）からコピー、テキスト差し替え
+            # テンプレートスライド2（hero スタイル: 32pt Bold 中央配置）からコピー
+            # 旧仕様で idx 4（チャンネル登録 24pt）を使っていたが、冒頭離脱率対策で
+            # 太字・大きめフォントの hero テンプレに統一（2026-04-29 改修）
             lines = sd.get("lines", "")
-            copy_slide_replace_text(tpl_prs, 4, prs, {"TextBox 2": lines})
+            copy_slide_replace_text(tpl_prs, 1, prs, {"TextBox 2": lines})
 
         elif stype == "intro":
             # テンプレートスライド4をそのままコピー
