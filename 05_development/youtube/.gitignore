@@ -19,6 +19,10 @@ logs/launchd-stderr.log
 # --- macOS ---
 .DS_Store
 
+# --- MCP / 自動化ツールの生成物 ---
+# Playwright MCP は console ログとページスナップショットを自動生成する
+.playwright-mcp/
+
 # --- プロジェクト成果物は全て track 外（作業ディレクトリ化）---
 # 1動画あたり article.md / script.md / slides.pptx / audio/ / verify/ など
 # 大量のバイナリが生成されるため projects/ ごと git管理から外す
