@@ -16,11 +16,16 @@ logs/launchd-stderr.log
 ~$*.docx
 ~$*.xlsx
 
-# --- プロジェクト副産物（毎回上書きされる、track 不要）---
-projects/*/debug/                       # アバター配置リトライ時のデバッグ SS
-projects/*/heygen-setup-progress.json   # レジューム用の状態ファイル
-projects/*/heygen-setup-progress.json.bak-*
-projects/*/audio/_archive/              # 音声分割で退避したファイル
+# --- macOS ---
+.DS_Store
 
-# --- Whisper キャッシュ（巨大、再生成可能）---
+# --- プロジェクト副産物（毎回上書きされる、track 不要）---
+# debug/ : アバター配置リトライ時のデバッグ SS
+# heygen-setup-progress.json : レジューム用の状態ファイル
+# audio/_archive/ : 音声分割で退避したファイル
+# audio/whisper_segments.json : Whisper キャッシュ（再生成可）
+projects/*/debug/
+projects/*/heygen-setup-progress.json
+projects/*/heygen-setup-progress.json.bak-*
+projects/*/audio/_archive/
 projects/*/audio/whisper_segments.json
