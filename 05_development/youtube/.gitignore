@@ -1,0 +1,26 @@
+# ============================================================
+# YouTube AI動画ワークスペース .gitignore
+# ============================================================
+
+# --- ランタイムログ・ロック ---
+logs/*.log
+logs/launchd-stdout.log
+logs/launchd-stderr.log
+*.lock
+
+# --- バックアップ・一時ファイル ---
+*.bak
+*.bak-*
+*.backup
+~$*.pptx
+~$*.docx
+~$*.xlsx
+
+# --- プロジェクト副産物（毎回上書きされる、track 不要）---
+projects/*/debug/                       # アバター配置リトライ時のデバッグ SS
+projects/*/heygen-setup-progress.json   # レジューム用の状態ファイル
+projects/*/heygen-setup-progress.json.bak-*
+projects/*/audio/_archive/              # 音声分割で退避したファイル
+
+# --- Whisper キャッシュ（巨大、再生成可能）---
+projects/*/audio/whisper_segments.json
