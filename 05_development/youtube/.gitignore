@@ -19,13 +19,7 @@ logs/launchd-stderr.log
 # --- macOS ---
 .DS_Store
 
-# --- プロジェクト副産物（毎回上書きされる、track 不要）---
-# debug/ : アバター配置リトライ時のデバッグ SS
-# heygen-setup-progress.json : レジューム用の状態ファイル
-# audio/_archive/ : 音声分割で退避したファイル
-# audio/whisper_segments.json : Whisper キャッシュ（再生成可）
-projects/*/debug/
-projects/*/heygen-setup-progress.json
-projects/*/heygen-setup-progress.json.bak-*
-projects/*/audio/_archive/
-projects/*/audio/whisper_segments.json
+# --- プロジェクト成果物は全て track 外（作業ディレクトリ化）---
+# 1動画あたり article.md / script.md / slides.pptx / audio/ / verify/ など
+# 大量のバイナリが生成されるため projects/ ごと git管理から外す
+projects/

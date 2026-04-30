@@ -38,6 +38,5 @@ shinkoku.db-shm
 .shinkoku/
 output/
 
-# YouTube 動画素材の重い中間ファイル（GitHub 50MB制限対策・投稿後ローカル削除推奨）
-05_development/youtube/projects/*/audio/full.wav
-05_development/youtube/projects/*/audio/full_pcm.wav
+# YouTube 動画制作の作業ディレクトリ（projects/ 配下は全て track 外）
+05_development/youtube/projects/
