@@ -8,7 +8,7 @@ description: YouTube AI動画 一括制作パイプライン
 
 **STEP 1〜5.5 は確認なしで完全自動進行する**。各 STEP 完了時は結果ファイルを開いて表示するだけで、即座に次の STEP へ進む。
 
-**STEP 6（HeyGen 動画生成）は半自動**。PPTX アップロード・**アバター選択**（本番用：山口鳳汰(背景リアル&スーツ見えるver)）・Create Video・音声アップロード・アバター位置調整は `_shared/heygen-setup.py` で、**BGM 追加・Volume 1%・Loop ON は `_shared/heygen-bgm-setup.py` で**それぞれ自動化済み。yt-produce は両スクリプトの起動コマンドを案内したら終了する。最終的なプレビュー確認 → 生成ボタン押下 → HeyGen 側の 2〜4 時間レンダリング待機は、ユーザーが自分のタイミングで実行する（yt-produce は待機しない）。
+**STEP 6（HeyGen 動画生成）は半自動だが「半自動」の主語は yt-produce（=Claude）**。PPTX アップロード・**アバター選択**（本番用：山口鳳汰(背景リアル&スーツ見えるver)）・Create Video・音声アップロード・アバター位置調整は `_shared/heygen-setup.py` で、**BGM 追加・Volume 1%・Loop ON は `_shared/heygen-bgm-setup.py` で**それぞれ自動化済み。**Claude が Bash ツールで両スクリプトを直接実行する（`run_in_background=true` で起動 → Monitor で完走確認）。ユーザーに「ターミナルで実行してください」と手順案内して終わるのは禁止。** エラー時は `HEYGEN_START=N` で最大5回まで自動リトライし、それでも詰まった場合のみ報告。最終的なプレビュー確認 → 生成ボタン押下 → HeyGen 側の 2〜4 時間レンダリング待機のみ、ユーザーが自分のタイミングで実行する（yt-produce は待機しない）。
 
 **STEP 7（YouTube 投稿）は完全手動なので `/yt-upload` という別スキルに委譲する。** yt-produce は STEP 6 完了時に「次は /yt-upload を実行してください」と案内して終了する。
 
@@ -241,45 +241,54 @@ YouTube概要欄用のチャプター一覧を生成し、台本の概要欄テ�
 
 **前提:** Profile 4 で walker-s.co.jp Google アカウント / HeyGen にログイン済みであること（普段の Chrome のセッション）。これさえ満たせば cron から `heygen-setup.py` を叩くだけで全部回る。
 
-**メッセージ:**
-```
-🎬 STEP 6: HeyGen動画生成
+**実行プロトコル（Claude が Bash ツールで自動実行する。手順案内だけ出して止まるのは禁止）:**
 
-これからHeyGenで動画を生成します。
-PPTX→アバター選択→音声アップ→位置調整、BGM 追加・Volume 1%・Loop ON まで自動です。
-CDP Chrome は未起動なら自動で立ち上がるので、ユーザーは何もしなくてOK。
-ユーザーが手で触るのは最後の生成ボタンだけです。
+各 Phase は `Bash(run_in_background=true)` で起動 → `Monitor` で完走を待つ。完走通知が来たら次の Phase に進む。
+
+```
+🎬 STEP 6: HeyGen動画生成（自動実行中）
+
+PPTX→アバター選択→音声アップ→位置調整、BGM 追加・Volume 1%・Loop ON まで Claude が連続で叩きます。
+CDP Chrome は未起動なら heygen-setup.py 内で自動起動。ユーザーが手で触るのは「最後の生成ボタン」だけ。
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-👤 あなたの作業（3ステップ・すべて自動）:
+🤖 Claude が自動実行する3ステップ:
 
-  【1】🤖 Phase 0: PPTXアップロード + アバター選択 + Create Video（自動）
-     ・HeyGenにログイン済みの状態でターミナルで実行:
+  【1】🤖 Phase 0: PPTXアップロード + アバター選択 + Create Video
+     コマンド（Claude が Bash で叩く）:
        HEYGEN_SLUG={slug} HEYGEN_PPTX_PATH=projects/{slug}/slides.pptx /Users/naru/.pyenv/versions/3.13.0/bin/python3 _shared/heygen-setup.py
      ・PPTX をアップ → アバター「本番用：山口鳳汰(背景リアル&スーツ見えるver)」を自動選択 → Create Video → エディタ遷移 → 変換完了で停止
-     ・⚠ アップロード時「スライドの内容を編集可能な要素としてインポート」が出たら必ずOFFにすること
+     ・⚠ HeyGen UI が「アバターカード再クリックで確定」のような変更をしている場合あり。タイムアウト失敗時は CDP Chrome 再起動 → リトライ
+     ・⚠ アップロード時「スライドの内容を編集可能な要素としてインポート」が出たら必ずOFFにすること（スクリプトが処理する）
 
-  【2】🤖 Phase 1+2: 音声アップロード + アバター位置調整（自動）
-     ・HeyGenエディタが開いた状態で以下を実行:
+  【2】🤖 Phase 1+2: 音声アップロード + アバター位置調整
+     コマンド（Claude が Bash で叩く）:
        HEYGEN_SLUG={slug} /Users/naru/.pyenv/versions/3.13.0/bin/python3 _shared/heygen-setup.py
-     ・全シーンに音声をアップロードし、アバターを 200x200 HeyGen単位で右上角に自動配置します
-     ・途中から再開: HEYGEN_START={N} を追加
-     ・ドライラン確認: HEYGEN_DRY=1 を追加
+     ・全シーンに音声をアップロードし、アバターを 200x200 HeyGen単位で右上角に自動配置
+     ・途中で「⚠ HeyGenシーン{N-1} ≠ scene_num={N} — ずれ懸念で中断」が出たら HEYGEN_START={N} で最大5回リトライ（CRITICAL ルール）
+     ・5回失敗で報告。ドライラン確認は HEYGEN_DRY=1
 
-  【3】🤖 BGM 設定: マイミュージックから既存トラック選択 + Volume 1% + Loop ON（自動）
-     ・Phase 1+2 完了後、CDP Chrome タブが create-v4 を開いてる状態で:
+  【3】🤖 BGM 設定: マイミュージックから既存トラック選択 + Volume 1% + Loop ON
+     コマンド（Claude が Bash で叩く）:
        /Users/naru/.pyenv/versions/3.13.0/bin/python3 _shared/heygen-bgm-setup.py
      ・マイ ミュージックの既存 Audiio*.wav を timeline に追加（既にあればスキップ）
      ・audio bar を右クリック → context menu → Volume を 1% にドラッグ → Loop music を ON
      ・menu 開いたまま終了するので、ユーザーは画面で目視確認してから生成ボタンへ
-     ・⚠ 前提: HeyGen の マイ ミュージック に Audiio*.wav が永続保存されていること
-       （初回のみ手動アップロード必要・以降アカウント単位で残る）
+     ・⚠ 前提: HeyGen の マイ ミュージック に Audiio*.wav が永続保存されていること（初回のみ手動アップロード必要）
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ここから先（プレビュー目視確認 → 生成ボタン → 2〜4時間待機）はユーザーが自分のタイミングで実行してください。
-yt-produce はここで案内終了。
+🚫 やってはいけないこと:
+  - 「ターミナルで実行してください」「以下のコマンドを叩いてください」と手順だけ出して停止する
+  - ユーザー名義の作業として書く（「👤 あなたの作業」のような表現）
+  - Phase 完了通知を待たず次の Phase を起動する（Monitor で完走確認してから次へ）
 
-→ 動画が完成したら次は `/yt-upload` を実行して YouTube に投稿してください。
+✅ 完了報告フォーマット（3 Phase 全完走後にユーザーへ送る）:
+  - 完成シーン数 / 失敗シーン数
+  - BGM 設定状態
+  - 「プレビュー目視確認 → 生成ボタン押下 → 2〜4時間待機 をユーザーが行ってください」
+  - 「動画完成後は /yt-upload を実行」
+
+→ ここで yt-produce 終了。
 ```
 
 ---
@@ -310,13 +319,13 @@ YouTube 投稿は完全に手動作業中心なので別スキルで管理する
 ✅ STEP 4: 音声生成           🤖 完了
 ✅ STEP 5: 音声分割           🤖 完了
 ✅ STEP 5.5: 概要欄チャプター 🤖 完了
-⏳ STEP 6: HeyGen動画生成    👤+🤖 作業中（最後の生成ボタンはユーザー）
+⏳ STEP 6: HeyGen動画生成    🤖 自動実行中（Phase 0/1+2/BGM を Claude が連続で叩く）
 
 🎉 yt-produce 完了 → 次は /yt-upload で YouTube 投稿
 ```
 
 - STEP 1〜5.5 は完全自動進行
-- STEP 6 は半自動（heygen-setup.py + heygen-bgm-setup.py 起動を案内 → ユーザーはプレビュー目視確認 → 生成ボタンのみ操作）
+- STEP 6 も自動進行（Claude が Bash で heygen-setup.py + heygen-bgm-setup.py を直接叩く）。ユーザーが手動でやるのはプレビュー目視確認 → 生成ボタン押下のみ
 - STEP 7（YouTube 投稿）は別スキル `/yt-upload` に委譲
 
 ## エラーハンドリング

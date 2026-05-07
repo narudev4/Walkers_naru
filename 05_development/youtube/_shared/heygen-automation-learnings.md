@@ -326,3 +326,43 @@ scene 20→30 の 11 シーン処理で **約 22 秒/シーン**（最適化前�
 - **HeyGen の UI state は再実行で「自分で進む」性質がある**。中途半端な状態で停止しても、もう一度叩けば次に進める
 - **失敗シーンログの重複（[11, 11]）は失敗ではなく "リトライの履歴"**。最終 `完了済み合計: N/N` だけ見れば良い
 - **既知の中断条件は「コードのバグ」ではなく「再実行で抜けるための保険」**。むやみに条件を緩めると別の場所で破綻する
+
+## 12. heygen-bgm-setup.py の罠（2026-05-07）
+
+`_shared/heygen-bgm-setup.py`（BGM 自動設定: Volume 1% + Loop ON）の実装中に踏んだ罠。
+
+### 12.1 「Upload processing」の長い待ち時間 → wait_for_upload_completion の race condition
+
+**症状**: アップロード後すぐに `find_my_music_track` を叩いていて、まだ processing 状態の track を「成功した」と誤検出してクリック → 何も起きない。
+
+**原因**:
+- HeyGen の音楽アップロードは **30秒以上** processing 状態が続くケースがある
+- アップロード直後は **まだ processing UI すら出ていない** こともあり、「track 無し」を「アップ失敗」と誤認しがち
+- その間にスクリプトが先走って次の処理へ行くと、context menu が開かない／クリック対象がずれる
+
+**対策**: 3 フェーズで待つ
+- **Phase A**: アップロード直後、`is_upload_processing()` で processing UI が**出るまで** 10秒待機（出始めを保証）
+- **Phase B**: processing UI が**消えるまで** 最大 180秒待機
+- **Phase C**: track 出現確認後にさらに 5秒安定化待機（DOM がフラついて click 対象がずれるのを防ぐ）
+
+### 12.2 timeline 下部 audio bar の右クリック target_x（z-index overlay）
+
+**症状**: `find_audio_bar_position` が返した座標で右クリックしても context menu が開かない。
+
+**原因**: timeline 下部、左側 (x=20-540 程度) に「シーンを追加」 button (`tw-size-10`, 40x40) が overlay されており、bar より z-index が高い。bar 検出 (tw-cursor-pointer + width 最大) 自体は正しくても、クリック座標が button 領域に重なると button にヒットして bar への右クリックにならない。
+
+**probe ログ（elementFromPoint）**:
+```
+(500,931): <button> ''  cls='tw-flex tw-size-10 tw-cursor-pointer ...'   ← button overlay
+(600,931): <div>    'Audiio____.wav'  cls='tw-z-10 tw-flex ...'         ← bar 本体
+(800,931): <div>    'Audiio____.wav'  cls='tw-z-10 tw-flex ...'
+(1000,931): <div>   'Audiio____.wav'  cls='tw-z-10 tw-flex ...'
+```
+
+**対策**: `target_x = Math.max(600, Math.min(1500, bar.x + 350))`
+- 初版は `Math.max(500, ...)` だったが (500,931) はまだ button 領域。600 まで上げて bar div (`tw-z-10 tw-flex`) に確実に着地させる。
+- bar.x は画面外まで伸びる (例: x=-3941, w=6184) ことがあるので、`bar.x + 350` ではなく **絶対座標 600 を最低値に固定** することが重要。
+
+### 12.3 教訓
+- HeyGen のアップロード系は「処理開始の確認」と「処理完了の確認」を分けて待つ。即時ポーリングは race condition を生む
+- timeline 下部は他の操作 button (シーン追加・分割等) が overlay している。クリック座標は **DOM の幾何学だけでなく z-index も考慮**する必要があり、必ず `elementFromPoint` で実際にヒットする要素を probe してから採用すること

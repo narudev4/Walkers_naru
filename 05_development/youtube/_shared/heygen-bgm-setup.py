@@ -8,9 +8,10 @@
   1. 右サイドバー「ミュージック」アイコンをクリックして音楽パネル開く
      （既に panel=music の場合はスキップ）
   2. 「マイ ミュージック」タブをクリック
-  3. timeline に Audiio*.wav が既にあれば 4 へ。無ければ
-     マイ ミュージック内の既存 Audiio*.wav トラックをクリックして
-     timeline に追加する（無ければエラー停止 — 新規アップロードは未対応）
+  3. timeline に Audiio*.wav が既にあれば 4 へ。無ければ:
+     a. マイ ミュージック内に既存 Audiio*.wav トラックがあればクリック → timeline 追加
+     b. 無ければ「音楽をアップロード」で assets/Audiio_本番用.wav をアップロード →
+        track 出現を待って → クリック → timeline 追加 (fallback、2026-05-XX 追加)
   4. timeline 下部の audio bar を右クリック → context menu 出す
   5. Volume slider を 1% にドラッグ
   6. Loop music switch を ON にクリック
@@ -18,8 +19,9 @@
 
 前提:
   - CDP Chrome (port 9222 等) で HeyGen create-v4 タブを開いている
-  - HeyGen の マイ ミュージック に Audiio*.wav トラックが永続保存されている
-    （初回のみ手動アップロードが必要・以降はアカウント単位で残る仕様）
+  - assets/Audiio_本番用.wav が存在する（fallback アップロード用）
+  - HeyGen マイ ミュージックは CDP Chrome 起動毎に空になる場合がある
+    （Profile rsync の都合・サーバー側永続データへのアクセスが安定しない）
 
 使い方:
   /Users/naru/.pyenv/versions/3.13.0/bin/python3 \\
@@ -29,6 +31,7 @@ import asyncio
 import json as _json
 import sys
 import urllib.request
+from pathlib import Path
 
 from playwright.async_api import async_playwright
 
@@ -36,6 +39,10 @@ from playwright.async_api import async_playwright
 # ===== 定数 =====
 TARGET_VOLUME = 0.01      # 1% (Volume slider の aria-valuemax=1 なので 0.01 = 1%)
 VOLUME_TOLERANCE = 0.015  # ドラッグ後の許容誤差
+BGM_FILE_PATH = "/Users/naru/Walkers_naru/05_development/youtube/assets/Audiio_本番用.wav"
+UPLOAD_TIMEOUT_SEC = 180  # アップロード完了待ち最大秒数（17MB BGM で実機 30〜60s 程度・余裕を持って 3分）
+PROCESSING_START_TIMEOUT_SEC = 10  # 「Upload processing」表示が出るまでの待ち
+POST_PROCESSING_STABILIZE_SEC = 5  # processing 完了後の UI 安定待ち
 
 
 def detect_cdp_url():
@@ -127,81 +134,233 @@ async def click_my_music_tab(page):
     print(f"[2/6] マイ ミュージック タブ切替", flush=True)
 
 
-async def click_existing_track(page):
-    """マイミュージック内の Audiio*.wav トラックをクリック → timeline に追加"""
-    info = await page.evaluate(
+async def find_my_music_track(page):
+    """マイミュージック内の **完成済み** Audiio*.wav トラック行を検出。無ければ None。
+
+    重要: track 行の textContent に「Upload processing / 処理中」が含まれている場合は
+    processing 中の track なので除外する。click しても timeline に正しく追加されないため。
+    完成済み track の text は典型的に「Audiio*.wav」+「1:26s」等の時刻表示のみ。
+
+    クリック座標は **行の左寄り** (file 名の領域) を返す。中央や右寄りだと
+    track 内の別ボタン (メニュー / 再生) をクリックしてしまうリスクあり。
+    """
+    return await page.evaluate(
         """() => {
-            // 右パネル内 (x > 1100) の Audiio*.wav を含むクリック可能要素
             const candidates = [];
             for (const el of document.querySelectorAll('div, button')) {
                 const t = (el.textContent || '').trim();
-                if (/Audiio_+\\.wav/.test(t) && t.length < 60) {
-                    const r = el.getBoundingClientRect();
-                    if (r.x > 1100 && r.width > 100 && r.height > 20 && r.height < 80) {
-                        candidates.push({
-                            tag: el.tagName.toLowerCase(),
-                            cls: (el.className || '').toString().slice(0, 80),
-                            cx: Math.round(r.x + r.width / 2),
-                            cy: Math.round(r.y + r.height / 2),
-                            w: Math.round(r.width), h: Math.round(r.height),
-                        });
-                    }
+                if (!/Audiio_+\\.wav/.test(t)) continue;
+                if (t.length >= 60) continue;
+                // ★processing 中は除外
+                if (/Upload\\s+processing|処理中/i.test(t)) continue;
+                const r = el.getBoundingClientRect();
+                // 行サイズの典型: width 200-400, height 30-60。それより小さい内側要素は除外
+                if (r.x > 1100 && r.width > 200 && r.height > 28 && r.height < 80) {
+                    candidates.push({
+                        // 左寄り (file 名の領域) を狙う
+                        cx: Math.round(r.x + Math.min(120, r.width * 0.3)),
+                        cy: Math.round(r.y + r.height / 2),
+                        w: Math.round(r.width), h: Math.round(r.height),
+                    });
                 }
             }
-            // 最も小さい (= 個別トラック行) を採用
+            // 最も小さい (= 個別トラック行 326x36 程度) を採用
             candidates.sort((a, b) => a.w * a.h - b.w * b.h);
             return candidates[0] || null;
         }"""
     )
-    if not info:
-        raise RuntimeError(
-            "マイ ミュージックに Audiio*.wav トラックが見つからない。\n"
-            "  HeyGen 側に永続トラックが保存されているか手動で確認してください。\n"
-            "  （新規アップロードは本スクリプトの未対応範囲）"
-        )
-    print(f"[3/6] 既存 BGM トラック検出 @({info['cx']},{info['cy']}) → クリック", flush=True)
-    await page.mouse.click(info["cx"], info["cy"])
-    await asyncio.sleep(2.0)  # timeline への反映待ち
-    # 反映確認
-    if not await is_track_in_timeline(page):
-        raise RuntimeError("timeline に BGM が追加されなかった（クリック失敗?）")
-    print(f"[3/6] BGM トラックを timeline に追加した", flush=True)
+
+
+async def is_upload_processing(page):
+    """マイミュージック内に Upload processing 中の行があるか判定"""
+    return await page.evaluate(
+        """() => {
+            for (const el of document.querySelectorAll('*')) {
+                const t = (el.textContent || '').trim();
+                if (t.length >= 80) continue;
+                if (/Upload\\s+processing|処理中/i.test(t)) return true;
+            }
+            return false;
+        }"""
+    )
+
+
+async def wait_for_upload_completion(page, timeout_sec=UPLOAD_TIMEOUT_SEC):
+    """アップロードのライフサイクルを段階的に待つ。
+
+    Phase A: 「Upload processing」表示が出るのを待つ（最大 PROCESSING_START_TIMEOUT_SEC 秒）
+             ※ 即座に出ない場合 = ファイルが既に処理済 / 小さくて瞬時完了 のいずれか。スキップ可
+    Phase B: 「Upload processing」表示が消えるのを待つ（最大 timeout_sec 秒）
+             ※ 17MB BGM で実機 30〜60 秒程度
+    Phase C: 完成済み track が出現するのを確認 + UI 安定待ち
+             ※ processing 消失 → track 出現 → +N 秒の安定 wait
+
+    ★罠: 単純な「processing が false かつ track 出現」poll は、processing 開始前に
+          偶然 false を返すタイミングがあり、まだ送信完了前の状態で誤判定する。
+          Phase A で必ず処理開始を確認することで誤判定を防ぐ。
+    """
+    # Phase A: processing 開始待ち
+    print(f"  [wait] processing 開始待ち...", flush=True)
+    processing_seen = False
+    for i in range(PROCESSING_START_TIMEOUT_SEC):
+        await asyncio.sleep(1)
+        if await is_upload_processing(page):
+            processing_seen = True
+            print(f"  [wait] processing 開始確認 ({i + 1} 秒)", flush=True)
+            break
+    if not processing_seen:
+        print(f"  [wait] processing 開始を {PROCESSING_START_TIMEOUT_SEC} 秒で確認できず（既に完了している可能性）", flush=True)
+
+    # Phase B: processing 完了待ち
+    if processing_seen:
+        print(f"  [wait] processing 完了待ち...", flush=True)
+        completed = False
+        for i in range(timeout_sec):
+            await asyncio.sleep(1)
+            if not await is_upload_processing(page):
+                print(f"  [wait] processing 完了 ({i + 1} 秒)", flush=True)
+                completed = True
+                break
+        if not completed:
+            raise RuntimeError(f"processing が {timeout_sec} 秒で完了しなかった")
+
+    # Phase C: track 出現確認 + UI 安定
+    print(f"  [wait] track 出現待ち + UI 安定 ({POST_PROCESSING_STABILIZE_SEC}秒)...", flush=True)
+    for i in range(20):
+        await asyncio.sleep(1)
+        track = await find_my_music_track(page)
+        if track:
+            print(f"  [wait] track 出現 ({i + 1} 秒) → +{POST_PROCESSING_STABILIZE_SEC}秒安定待ち", flush=True)
+            await asyncio.sleep(POST_PROCESSING_STABILIZE_SEC)
+            return track
+    raise RuntimeError("processing は完了したが track が 20 秒で出現せず")
+
+
+async def upload_bgm_track(page, file_path):
+    """マイミュージックが空のときに BGM ファイルをアップロード送信。
+
+    送信のみ。完了待ちは wait_for_upload_completion に委譲。
+
+    優先順 (learnings.md Section 2.7 と同じ二段フォールバック):
+      パターン 1: input[type="file"][accept*="audio"] に set_input_files() (推奨)
+      パターン 2: 「音楽をアップロード」ボタンクリック → FileChooser → set_files()
+    """
+    if not Path(file_path).exists():
+        raise RuntimeError(f"BGM ファイルが存在しない: {file_path}")
+    print(f"[3/6] マイミュージックが空 → {file_path} をアップロード", flush=True)
+
+    # パターン 1: input[type=file] に直接 set
+    audio_inputs = page.locator('input[type="file"][accept*="audio"]')
+    n_inputs = await audio_inputs.count()
+    uploaded = False
+    if n_inputs > 0:
+        try:
+            await audio_inputs.first.set_input_files(file_path)
+            uploaded = True
+            print(f"[3/6] input[type=file][accept*=audio] に set_input_files() でアップロード送信", flush=True)
+        except Exception as e:
+            print(f"⚠ input 直接設定失敗 → FileChooser にフォールバック: {e}", flush=True)
+
+    # パターン 2: ボタンクリック → FileChooser
+    if not uploaded:
+        upload_btn = page.locator('button:has-text("音楽をアップロード")')
+        if await upload_btn.count() == 0:
+            raise RuntimeError(
+                "「音楽をアップロード」ボタンも audio 用 input[type=file] も見つからない。"
+                "マイ ミュージック タブが正しく開いているか確認"
+            )
+        async with page.expect_file_chooser(timeout=10_000) as fc_info:
+            await upload_btn.click()
+        chooser = await fc_info.value
+        await chooser.set_files(file_path)
+        print(f"[3/6] FileChooser 経由でアップロード送信", flush=True)
+
+    # 完了待ち
+    print(f"[3/6] アップロード完了待ち (最大 {UPLOAD_TIMEOUT_SEC}秒)...", flush=True)
+    return await wait_for_upload_completion(page)
+
+
+async def select_or_upload_track(page):
+    """マイミュージック内の Audiio*.wav を timeline に追加。
+
+    分岐:
+      A. 完成済み track あり → 即 click
+      B. processing 中 track あり → 完了待ち → click（手動アップ等で processing 中の状態）
+      C. 何も無い → upload → 完了待ち → click
+    """
+    track = await find_my_music_track(page)
+    if track:
+        print(f"[3/6] 既存 BGM トラック検出 @({track['cx']},{track['cy']})", flush=True)
+    elif await is_upload_processing(page):
+        print(f"[3/6] processing 中の track が既に存在 → 完了待ち", flush=True)
+        track = await wait_for_upload_completion(page)
+    else:
+        track = await upload_bgm_track(page, BGM_FILE_PATH)
+
+    print(f"[3/6] track をクリック ({track['cx']},{track['cy']}) → timeline 追加", flush=True)
+    await page.mouse.click(track["cx"], track["cy"])
+    # timeline 反映待ち
+    for i in range(10):
+        await asyncio.sleep(1)
+        if await is_track_in_timeline(page):
+            print(f"[3/6] BGM トラックを timeline に追加した ({i + 1} 秒)", flush=True)
+            return
+    raise RuntimeError("timeline に BGM が追加されなかった（10秒タイムアウト・クリック対象が違う?）")
 
 
 async def find_audio_bar_position(page):
-    """timeline 下部の audio bar の右クリック対象座標を返す"""
+    """timeline 下部の audio bar の右クリック対象座標を返す。
+
+    実装方針:
+      画面下部 (y=800-950) で **tw-cursor-pointer クラス**を持つ横長要素を
+      bar 本体として選ぶ（典型: w > 1000, h ~20 px、scenes 全体に渡る audio track）。
+
+    クリック x 座標は **x >= 600 から狙う**:
+      理由は左側 (x=20-540 程度) に「シーンを追加」 button (tw-size-10) が
+      overlay されており、z-index 的に button が前面 → x < 600 で右クリックすると
+      button にヒットして context menu が出ない。bar は viewport の右側まで延びて
+      いるので x=600 以降なら button 領域を避けつつ bar 領域 (`tw-z-10 tw-flex`
+      で text 'Audiio____.wav') 内になる。
+
+    過去の失敗 (2026-05-XX 〜):
+      - `^Audiio_+\\.wav$` exact match で要素検索 → 親要素の集約 textContent も
+        match してしまい、誤った要素 (位置のずれた親 div) を返す
+      - 「width 最大」で選んでも z-index で他要素 (button) に隠れた position を返す
+      - x=500 でも `tw-size-10` button (40x40) にヒット → x=600 まで上げて安定化
+        (elementFromPoint probe で (500,931)=button, (600+,931)=bar div を確認)
+      → tw-cursor-pointer + x>=600 への補正で安定化
+    """
     info = await page.evaluate(
-        """() => {
-            for (const el of document.querySelectorAll('div')) {
-                const t = (el.textContent || '').trim();
-                if (/^Audiio_+\\.wav$/.test(t)) {
-                    const r = el.getBoundingClientRect();
-                    if (r.y > 700 && r.x < 1000) {
-                        // 親辿って横長コンテナ
-                        let cur = el;
-                        for (let i = 0; i < 5; i++) {
-                            if (!cur) break;
-                            const cr = cur.getBoundingClientRect();
-                            if (cr.width > 500 && cr.y > 700 && cr.height < 50) {
-                                return {
-                                    cx: Math.round(cr.x + Math.min(100, cr.width / 2)),
-                                    cy: Math.round(cr.y + cr.height / 2),
-                                };
-                            }
-                            cur = cur.parentElement;
-                        }
-                        return {
-                            cx: Math.round(r.x + r.width / 2),
-                            cy: Math.round(r.y + r.height / 2),
-                        };
-                    }
+        r"""() => {
+            let best = null;
+            for (const el of document.querySelectorAll('*')) {
+                const cls = (el.className || '').toString();
+                if (!/cursor-pointer/.test(cls)) continue;
+                const r = el.getBoundingClientRect();
+                if (r.y < 800 || r.y > 950) continue;
+                if (r.width < 400) continue;
+                if (r.height < 5 || r.height > 60) continue;
+                if (r.x > 1100) continue;
+                if (!best || r.width > best.w) {
+                    best = {x: r.x, y: r.y, w: r.width, h: r.height};
                 }
             }
-            return null;
+            if (!best) return null;
+            // 「シーンを追加」button (x=20-540 / tw-size-10) を避けて x>=600
+            const target_x = Math.max(600, Math.min(1500, best.x + 350));
+            return {
+                cx: Math.round(target_x),
+                cy: Math.round(best.y + best.h / 2),
+                bar_x: Math.round(best.x),
+                bar_y: Math.round(best.y),
+                bar_w: Math.round(best.w),
+                bar_h: Math.round(best.h),
+            };
         }"""
     )
     if not info:
-        raise RuntimeError("timeline の audio bar が見つからない")
+        raise RuntimeError("timeline の audio bar が見つからない (tw-cursor-pointer 系)")
+    print(f"  [bar] @({info['bar_x']},{info['bar_y']}) {info['bar_w']}x{info['bar_h']} → 右クリック ({info['cx']},{info['cy']})", flush=True)
     return info["cx"], info["cy"]
 
 
@@ -349,7 +508,7 @@ async def main():
         else:
             await open_music_panel(page)
             await click_my_music_tab(page)
-            await click_existing_track(page)
+            await select_or_upload_track(page)
 
         cx, cy = await find_audio_bar_position(page)
         await open_context_menu(page, cx, cy)
