@@ -125,20 +125,29 @@ HEYGEN_SLUG=what-is-make HEYGEN_DRY=1 /Users/naru/.pyenv/versions/3.13.0/bin/pyt
 | 形状 | 円形（デフォルトで丸。border-radiusは触らない） |
 | 計算式 | `target_px = ceil(200 * canvas_w_px / 1920)` |
 
-## 背景BGM設定（手動・動画生成前）
+## 背景BGM設定（自動・動画生成前）
+
+`_shared/heygen-bgm-setup.py` で自動化済み。Phase 1+2 完了後に独立実行する。
 
 | 設定 | 値 |
 |------|-----|
-| BGMジャンル | Corporate / Upbeat系 |
-| Volume | **3%** |
+| BGM トラック | マイ ミュージックの既存 `Audiio*.wav`（永続保存） |
+| Volume | **1%** |
 | Loop music | **ON** |
+
+```bash
+/Users/naru/.pyenv/versions/3.13.0/bin/python3 \
+  /Users/naru/Walkers_naru/05_development/youtube/_shared/heygen-bgm-setup.py
+```
+
+スクリプト実行後、context menu は開いたまま終了するので、ユーザーは画面で目視確認後に生成ボタンを手動で押す。
 
 ## 品質チェック
 
 - [ ] 全シーンでアバターが200×200・右上角に配置されているか
 - [ ] リップシンクが音声と同期しているか
 - [ ] スライドの切り替えがシーンと一致しているか
-- [ ] 背景BGMが設定されているか（Volume 3%、Loop ON）
+- [ ] 背景BGMが設定されているか（Volume 1%、Loop ON）
 
 ## 既知の制約
 
