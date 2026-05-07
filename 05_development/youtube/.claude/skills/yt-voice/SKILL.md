@@ -5,302 +5,133 @@ description: YouTube AI動画 音声生成（ElevenLabs API）
 # YouTube AI動画 音声生成（ElevenLabs API）
 
 台本から ElevenLabs V3 + IVC で音声ファイル（WAV）を生成する。
-
-## 鉄の掟（破ったら音声が途切れる。過去5回以上事故発生）
-
-1. **1チャンク最大2000文字**（assertで強制。超えたら即エラー）
-2. **CTAは毎回生成しない**（テンプレート音声を結合する）
-3. **「AI・」の中黒は「AI、」に変換**（変な間が入る）
-4. **CTAテンプレートは必ず `cta_audio_pcm.wav` を使う**（`cta_audio.wav` は中身がMP3なので結合に失敗する。絶対に使わない）
-5. **結合後に秒数検証を必ず行う**（本編チャンク合計 + CTA秒数 ≒ full.wav秒数。CTA分が欠落していないかassertする）
+実装はすべて `_shared/yt-voice.py` に集約されている。
 
 ## 入力
 
-$ARGUMENTS に台本ファイルパスまたはスラッグが渡される。
+- `projects/{slug}/script.md`
+- `projects/{slug}/audio/voice_pronunciation_auto.json`（任意・**Mode 1 前にこのスキルが作る**）
+- `projects/{slug}/voice_pronunciation.json`（任意・ユーザー手動上書き用）
+- `_shared/templates/cta_audio_pcm.wav`（CTA 固定音声・8 スライド分）
+- `credentials/elevenlabs_api_key.txt`、`credentials/elevenlabs_voice_id.txt`
 
-- パスの場合: そのファイルを読み込む
-- スラッグの場合: `projects/{slug}/script.md` を読み込む
-- 引数なしの場合: `projects/` 内の最新の `*-script.md` を使用
+## 出力
 
-## 処理フロー（6ステップ）
+| パス | 内容 |
+|---|---|
+| `projects/{slug}/audio/full.wav` | 本編 + CTA 連結済み（ユーザー視聴 / yt-split-audio 入力） |
+| `projects/{slug}/audio/full_pcm.wav` | 同上の PCM 版（HeyGen アップロード / Whisper 入力） |
+| `projects/{slug}/audio/chunks/chunkNN.wav` | API から返ってきた生 wav（Mode 1 中間生成物） |
+| `projects/{slug}/audio/scenes/sceneNN.wav` | scene 単位の wav（Mode 2 で上書き） |
+| `projects/{slug}/audio/voice_report.json` | チャンクごとの秒数・結合点リスク |
 
-### STEP 1: 本編テキスト抽出（CTAは除外）
+## 2 モード
 
-1. 台本MDを読み込む
-2. 各 `### 【スライドN】` のナレーションテキストを抽出
-3. **「末尾スライド」で始まるスライドは全て除外**（CTAはテンプレート使用）
-4. HTMLコメント除去
+### Mode 1: 初回生成（環境変数なしで実行）
 
-### STEP 2: テキスト修正
+#### 手順
 
-#### 発音修正（二重適用OK）
-```python
-import re
-
-PRONUNCIATION_MAP = {
-    'ノーコード': 'のーこーど',
-    'ローコード': 'ろーこーど',
-    'Walkers': 'ウォーカーズ',
-    'Cursor': 'カーソル',
-    'Claude Code': 'クロードコード',
-    'Lovable': 'ラバブル',
-    'Next.js': 'ネクストジェイエス',
-    'React': 'リアクト',
-    'Flutter': 'フラッター',
-    'Python': 'パイソン',
-    'Bubble': 'バブル',
-    'Adalo': 'アダロ',
-    'Glide': 'グライド',
-    'MVP': 'エムブイピー',
-    'LP': 'エルピー',
-    'API': 'エーピーアイ',
-    'SSL': 'エスエスエル',
-    'LLM': 'エルエルエム',
-    'CLI': 'シーエルアイ',
-    'iOS': 'アイオーエス',
-    'Android': 'アンドロイド',
-    'VS Code': 'ブイエスコード',
-    'Dify': 'ディフィ',
-    'env': 'えんぶ',
-    # 漢字誤変換対策
-    '社内': 'しゃない',
-    '既存': 'きそん',
-    '基幹': 'きかん',
-    '保守': 'ほしゅ',
-    '可視化': 'かしか',
-    '行っている': 'おこなっている',
-    '行っております': 'おこなっております',
-    '行う': 'おこなう',
-    '行い': 'おこない',
-}
-
-def apply_fixes(text):
-    for k, v in PRONUNCIATION_MAP.items():
-        text = text.replace(k, v)
-    # 中黒修正: 「AI・」→「AI、」（他の「・」はそのまま）
-    text = re.sub(r'AI・', 'AI、', text)
-    return text
-```
-
-#### Audio Tags挿入
-| 場面 | タグ | 目安数 |
-|------|-----|-------|
-| セクション遷移の直前 | `[pause]` | 5〜7箇所 |
-| 数字の前後 | `[pause]` `[deliberate]` | 3〜5箇所 |
-| 強調 | `[excited]` | 2〜3箇所 |
-| 冒頭 | `[calm]` | 1箇所 |
-| 自然さ | `[breathes]` `[hesitates]` | 3〜5箇所 |
-
-### STEP 3: 2000文字以下にチャンク分割（CRITICAL）
-
-```python
-# セクションタイトルスライドの境界で分割
-# さらに2000文字を超えるならスライド単位で分割
-
-for i, chunk in enumerate(chunks):
-    print(f"Chunk {i+1}: {len(chunk)} chars")
-    assert len(chunk) <= 2000, f"BLOCKED: Chunk {i+1} is {len(chunk)} chars!"
-```
-
-分割ルール:
-- **1チャンク最大2000文字（絶対超えない）**
-- 分割位置: セクションタイトルスライドの境界 → 収まらなければスライド単位
-- 文章の途中で切らない
-- 各チャンクの文字数をprint出力で確認
-
-### STEP 4: ElevenLabs API呼び出し
-
-```python
-import requests
-
-api_key = open("credentials/elevenlabs_api_key.txt").read().strip()
-voice_id = open("credentials/elevenlabs_voice_id.txt").read().strip()
-
-url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
-headers = {
-    "xi-api-key": api_key,
-    "Content-Type": "application/json",
-    "Accept": "audio/wav"
-}
-
-for i, chunk in enumerate(chunks):
-    data = {
-        "text": chunk,
-        "model_id": "eleven_v3",
-        "voice_settings": {
-            "stability": 0.5,
-            "similarity_boost": 0.75,
-            "style": 0.0
-        }
-    }
-    response = requests.post(url, json=data, headers=headers)
-    assert response.status_code == 200, f"API error: {response.status_code}"
-    with open(f"/tmp/chunk{i+1}.wav", "wb") as f:
-        f.write(response.content)
-    print(f"Chunk {i+1}: {len(response.content)} bytes saved")
-```
-
-### STEP 5: PCM変換 → トリム → filter_complex結合 → CTA結合
-
-**⚠ 鉄の掟: `ffmpeg -f concat -c copy` での単純結合は絶対禁止。チャンク境界で音が途切れる（過去3回事故発生）。必ず filter_complex concat フィルタを使うこと。**
+1. **`script.md` を読む**
+2. **誤読しそうな単語を抽出して JSON 化**:
+   - 抽出対象: 英単語・略語（API, MVP, SaaS, KPI 等）、英表記固有名詞（Cursor, Lovable 等）、漢字読みが揺れる単語（行う / 既存 等）
+   - 抽出対象外: 一般カタカナ語（パソコン、データ等）、ひらがなの単語
+   - 形式: `{"単語": "読み"}`（読みは**カタカナまたはひらがな**。英略語はカタカナ、漢字読み揺れはひらがなが標準）
+   - 例: `{"PMF": "ピーエムエフ", "Cursor": "カーソル", "行う": "おこなう", "既存": "きそん"}`
+   - 保存先: `projects/{slug}/audio/voice_pronunciation_auto.json`
+3. **実行**（cwd 不問・絶対パス指定）:
 
 ```bash
-# 1. 各チャンクをPCM変換
-for f in /tmp/chunk*.wav; do
-    base=$(basename "$f" .wav)
-    ffmpeg -y -i "$f" -acodec pcm_s16le -ar 44100 -ac 1 "/tmp/${base}_pcm.wav"
-done
-
-# 2. CTAテンプレートをPCM版で準備（CRITICAL: cta_audio.wavは中身MP3なので絶対使わない）
-CTA_PCM="_shared/templates/cta_audio_pcm.wav"
-if [ ! -f "$CTA_PCM" ]; then
-    ffmpeg -y -i "_shared/templates/cta_audio.wav" -acodec pcm_s16le -ar 44100 -ac 1 "$CTA_PCM"
-fi
-
-# 3. 各チャンクの先頭/末尾の無音をトリム
-for f in /tmp/chunk*_pcm.wav; do
-    base=$(basename "$f" .wav)
-    # 先頭無音をトリム
-    ffmpeg -y -i "$f" -af "silenceremove=start_periods=1:start_silence=0.05:start_threshold=-50dB" "/tmp/${base}_head_trimmed.wav"
-    # 末尾無音をトリム（reverse→先頭トリム→reverse）
-    ffmpeg -y -i "/tmp/${base}_head_trimmed.wav" -af "areverse,silenceremove=start_periods=1:start_silence=0.05:start_threshold=-50dB,areverse" "/tmp/${base}_trimmed.wav"
-done
-
-# 4. 0.3秒の無音パッドを生成（チャンク間の自然な間）
-ffmpeg -y -f lavfi -i anullsrc=r=44100:cl=mono -t 0.3 -acodec pcm_s16le /tmp/silence_pad.wav
-
-# 5. filter_complex concat で結合（単純concat -c copy は絶対禁止）
-#    Pythonで動的にfilter_complex文字列を構築する
+HEYGEN_SLUG={slug} /Users/naru/.pyenv/versions/3.13.0/bin/python3 \
+  /Users/naru/Walkers_naru/05_development/youtube/_shared/yt-voice.py
 ```
 
-```python
-import subprocess, glob, os
+→ `audio/full.wav` 生成。後段の yt-split-audio の入力になる。
 
-# トリム済みチャンクファイルを取得（ソート）
-trimmed_chunks = sorted(glob.glob("/tmp/chunk*_pcm_trimmed.wav"))
-silence_pad = "/tmp/silence_pad.wav"
-cta_pcm = os.path.abspath("_shared/templates/cta_audio_pcm.wav")
-slug_audio_dir = "projects/{slug}/audio"
+### Mode 2: scene 単位の修正
 
-# ffmpeg入力リストを構築: chunk1, silence, chunk2, silence, ..., chunkN, silence, CTA
-inputs = []
-for chunk_path in trimmed_chunks:
-    inputs.append(chunk_path)
-    inputs.append(silence_pad)
-inputs.append(cta_pcm)  # 最後にCTA
+ユーザーから「scene14 の◯◯がおかしい」と FB を受けたとき:
 
-# ffmpegコマンド構築
-cmd = ["ffmpeg", "-y"]
-for inp in inputs:
-    cmd.extend(["-i", inp])
-
-# filter_complex: [0][1][2][3]...[N]concat=n=N+1:v=0:a=1[out]
-n = len(inputs)
-filter_parts = "".join(f"[{i}]" for i in range(n))
-filter_complex = f"{filter_parts}concat=n={n}:v=0:a=1[out]"
-
-cmd.extend([
-    "-filter_complex", filter_complex,
-    "-map", "[out]",
-    "-acodec", "pcm_s16le", "-ar", "44100", "-ac", "1",
-    f"{slug_audio_dir}/full_pcm.wav"
-])
-
-print(f"Combining {len(trimmed_chunks)} chunks + {len(trimmed_chunks)} silences + 1 CTA = {n} inputs")
-result = subprocess.run(cmd, capture_output=True, text=True)
-assert result.returncode == 0, f"ffmpeg failed: {result.stderr}"
-
-# full.wavもコピー
-import shutil
-shutil.copy(f"{slug_audio_dir}/full_pcm.wav", f"{slug_audio_dir}/full.wav")
-print("Done: full_pcm.wav and full.wav created")
-```
-
-**なぜ filter_complex が必須か:**
-- `concat -c copy` はバイナリ結合。ElevenLabsが各チャンクに付けるフェードイン/フェードアウトがそのまま残り、結合点で「ブツッ」と切れる
-- `filter_complex concat` はデコード→再エンコードするため、チャンク間のフェードが自然に処理される
-- 0.3秒の無音パッドがセクション遷移の自然な間として機能する
-
-### STEP 6: 検証（CRITICAL: CTA欠落検知）
+1. **`projects/{slug}/voice_pronunciation.json` に修正を追記**（例: `{"PMF": "ピーエムエフ"}`）
+   - `voice_pronunciation_auto.json` は触らない（Mode 1 で再生成される前提・Mode 2 では編集対象外）
+2. **実行**（cwd 不問・絶対パス指定）:
 
 ```bash
-# 各チャンクの秒数を確認
-CHUNK_TOTAL=0
-for f in /tmp/chunk*_pcm.wav; do
-    dur=$(ffprobe -i "$f" -show_entries format=duration -v quiet -of csv=p=0)
-    echo "$(basename $f): ${dur}秒"
-    CHUNK_TOTAL=$(echo "$CHUNK_TOTAL + $dur" | bc)
-done
-
-# CTAテンプレートの秒数
-CTA_DUR=$(ffprobe -i _shared/templates/cta_audio_pcm.wav -show_entries format=duration -v quiet -of csv=p=0)
-echo "CTA template: ${CTA_DUR}秒"
-
-# 全体の秒数
-FULL_DUR=$(ffprobe -i projects/{slug}/audio/full_pcm.wav -show_entries format=duration -v quiet -of csv=p=0)
-echo "Full audio: ${FULL_DUR}秒"
-
-# 期待値との差分チェック（±5秒以内なら合格）
-EXPECTED=$(echo "$CHUNK_TOTAL + $CTA_DUR" | bc)
-DIFF=$(echo "$FULL_DUR - $EXPECTED" | bc)
-echo "Expected: ${EXPECTED}秒 / Actual: ${FULL_DUR}秒 / Diff: ${DIFF}秒"
+REGEN_SCENES=14 HEYGEN_SLUG={slug} /Users/naru/.pyenv/versions/3.13.0/bin/python3 \
+  /Users/naru/Walkers_naru/05_development/youtube/_shared/yt-voice.py
 ```
 
-**CTA欠落チェック（assert）:**
-- `full.wav秒数` ≒ `チャンク合計 + CTA秒数`（±5秒以内）でなければ**CTA結合に失敗している**
-- CTA分（約105秒）が丸ごと欠落するパターンが過去に発生。原因は`cta_audio.wav`（中身MP3）を使ったこと
-- **必ず `cta_audio_pcm.wav` を使い、秒数assertを通すこと**
+→ `audio/scenes/scene14.wav` だけ上書き。`full.wav` や他 scene は触らない。
+→ HeyGen にはユーザーが手動で再アップ。
 
-出力後 `open -R projects/{slug}/audio/full.wav` でFinderを開く。
+複数 scene 同時指定可: `REGEN_SCENES=14,16,20`
 
-## CTAテンプレート
+#### scene 番号 = slide 番号（CTA 込み）
 
-- ファイル: `_shared/templates/cta_audio_pcm.wav`（PCM 44100Hz mono, 約1分45秒）
-- 内容: 末尾スライド1〜8の固定ナレーション（毎動画共通）
-- **毎回APIで生成しない。テンプレートを結合するだけ。**
+`script.md` の `### 【スライドN】` の N がそのまま scene 番号になる（CTA も同じ通し番号）。
 
-### テンプレートが存在しない場合
-CTA台本テキストを**単独で1回のAPIコール**（2000文字以内）で生成し保存:
-```bash
-mkdir -p _shared/templates/
-ffmpeg -y -i cta_raw.wav -acodec pcm_s16le -ar 44100 -ac 1 _shared/templates/cta_audio_pcm.wav
-```
+| 例 | 構成 | 本編 scene | CTA scene |
+|---|---|---|---|
+| 35 スライド構成（本編 27 + CTA 8） | slides 1-35 | scenes 1-27 | scenes 28-35 |
+| 28 スライド構成（本編 20 + CTA 8） | slides 1-28 | scenes 1-20 | scenes 21-28 |
+| 33 スライド構成（本編 25 + CTA 8） | slides 1-33 | scenes 1-25 | scenes 26-33 |
 
-### テンプレート再生成が必要な場合
-CTA台本の文言が変わったときのみ。
+**scene 番号の特定方法**: `script.md` の `### 【スライドN】タイトル` を見て、タイトルに「末尾スライド」または「CTA N」が含まれるスライド番号 = CTA scene 番号（`REGEN_SCENES` で指定不可）。それ以外 = 本編 scene 番号（`REGEN_SCENES` で指定可）。
 
-## 出力先
+## 環境変数
 
-- `projects/{slug}/audio/full.wav`
-- `projects/{slug}/audio/full_pcm.wav`（HeyGenアップロード用・Whisper分割用）
+| 変数 | 必須 | 用途 |
+|------|------|------|
+| `HEYGEN_SLUG` | ✅ | プロジェクトディレクトリ名 |
+| `REGEN_SCENES` | | scene 番号のカンマ区切り。指定時は Mode 2 |
 
-## 品質チェック
-
-- [ ] 各チャンクが2000文字以下であること（assert通過）
-- [ ] 各チャンクの音声秒数が妥当か（極端に短い→途切れの可能性）
-- [ ] チャンク繋ぎ目で途切れ・不自然なポーズがないか
-- [ ] 全体秒数が台本想定尺に近いか
-- [ ] 発音修正が適用されているか（特に「のーこーど」）
-- [ ] 最後2分（CTA部分）を再生して途切れがないか
-- [ ] 「AI、のーこーど」の間が自然か
-
-## ユーザー確認用：チャンク結合点テーブル（CRITICAL）
-
-音声生成完了後、ユーザーに以下の形式で**切れやすいタイムスタンプ一覧**を必ず提示する。
-チャンク末尾の累積秒数を算出し、リスクを「高/中/低」で判定する。
-
-**表示順: タイムスタンプの昇順（時系列順）で並べる。** リスク順ではない。
+## 発音マップの優先順位
 
 ```
-| リスク | タイムスタンプ | 内容 | チェック理由 |
-|--------|-------------|------|-------------|
-| 低 | **1:22付近** | チャンク1末尾（オープニング終わり） | 595字 |
-| 低 | **3:19付近** | チャンク2末尾（{セクション名}終わり） | 735字 |
-| 中 | **8:04付近** | チャンク4末尾（{セクション名}終わり） | 1261字 |
-| 中 | **13:17付近** | CTAテンプレート接合部 | CTA結合点 |
+BASE_MAP（スクリプト内ハードコード・最小限）
+  ↓ 上書き
+voice_pronunciation_auto.json（このスキルが Mode 1 で生成）
+  ↓ 上書き
+voice_pronunciation.json（ユーザー手動上書き）
 ```
 
-**リスク判定基準:**
-- 高: 1500文字以上のチャンク末尾
-- 中: 1000〜1499文字のチャンク末尾、またはCTAテンプレート接合部
-- 低: 999文字以下のチャンク末尾
+同じキーは後勝ち。
+
+## CTA scenes
+
+末尾 8 scenes（CTA）は `_shared/templates/cta_audio_pcm.wav` を流し込む。**API は呼ばない**（コスト削減）。
+`REGEN_SCENES=36` 等で CTA scene 番号が指定されると **エラー停止**。テンプレ自体を変えたい場合は `_shared/templates/` を別作業で更新。
+
+## 鉄の掟（破ったら音声が途切れる）
+
+1. **1 チャンク最大 2000 文字**（`_shared/yt-voice.py` の assert で強制）
+2. **CTA は毎回生成しない**（テンプレ流し込み）
+3. **「AI・」の中黒は「AI、」に変換**（変な間が入る）
+4. **CTA テンプレートは `cta_audio_pcm.wav` を使う**（`cta_audio.wav` は中身 MP3 で結合に失敗する）
+5. **結合は filter_complex concat**（`-c copy` はチャンク境界で音切れ）
+6. **結合後の秒数検証**（チャンク合計 + 無音パッド + CTA ≒ full.wav、±5秒以内 assert）
+
+## 編集禁止（CRITICAL）
+
+`_shared/yt-voice.py` は実機検証済みコード。挙動が変なら **まず `audio/chunks/` を消して再実行**。
+それでも詰まる場合は **ユーザーに相談してから**コードに触る（憶測修正は過去の罠を再発させるリスクが高い）。
+
+## 詰まった時の対処
+
+| 症状 | 対処 |
+|------|------|
+| 「CTA scenes を検出できなかった」 | `script.md` のスライドタイトルに「末尾スライドN」または「CTA N」を含めること |
+| 「CTA scenes が ≥9 件」 | タイトルパターン誤検出。本編のスライドタイトルに「末尾スライド」「CTA N」が入ってないか確認 |
+| 「チャンクが 2000 文字超え」 | `script.md` のセクションタイトルを増やすか、本文を短くする |
+| 「CTA 欠落の疑い: 差分 ◯秒」 | `_shared/templates/cta_audio_pcm.wav` の存在と長さ確認（約 1 分 45 秒） |
+| ElevenLabs API 5xx | 1 回リトライ後失敗で停止。クレジット残量・ネット確認 |
+| Mode 2 で「scene 番号が script.md に存在しない」 | `script.md` の `### 【スライドN】` 番号を確認 |
+
+## 削除されたパターン（参考）
+
+過去には SKILL.md 内に Python コード片を書いて毎回 Claude が voice_gen.py を実装していたが、以下の理由で `_shared/yt-voice.py` に固定化（2026-05-01）:
+
+- 毎回バグ混入
+- 1 単語修正で全チャンク再生成（API 料金 8 倍）
+- 発音マップを Claude が手動メンテ → 漏れがち
+
+新方式: 固定スクリプト + 発音マップ JSON 3 層 + scene 単位部分再生成。

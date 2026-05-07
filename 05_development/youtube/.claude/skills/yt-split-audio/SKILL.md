@@ -39,7 +39,7 @@ HEYGEN_SLUG=claudecode-failure /Users/naru/.pyenv/versions/3.13.0/bin/python3 \
 ## 仕組み（要約）
 
 1. `script.md` の `### 【スライドN】` 各シーンの冒頭ナレーションを抽出
-2. Whisper medium で `full.wav` を文字起こし（CPU・word_timestamps、約30分・初回のみ）
+2. mlx-whisper medium で `full.wav` を文字起こし（Apple Silicon・word_timestamps、M3で数分・初回のみ）
 3. 各シーン冒頭フレーズと Whisper セグメントを位置一致でマッチング
    - 漢数字（一/二/三...）↔ 算用数字（1/2/3...）正規化
    - 英語表記（Claude Code 等）↔ カタカナ正規化
@@ -53,7 +53,8 @@ HEYGEN_SLUG=claudecode-failure /Users/naru/.pyenv/versions/3.13.0/bin/python3 \
 | 症状 | 対処 |
 |------|------|
 | 「マッチできない」エラー | `proposed_cuts.json` の最後の出力を確認。台本冒頭フレーズと Whisper 結果が大きく違うシーンがないかチェック |
-| Whisper が遅い | CPU で30分かかるのが正常。`whisper_segments.json` がキャッシュされる |
+| Whisper が遅い | M3 で数分かかるのが正常（mlx-whisper medium）。`whisper_segments.json` がキャッシュされるので 2 回目以降は即時 |
+| 「mlx_whisper が import できない」 | Apple Silicon 専用。`pip install mlx-whisper` 必要 |
 | 音声末尾が切れすぎ | `_shared/yt-split-audio.py` の `SILENCE_THRESHOLD_DB`（既定 -50）を下げる（例: -55） |
 | 音声末尾の息継ぎが残る | 同 `SILENCE_THRESHOLD_DB` を上げる（例: -45） |
 

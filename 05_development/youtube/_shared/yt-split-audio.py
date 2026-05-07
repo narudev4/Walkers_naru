@@ -26,7 +26,7 @@
 
 ロジック:
   1. script.md から各スライドのナレーション冒頭を抽出
-  2. Whisper medium で full.wav を文字起こし（CPU、word_timestamps=True、~30分）
+  2. mlx-whisper medium で full.wav を文字起こし（Apple Silicon、word_timestamps=True、M3で数分）
   3. 各シーン冒頭フレーズと Whisper セグメント先頭を照合（位置一致スコア）
      - 漢数字（一,二,三...）↔ 算用数字（1,2,3...）正規化
      - 英語単語 → カタカナ正規化（PRONUNCIATION_MAP）
@@ -148,17 +148,24 @@ def extract_scenes(script_path):
 # ===== Whisper 文字起こし =====
 
 def run_whisper(full_pcm_path, output_path, force=False):
-    """既存 JSON があれば再利用。なければ Whisper medium で文字起こし。"""
+    """既存 JSON があれば再利用。なければ mlx-whisper medium で文字起こし。
+
+    Apple Silicon 専用 (mlx-whisper)。openai-whisper 互換の result 構造を返す。
+    M3 で medium モデル ~15 分音声なら 1〜3 分程度で完走。
+    """
     if output_path.exists() and not force:
         size_mb = output_path.stat().st_size / 1024 / 1024
         if size_mb > 0.05:
             print(f"[whisper] キャッシュ再利用: {output_path.name} ({size_mb:.1f}MB)")
             return
-    print(f"[whisper] Whisper medium で文字起こし中（CPU・約30分）...")
-    import whisper
-    model = whisper.load_model("medium")
-    result = model.transcribe(str(full_pcm_path), language="ja",
-                              word_timestamps=True, fp16=False)
+    print(f"[whisper] mlx-whisper medium で文字起こし中（M3 で数分）...")
+    import mlx_whisper
+    result = mlx_whisper.transcribe(
+        str(full_pcm_path),
+        path_or_hf_repo="mlx-community/whisper-medium-mlx",
+        language="ja",
+        word_timestamps=True,
+    )
     segments = []
     for s in result['segments']:
         segments.append({
