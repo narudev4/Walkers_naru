@@ -15,6 +15,7 @@ import argparse
 import copy
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -781,7 +782,13 @@ def generate_pptx(json_path, output_path=None, template_path=None):
             # 旧仕様で idx 4（チャンネル登録 24pt）を使っていたが、冒頭離脱率対策で
             # 太字・大きめフォントの hero テンプレに統一（2026-04-29 改修）
             lines = sd.get("lines", "")
-            copy_slide_replace_text(tpl_prs, 1, prs, {"TextBox 2": lines})
+            new_slide = copy_slide_replace_text(tpl_prs, 1, prs, {"TextBox 2": lines})
+            # オプション: top_in 指定があれば TextBox の縦位置を上書き（単位: inch）
+            top_in = sd.get("top_in")
+            if top_in is not None:
+                for sh in new_slide.shapes:
+                    if sh.name == "TextBox 2" and sh.has_text_frame:
+                        sh.top = int(float(top_in) * 914400)
 
         elif stype == "intro":
             # テンプレートスライド4をそのままコピー
@@ -926,6 +933,54 @@ def verify_pptx(pptx_path):
 #  CLI
 # ════════════════════════════════════════════════════════
 
+_NUM_RE_SECTION = re.compile(r"^[0-9]{2}$")
+_NUM_RE_CARDS = re.compile(r"^[①②③④⑤⑥⑦⑧⑨]$|^$")
+
+
+def validate_slides_json(slides_data):
+    """slides.json の構造を検証する。CRITICAL ルール違反があれば例外を投げる。
+
+    検証項目:
+      - section.num: '01'-'99' の2桁ゼロ埋めのみ
+      - cards/comparison/table/flow.num: '①'-'⑨' または '' のみ（漢字・独自ラベル禁止）
+      - section.title: 改行で分割した行数が 2 以下
+    """
+    errors = []
+    for i, sd in enumerate(slides_data.get("slides", []), start=1):
+        stype = sd.get("type")
+        num = sd.get("num")
+
+        if stype == "section":
+            if num is not None and not _NUM_RE_SECTION.match(str(num)):
+                errors.append(
+                    f"slide {i} (section): num={num!r} は不正。"
+                    f"section.num は '01'-'99' の2桁ゼロ埋めのみ許容。"
+                    f"漢字（'結','序'等）や独自ラベル禁止。"
+                )
+            title = sd.get("title", "")
+            line_count = len(title.split("\n"))
+            if line_count > 2:
+                errors.append(
+                    f"slide {i} (section): title が {line_count} 行。"
+                    f"section.title は 2 行以下に収めること（エンジンの textbox 高さは 1 inch 固定で 2 行までしか綺麗に収まらない）。"
+                    f"現在: {title!r}"
+                )
+        elif stype in ("cards", "comparison", "table", "flow"):
+            if num is not None and not _NUM_RE_CARDS.match(str(num)):
+                errors.append(
+                    f"slide {i} ({stype}): num={num!r} は不正。"
+                    f"{stype}.num は '①'-'⑨' または '' のみ許容。"
+                    f"漢字（'結','序'等）や数字（'01'）禁止。"
+                )
+
+    if errors:
+        msg = "\n".join(f"  ❌ {e}" for e in errors)
+        raise ValueError(
+            f"slides.json 検証エラー（{len(errors)} 件）:\n{msg}\n"
+            f"参照: .claude/skills/yt-slides/SKILL.md の「num フィールドの値域」「section title 行数制約」"
+        )
+
+
 def main():
     parser = argparse.ArgumentParser(description="YouTube AI動画 スライド生成エンジン")
     parser.add_argument("--json", required=True, help="JSONスライドデータファイルパス")
@@ -935,6 +990,11 @@ def main():
     parser.add_argument("--open", action="store_true", help="生成後にPPTXを開く")
 
     args = parser.parse_args()
+
+    # JSON 構造を事前検証（CRITICAL ルール）
+    with open(args.json, encoding="utf-8") as f:
+        slides_data = json.load(f)
+    validate_slides_json(slides_data)
 
     template = Path(args.template) if args.template else None
     output = Path(args.output) if args.output else None
