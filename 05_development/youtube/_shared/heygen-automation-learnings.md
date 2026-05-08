@@ -473,3 +473,51 @@ if not ok:
 - **同じ目的を達成する経路が複数ある場合、構造的に安全な方を選ぶ**。座標クリック (`page.mouse.click`) より セレクタ指定 (`locator().click()`) の方が誤対象クリックの可能性を排除しやすい
 - **症状再現が確実な場合、デバッグログを 4 ポイント仕込んで実機で観察**するのが最速。今回も 4 ポイント (Upload click 前後 / set_input_files / Add audio click) のシーン数監視で「クリック直後に scene 数 43→44」を検出して原因を 1 回の実行で特定できた
 - **「Section X が正解」と書かれていた過去のドキュメントも、新しい事故が出たら訂正する**。Section 6 の「タイムラインではなく左パネル」は `page.mouse.click(x,y)` 限定の話で、`locator().click()` には当てはまらないことが後の検証で判明。古い前提が残ると次の人が同じ罠に戻る
+
+## 15. heygen-bgm-setup.py の audio bar セレクタ更新 (2026-05-08)
+
+### 15.1 現象
+`claudecode-security-failure` の Phase 3 (BGM 設定) 実行時、`find_audio_bar_position` が
+`tw-cursor-pointer` 系セレクタで対象を見つけられず `RuntimeError("timeline の audio bar が見つからない")` で停止。
+HEYGEN_START 系のリトライ機構もないため、5 回連続実行しても同じ場所で失敗。
+
+### 15.2 原因 (推定)
+HeyGen の timeline 周辺の DOM 構造が変わり、過去に「audio bar = `cursor-pointer` クラスを持つ横長要素」
+で当たっていた要素が、現在は別のクラス階層 (`div.tw-left-0` 内の `div.tw-z-10`) になっていた。
+旧 selector は完全には消えていない可能性もあるが、実機 ([Profile 4 で開いた CDP Chrome の `app.heygen.com/create-v4/...?panel=music`])
+では `cursor-pointer` 単独の検索でヒットしなくなっていた。
+
+### 15.3 解決策 (実証済み・2026-05-08)
+**Chrome DevTools Recorder で手動操作を録画 → JSON エクスポート** して正解セレクタを取得:
+
+```
+step 5 (右クリック): selectors = [
+  'div.tw-left-0 div.tw-z-10',
+  'xpath:.../div[3]',
+  'pierce/div.tw-left-0 div.tw-z-10',
+]
+```
+
+`heygen-bgm-setup.py:find_audio_bar_position` を **2 段階フォールバック** に書き換え:
+1. **Pattern 1 (主軸)**: `div.tw-left-0` 内の `div.tw-z-10` で横長要素 (w>400, h=5-60, y=700-950, x≤1100) を選ぶ
+2. **Pattern 2 (fallback)**: 旧 `cursor-pointer` 検索 (互換のため残す)
+
+検証ログ:
+```
+[bar] [tw-left-0/tw-z-10] @(482,923) 6302x16 → 右クリック (832,931)
+[4/6] context menu 開いた @(832,931)
+[5/6] Volume slider 設定後: 0.0100 (1%) ✅
+[6/6] Loop music は既に ON
+✅ BGM 設定完了
+```
+
+### 15.4 検証済み・不採用のアプローチ
+1. **HEYGEN_START 的なリトライ** ← BGM スクリプトはそもそも段階的進行で、5 回再実行しても同じ DOM 状態にぶつかるだけ。UI 変化が原因の場合は再実行で抜けない (Section 11 と性質が違う)
+2. **画面録画 + 手動でセレクタ推定** ← DOM 詳細は録画から復元できないため精度が出ない
+3. **Recorder JSON で記録される `aria/` 系を直接 Playwright で使う** ← Playwright の locator strategy と DevTools Recorder の `aria/` 表記が完全互換でないので、生 selector (`div.tw-left-0 div.tw-z-10`) を採用するほうが安定
+
+### 15.5 教訓
+- **「実機録画で正解を取る」のは UI 自動化の最強デバッグ手段**。Claude が DOM を推測するより、ユーザーが Chrome DevTools Recorder で操作して selector + 座標 + 順序を JSON 出力したほうが速い
+- **DevTools Recorder の制約**: slider のドラッグ操作 (mousedown→move→mouseup) は記録されない。click / change 系の離散イベントのみ記録される。Volume slider のドラッグなどは別途実機検証が必要
+- **DOM 構造が変わったら fallback を残しつつ新セレクタを主軸にする**。完全置換だと旧構造復活時に動かなくなる。今回は 2 段階フォールバックで両対応
+- **HeyGen の DOM クラス命名 `tw-*` は Tailwind 由来で意味が安定している** (`tw-left-0` = 絶対配置 left:0、`tw-z-10` = z-index:10)。位置情報が selector に埋まっているため、構造的安定性が高い (cursor-pointer のような汎用クラスより信頼できる)

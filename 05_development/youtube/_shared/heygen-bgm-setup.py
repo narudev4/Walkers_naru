@@ -311,40 +311,59 @@ async def select_or_upload_track(page):
 async def find_audio_bar_position(page):
     """timeline 下部の audio bar の右クリック対象座標を返す。
 
-    実装方針:
-      画面下部 (y=800-950) で **tw-cursor-pointer クラス**を持つ横長要素を
-      bar 本体として選ぶ（典型: w > 1000, h ~20 px、scenes 全体に渡る audio track）。
+    実装方針 (2026-05-08 改修):
+      Pattern 1 (主軸): div.tw-left-0 直下の div.tw-z-10 で横長要素を探す。
+        Chrome DevTools Recorder で記録された正解セレクタ (recording 2026-05-08)。
+      Pattern 2 (fallback): tw-cursor-pointer クラスを持つ横長要素 (旧実装)。
+        DOM 構造変化に備えて残す。
 
     クリック x 座標は **x >= 600 から狙う**:
-      理由は左側 (x=20-540 程度) に「シーンを追加」 button (tw-size-10) が
-      overlay されており、z-index 的に button が前面 → x < 600 で右クリックすると
-      button にヒットして context menu が出ない。bar は viewport の右側まで延びて
-      いるので x=600 以降なら button 領域を避けつつ bar 領域 (`tw-z-10 tw-flex`
-      で text 'Audiio____.wav') 内になる。
+      左側 (x=20-540 程度) に「シーンを追加」 button (tw-size-10) が overlay されており、
+      z-index 的に button が前面 → x < 600 で右クリックすると button にヒットして
+      context menu が出ない。bar は viewport の右側まで延びているので x=600 以降なら
+      button 領域を避けつつ bar 領域内になる。
 
-    過去の失敗 (2026-05-XX 〜):
-      - `^Audiio_+\\.wav$` exact match で要素検索 → 親要素の集約 textContent も
-        match してしまい、誤った要素 (位置のずれた親 div) を返す
-      - 「width 最大」で選んでも z-index で他要素 (button) に隠れた position を返す
+    過去の失敗 (〜2026-05-07):
+      - `^Audiio_+\\.wav$` exact match で誤った親要素を取得
+      - 「width 最大」だけでは z-index で隠れた position を返す
       - x=500 でも `tw-size-10` button (40x40) にヒット → x=600 まで上げて安定化
-        (elementFromPoint probe で (500,931)=button, (600+,931)=bar div を確認)
-      → tw-cursor-pointer + x>=600 への補正で安定化
+      - 2026-05-08: cursor-pointer 単独だと find できなくなる事象発生
+        → recorder で確認した tw-left-0/tw-z-10 を主軸に変更
     """
     info = await page.evaluate(
         r"""() => {
             let best = null;
-            for (const el of document.querySelectorAll('*')) {
-                const cls = (el.className || '').toString();
-                if (!/cursor-pointer/.test(cls)) continue;
-                const r = el.getBoundingClientRect();
-                if (r.y < 800 || r.y > 950) continue;
-                if (r.width < 400) continue;
-                if (r.height < 5 || r.height > 60) continue;
-                if (r.x > 1100) continue;
-                if (!best || r.width > best.w) {
-                    best = {x: r.x, y: r.y, w: r.width, h: r.height};
+
+            // Pattern 1 (主軸・2026-05-08 recorder JSON で確認): div.tw-left-0 内の div.tw-z-10
+            for (const container of document.querySelectorAll('div.tw-left-0')) {
+                for (const el of container.querySelectorAll('div.tw-z-10')) {
+                    const r = el.getBoundingClientRect();
+                    if (r.y < 700 || r.y > 950) continue;
+                    if (r.width < 400) continue;
+                    if (r.height < 5 || r.height > 60) continue;
+                    if (r.x > 1100) continue;
+                    if (!best || r.width > best.w) {
+                        best = {x: r.x, y: r.y, w: r.width, h: r.height, source: 'tw-left-0/tw-z-10'};
+                    }
                 }
             }
+
+            // Pattern 2 (fallback・旧実装): cursor-pointer
+            if (!best) {
+                for (const el of document.querySelectorAll('*')) {
+                    const cls = (el.className || '').toString();
+                    if (!/cursor-pointer/.test(cls)) continue;
+                    const r = el.getBoundingClientRect();
+                    if (r.y < 800 || r.y > 950) continue;
+                    if (r.width < 400) continue;
+                    if (r.height < 5 || r.height > 60) continue;
+                    if (r.x > 1100) continue;
+                    if (!best || r.width > best.w) {
+                        best = {x: r.x, y: r.y, w: r.width, h: r.height, source: 'cursor-pointer'};
+                    }
+                }
+            }
+
             if (!best) return null;
             // 「シーンを追加」button (x=20-540 / tw-size-10) を避けて x>=600
             const target_x = Math.max(600, Math.min(1500, best.x + 350));
@@ -355,12 +374,13 @@ async def find_audio_bar_position(page):
                 bar_y: Math.round(best.y),
                 bar_w: Math.round(best.w),
                 bar_h: Math.round(best.h),
+                source: best.source,
             };
         }"""
     )
     if not info:
-        raise RuntimeError("timeline の audio bar が見つからない (tw-cursor-pointer 系)")
-    print(f"  [bar] @({info['bar_x']},{info['bar_y']}) {info['bar_w']}x{info['bar_h']} → 右クリック ({info['cx']},{info['cy']})", flush=True)
+        raise RuntimeError("timeline の audio bar が見つからない (tw-left-0/tw-z-10 / cursor-pointer 共に)")
+    print(f"  [bar] [{info['source']}] @({info['bar_x']},{info['bar_y']}) {info['bar_w']}x{info['bar_h']} → 右クリック ({info['cx']},{info['cy']})", flush=True)
     return info["cx"], info["cy"]
 
 
