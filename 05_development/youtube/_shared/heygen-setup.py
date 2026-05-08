@@ -5,9 +5,12 @@ HeyGen セットアップ: PPTXアップロード + 音声アップロード + �
 ⚠ このファイルは速度最適化済み (2026-04-28、α+β)。詳細は heygen-automation-learnings.md Section 10。
    - α: scrollIntoView を smooth → instant 化（click_scene_by_timeline）
    - β: nav 周辺の sleep を圧縮（2.5→0.5、0.3→0.1 等）
-   - β: click_scene_script の scrollTop=0 リセットを廃止（main loop は単調増加）
    無検証で sleep 値を増やしたり scrollIntoView を戻したりすると nav 速度が約2倍劣化する。
    変更したい場合は実機検証してから learnings.md に追記すること。
+
+⚠ シーンナビは「画面下タイムライン経由」が主軸 (2026-05-07、Section 14)。
+   click_scene_script は click_scene_by_timeline の薄いラッパーに変更済み。
+   左パネル経由の番号 span 検索に戻すと白紙シーン誤生成事故が再発する。
 
 使い方:
   # 作業ディレクトリ: 05_development/youtube/
@@ -481,67 +484,19 @@ async def click_next_unprocessed_script(page, expected_num=None):
 
 
 async def click_scene_script(page, scene_num):
-    """左パネルでシーンNのスクリプト入力行をクリック。"""
-    # 番号検索でスクロール+クリック（回数制限: 末尾の誤操作防止）
-    # scene01, scene02... 形式のファイル名を検索（HeyGen PPTアップ時のUI対応）
-    scene_prefix = f"scene{scene_num:02d}"
-    for scroll_try in range(25):
-        result = await page.evaluate(f"""() => {{
-            const divs = [...document.querySelectorAll("div")];
-            const numStr = "{scene_num}";
-            const scenePrefix = "{scene_prefix}";
+    """シーンNに移動（タイムライン経由のラッパー）。
 
-            const container = divs.find(d => {{
-                const r = d.getBoundingClientRect();
-                return r.x < 30 && r.width > 300 && r.width < 700 && d.scrollHeight > d.clientHeight + 50;
-            }});
+    旧実装は左パネル経由（番号 span 検索）だったが、音声プレビュー UI 内の button を持つ
+    シーン行を defensive filter (querySelector("button")) で誤って弾き、結果として
+    Add scene ボタンを誤クリックする白紙シーン生成事故が発生（learnings Section 14,
+    2026-05-07）。タイムライン経由の click_scene_by_timeline は [data-scene-id] で
+    直接指定するため Add scene と混在せず構造的に安全。
 
-            for (const d of divs) {{
-                const t = d.textContent.trim();
-                const r = d.getBoundingClientRect();
-                if (r.x >= 10 && r.x < 80 && r.width > 300 && r.height > 15 && r.height < 100
-                    && r.y > 50 && r.y < 850) {{
-                    // sceneNN_ 形式にマッチ（PPTアップロード時のファイル名）
-                    if (t.startsWith(scenePrefix)) {{
-                        return {{found: true, x: Math.round(r.x + r.width / 2), y: Math.round(r.y + r.height / 2)}};
-                    }}
-                    // 従来の番号プレフィックス形式にもフォールバック
-                    if (t.startsWith(numStr)) {{
-                        const nextChar = t.charAt(numStr.length);
-                        if (nextChar >= "0" && nextChar <= "9") continue;
-                        return {{found: true, x: Math.round(r.x + r.width / 2), y: Math.round(r.y + r.height / 2)}};
-                    }}
-                    // シーン1がアクティブ状態（拡張プレースホルダー h≈64）: "音声をアップロード"を含む最初の行
-                    if (numStr === "1" && r.y < 220 && (t.includes("音声をアップロード") || t.includes("Upload audio"))) {{
-                        return {{found: true, x: Math.round(r.x + r.width / 2), y: Math.round(r.y + r.height / 2)}};
-                    }}
-                }}
-            }}
-
-            if (container) {{
-                // β: scrollTop=0 リセットは廃止（main loopは単調増加、戻る必要なし）
-                container.scrollTop += 400;
-                // scrollHeightの95%を超えたら停止（「シーンを追加」ボタン誤クリック防止）
-                if (container.scrollTop > container.scrollHeight * 0.95) {{
-                    return {{found: false, scrolled: false}};
-                }}
-                return {{found: false, scrolled: true}};
-            }}
-            return {{found: false, scrolled: false}};
-        }}""")
-
-        if result and result.get('found'):
-            await page.mouse.click(result['x'], result['y'])
-            await asyncio.sleep(0.5)   # β: 2.5 → 0.5
-            return True
-
-        if result and result.get('scrolled'):
-            await asyncio.sleep(0.1)   # β: 0.3 → 0.1
-            continue
-        break
-
-    print(f"  [nav] シーン{scene_num}への移動失敗", flush=True)
-    return False
+    既存呼び出し元（upload_audio リトライ・self_heal・VERIFY_MODE）の互換のため、
+    bool を返すラッパーとして残す。
+    """
+    ok, _scene_id = await click_scene_by_timeline(page, scene_num)
+    return ok
 
 
 async def upload_audio(page, scene_num, wav_path):
@@ -585,6 +540,9 @@ async def upload_audio(page, scene_num, wav_path):
         # ボタンがない＝音声が既に設定済み（ボタンはアップ済みで非表示になる）
         print(f"  [audio] アップロードボタンなし → 既にアップ済みと判断", flush=True)
         return True
+    # 2026-05-07 debug: Upload audio click 直後の scene 数
+    _ucnt = await page.evaluate("() => document.querySelectorAll('[data-scene-item]').length")
+    print(f"  [audio][debug] Upload audio click 後の scene数 = {_ucnt}", flush=True)
     await asyncio.sleep(2.5)
 
     # Step 2: hidden audio input に直接 set_input_files
@@ -622,6 +580,9 @@ async def upload_audio(page, scene_num, wav_path):
         print(f"  [audio] set_input_files失敗: {e}", flush=True)
         await page.keyboard.press("Escape")
         return False
+    # 2026-05-07 debug: set_input_files 直後の scene 数
+    _scnt = await page.evaluate("() => document.querySelectorAll('[data-scene-item]').length")
+    print(f"  [audio][debug] set_input_files 後の scene数 = {_scnt}", flush=True)
 
     # Step 3: 「Add audio」/「音声を追加」ボタン出現をポーリング待機してJSクリック
     # （WAVデコード・ダイアログレンダ完了まで数秒かかるため固定sleepではなくポーリングする）
@@ -648,6 +609,9 @@ async def upload_audio(page, scene_num, wav_path):
         print(f"  [audio] Add audioボタンが30秒以内に出現しません", flush=True)
         await page.keyboard.press("Escape")
         return False
+    # 2026-05-07 debug: Add audio click 直後の scene 数
+    _acnt = await page.evaluate("() => document.querySelectorAll('[data-scene-item]').length")
+    print(f"  [audio][debug] Add audio click 後の scene数 = {_acnt}", flush=True)
     print(f"  [audio] Add audioクリック（JS）", flush=True)
 
     # Step 4: Add audioが非表示になるまで待つ（最大30秒）
@@ -1439,7 +1403,53 @@ async def phase_0_upload_pptx_cdp():
             # fallback: imgの親divを直接クリック
             await avatar_img.locator("xpath=..").click()
         await asyncio.sleep(1.5)
-        print("  ✓ アバター選択完了", flush=True)
+        print("  ✓ アバター選択完了 (1回目クリック = 拡大モーダル展開)", flush=True)
+
+        # 2026-05-07: HeyGen UI 変更で「アバター選択は2クリック制」になった。
+        # 1回目クリック → 拡大モーダル展開（選択は未確定）
+        # 2回目クリック → 拡大モーダル内のアバターを再クリックして選択を確定
+        # ESC でモーダル閉じると選択未確定のまま Create Video が押せてしまい、
+        # 結果「アバターなし・Annie 英語ボイス」エディタができる事故あり（learnings.md 13.4）
+        # → ESCフォールバックは禁止。3段フォールバック（img / 親 / mouse 座標）で確実に再クリック
+        await asyncio.sleep(0.7)
+        expanded_avatar = page.locator('img[alt*="山口鳳汰"][alt*="背景リアル"]').last
+        reclick_ok = False
+        if await expanded_avatar.count() > 0:
+            # 段1: img を force クリック
+            try:
+                await expanded_avatar.click(timeout=5000, force=True)
+                reclick_ok = True
+                print("  ✓ 拡大モーダル内アバター再クリック [img force]", flush=True)
+            except Exception:
+                pass
+            # 段2: 親 div を force クリック
+            if not reclick_ok:
+                try:
+                    parent = expanded_avatar.locator("xpath=..")
+                    await parent.click(timeout=5000, force=True)
+                    reclick_ok = True
+                    print("  ✓ 拡大モーダル内アバター再クリック [parent]", flush=True)
+                except Exception:
+                    pass
+            # 段3: bounding box の中心を mouse.click
+            if not reclick_ok:
+                try:
+                    box = await expanded_avatar.bounding_box()
+                    if box:
+                        cx = box["x"] + box["width"] / 2
+                        cy = box["y"] + box["height"] / 2
+                        await page.mouse.click(cx, cy)
+                        reclick_ok = True
+                        print(f"  ✓ 拡大モーダル内アバター再クリック [mouse {int(cx)},{int(cy)}]", flush=True)
+                except Exception:
+                    pass
+
+        if not reclick_ok:
+            # 3段全て失敗 → スクショ撮って Phase 0 失敗扱い
+            await page.screenshot(path="/tmp/heygen-phase0-reclick-fail.png")
+            print("❌ 拡大モーダル内アバター再クリック全段失敗 → /tmp/heygen-phase0-reclick-fail.png", flush=True)
+            return False
+        await asyncio.sleep(1.5)
 
         # Step 6: Create Videoクリック → create-v4 URL到達待機
         print("  [6/6] Create Video...", flush=True)
@@ -1704,19 +1714,23 @@ async def main():
             await page.keyboard.press("Escape")
             await asyncio.sleep(0.5)
 
-            # 左パネルのスクリプト行をクリックしてシーンに移動（旧版同等の実績ある方式）
-            # click_scene_script は scene{NN}_ プレフィックス + 番号プレフィックス + シーン1アクティブ特殊処理を持つ
+            # 2026-05-07 追加: 白紙シーン誤生成検知（learnings.md Section 14 候補）
+            # シーン処理中に scene count が増えるなら、どこかで「+ シーンを追加」が誤発火している
+            scene_count_start = await page.evaluate(
+                "() => document.querySelectorAll('[data-scene-item]').length"
+            )
+
+            # 2026-05-07 主従逆転: 画面下タイムライン経由 ([data-scene-id]) を主に。
+            # 左パネル経由 click_scene_script は「シーンを追加」誤クリック事故あり (learnings Section 14)。
+            # click_scene_by_timeline は locator().click() を使うので左パネルも更新される (Section 6)。
             print(f"  [nav] シーン{scene_num}に移動...", flush=True)
-            if not await click_scene_script(page, scene_num):
-                # フォールバック: タイムラインから直接クリック
-                print(f"  [nav] click_scene_script失敗 → タイムラインクリックにフォールバック", flush=True)
-                ok, _scene_id = await click_scene_by_timeline(page, scene_num)
-                if not ok:
-                    print(f"❌ シーン{scene_num}への移動失敗。中断。", flush=True)
-                    progress["failed"].append(scene_num)
-                    progress["status"] = "stopped"
-                    save_progress(SLUG, progress)
-                    break
+            ok, _scene_id = await click_scene_by_timeline(page, scene_num)
+            if not ok:
+                print(f"❌ シーン{scene_num}への移動失敗（タイムラインから data-scene-id 取得不可）。中断。", flush=True)
+                progress["failed"].append(scene_num)
+                progress["status"] = "stopped"
+                save_progress(SLUG, progress)
+                break
             # 右パネルから実際のシーン番号を読んで照合
             await asyncio.sleep(0.5)
             heygen_num = await read_heygen_scene_num(page)
@@ -1755,6 +1769,20 @@ async def main():
             await page.keyboard.press("Escape")
             await asyncio.sleep(1.0)
 
+            # 2026-05-07 追加: 音声アップ後の scene count 検証
+            scene_count_after_audio = await page.evaluate(
+                "() => document.querySelectorAll('[data-scene-item]').length"
+            )
+            if scene_count_after_audio != scene_count_start:
+                print(f"❌ 白紙シーン誤生成検知: 音声アップ後に {scene_count_start} → {scene_count_after_audio} (シーン{scene_num}処理中)", flush=True)
+                ss_dir = f"{BASE_DIR}/{SLUG}/debug"
+                os.makedirs(ss_dir, exist_ok=True)
+                await page.screenshot(path=f"{ss_dir}/scene{scene_num:02d}_phantom_after_audio.png")
+                progress["failed"].append(scene_num)
+                progress["status"] = "stopped"
+                save_progress(SLUG, progress)
+                break
+
             # [3/3] アバター配置
             print(f"  [3/3] アバター配置...", flush=True)
             avatar_ok = False
@@ -1788,6 +1816,20 @@ async def main():
 
             if avatar_ok:
                 print(f"  [OK] シーン{scene_num}: {avatar_msg}", flush=True)
+
+                # 2026-05-07 追加: アバター配置後の scene count 検証
+                scene_count_after_avatar = await page.evaluate(
+                    "() => document.querySelectorAll('[data-scene-item]').length"
+                )
+                if scene_count_after_avatar != scene_count_start:
+                    print(f"❌ 白紙シーン誤生成検知: アバター配置後に {scene_count_start} → {scene_count_after_avatar} (シーン{scene_num}処理中)", flush=True)
+                    ss_dir = f"{BASE_DIR}/{SLUG}/debug"
+                    os.makedirs(ss_dir, exist_ok=True)
+                    await page.screenshot(path=f"{ss_dir}/scene{scene_num:02d}_phantom_after_avatar.png")
+                    progress["failed"].append(scene_num)
+                    progress["status"] = "stopped"
+                    save_progress(SLUG, progress)
+                    break
 
                 # スクリーンショット保存（後でまとめて検証用）
                 ss = await capture_scene_screenshot(page, scene_num, SLUG)

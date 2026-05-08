@@ -111,6 +111,18 @@ WebFetch or Chrome MCPで記事を取得し、Markdown化する。
 - 両 Agent から完了通知が来たら、揃った時点で次の STEP 5 に進む。
 - 片方が遅れていてももう片方は先に表示する（音声側だけ結合点情報を出す等は可）。
 
+**スライド生成サブエージェント起動時に必ず含める制約（CRITICAL — 過去事故防止）:**
+
+過去にサブエージェントが暴走して「`num="結"`」「section title 3 行構成」を勝手に作って動画品質が破綻した実例あり。スライド生成 Agent への起動プロンプトには **必ず以下のすべてを明記する**:
+
+1. **「`.claude/skills/yt-slides/SKILL.md` を **必ず** Read で読む」**（参考ではなく必須）
+2. **「過去プロジェクト `projects/claudecode-entrepreneur/slides.json` を Read して構造を **完全踏襲** する。独自構造を作らない」**
+3. **「`num` フィールドは厳密に: section は `01`-`99`、cards/comparison/table/flow は `①`-`⑨` または空文字 `""` のみ。**漢字（'結'/'序'/'破'/'急'）や独自ラベル絶対禁止**」**
+4. **「`section.title` は **2 行以下** に必ず収める。3 行以上は禁止。1 行目に「事例①」のような独立カテゴリラベルを置くのも禁止」**
+5. **「`yt_slide_engine.py --verify` が PASS しても、JSON 内の num 値や title 行数を必ずセルフ目視確認する。`--verify` は画像 blob 健全性しか見ない」**
+
+エンジン側にも `validate_slides_json()` で num 値域・title 行数チェックが入っており、違反時は ValueError で停止する。これは安全網であって、サブエージェントへの指示の代わりではない。**起動プロンプトで縛らないと、サブエージェントは自由解釈で再び暴走する**（過去実例あり）。
+
 **両方完了後のメッセージ:**
 ```
 ✅ STEP 3 完了: スライドを生成しました（{N}枚 / verify {PASS|FAIL}）
@@ -257,8 +269,9 @@ CDP Chrome は未起動なら heygen-setup.py 内で自動起動。ユーザー�
   【1】🤖 Phase 0: PPTXアップロード + アバター選択 + Create Video
      コマンド（Claude が Bash で叩く）:
        HEYGEN_SLUG={slug} HEYGEN_PPTX_PATH=projects/{slug}/slides.pptx /Users/naru/.pyenv/versions/3.13.0/bin/python3 _shared/heygen-setup.py
-     ・PPTX をアップ → アバター「本番用：山口鳳汰(背景リアル&スーツ見えるver)」を自動選択 → Create Video → エディタ遷移 → 変換完了で停止
-     ・⚠ HeyGen UI が「アバターカード再クリックで確定」のような変更をしている場合あり。タイムアウト失敗時は CDP Chrome 再起動 → リトライ
+     ・PPTX をアップ → アバター「本番用：山口鳳汰(背景リアル&スーツ見えるver)」を自動選択 → ESC で拡大モーダル閉じ → Create Video → エディタ遷移 → 変換完了で停止
+     ・✅ アバター選択後の ESC 自動送信は heygen-setup.py に組み込み済み（learnings.md Section 13）
+     ・⚠ それでも Create Video ボタンが詰まる場合は CDP Chrome 再起動 → リトライ。最大5回まで再実行
      ・⚠ アップロード時「スライドの内容を編集可能な要素としてインポート」が出たら必ずOFFにすること（スクリプトが処理する）
 
   【2】🤖 Phase 1+2: 音声アップロード + アバター位置調整
@@ -281,6 +294,7 @@ CDP Chrome は未起動なら heygen-setup.py 内で自動起動。ユーザー�
   - 「ターミナルで実行してください」「以下のコマンドを叩いてください」と手順だけ出して停止する
   - ユーザー名義の作業として書く（「👤 あなたの作業」のような表現）
   - Phase 完了通知を待たず次の Phase を起動する（Monitor で完走確認してから次へ）
+  - **Phase 1+2 完走後に「BGM 設定に進めて良いですか？」と確認する**（不要・自動継続。Phase 1+2 が成功で完走したら即座に Phase 3 (heygen-bgm-setup.py) を起動する）
 
 ✅ 完了報告フォーマット（3 Phase 全完走後にユーザーへ送る）:
   - 完成シーン数 / 失敗シーン数

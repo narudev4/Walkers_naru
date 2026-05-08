@@ -75,9 +75,12 @@ VOICE_SETTINGS = {
 }
 
 # claude -p が落ちた時の保険。汎用テック用語は auto JSON に任せる。
+# 2026-05-08: 「ノーコード→のーこーど」「ローコード→ろーこーど」を削除。
+#   ElevenLabs JP voice ではひらがな+長音記号(ー)の連続を分節崩壊する傾向あり、
+#   「のーこーど」が「の高度/のコード/濃厚度」と誤読された (claudecode-security-failure 検証)。
+#   カタカナ複合語は中黒区切り「ノー、コード」が安全。詳細は yt-script SKILL.md の
+#   TTS-friendly ルール参照。
 BASE_MAP = {
-    "ノーコード": "のーこーど",
-    "ローコード": "ろーこーど",
     "Walkers": "ウォーカーズ",
     "行っている": "おこなっている",
     "行っております": "おこなっております",
@@ -429,6 +432,59 @@ def parse_regen_scenes(env_val: str) -> list:
     return sorted({int(x) for x in env_val.split(",") if x.strip()})
 
 
+def verify_scenes_with_whisper(scenes_dir: Path, scene_nos: list, slide_map: dict):
+    """mlx-whisper で再生成 wav を書き起こし、元台本との差分から誤読疑いを警告。
+
+    完璧ではない: Whisper は補正バイアスで実音の誤読を「正しく」転写することがある
+    (例: 「じこうじれい」音声を「事故事例」に補正)。あくまでセーフティネット。
+    最終判断は耳での確認に委ねる。
+    """
+    try:
+        import mlx_whisper
+    except ImportError:
+        print("\n⚠ mlx-whisper 未インストール。Whisper 検証スキップ。", file=sys.stderr)
+        return
+
+    print("\n=== Whisper 自動検証 (TTS-friendly チェック H') ===")
+    issues = []
+    for sn in scene_nos:
+        wav = scenes_dir / f"scene{sn:02d}.wav"
+        if not wav.exists():
+            continue
+        try:
+            r = mlx_whisper.transcribe(
+                str(wav),
+                path_or_hf_repo="mlx-community/whisper-large-v3-mlx",
+                language="ja",
+                verbose=False,
+            )
+        except Exception as e:
+            print(f"  [whisper] scene{sn:02d}: 書き起こし失敗 ({e})")
+            continue
+        actual = r["text"].strip()
+        _, expected = slide_map.get(sn, (None, ""))
+        # 元台本に出てくる「目立つ語」のうち実音転写に消えているものを抽出
+        # 漢字 2-4 字の熟語 + カタカナ 4 音節以上を疑い対象に
+        suspect = set()
+        suspect.update(re.findall(r"[一-鿿]{2,4}", expected))
+        suspect.update(re.findall(r"[ァ-ヴー]{4,}", expected))
+        missing = sorted(w for w in suspect if w in expected and w not in actual)
+        if missing:
+            print(f"  [whisper] scene{sn:02d}: ⚠ 期待語が転写に無い → {missing[:5]}")
+            print(f"    実音: {actual[:120]}")
+            issues.append((sn, missing))
+        else:
+            print(f"  [whisper] scene{sn:02d}: ✓ 主要語一致")
+
+    if issues:
+        print(f"\n⚠ {len(issues)} シーンで誤読疑い。実音を耳で確認推奨:")
+        for sn, words in issues:
+            print(f"   scene{sn:02d}: {words[:5]}")
+        print("   (Whisper の補正バイアスで実音誤読を見逃す可能性あり)")
+    else:
+        print("\n✅ 全 scene 主要語一致")
+
+
 def run_regen(
     scene_nos: list, slides: list, cta_set: set,
     pron_map: dict, api_key: str, voice_id: str,
@@ -479,6 +535,10 @@ def run_regen(
         trim_silence(pcm, out)
         dur = get_duration(out)
         print(f"  → {out.name} ({dur:.2f}s)")
+
+    # 2026-05-08 H': Whisper で誤読チェック (yt-script SKILL.md の TTS-friendly 戦略 5)
+    verify_scenes_with_whisper(scenes_dir, scene_nos, slide_map)
+
     print("\n✅ 再生成完了。HeyGen に手動で再アップしてください。")
 
 
