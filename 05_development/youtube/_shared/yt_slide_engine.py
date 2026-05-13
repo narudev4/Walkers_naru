@@ -744,7 +744,9 @@ def generate_pptx(json_path, output_path=None, template_path=None):
 
     # 出力パス決定
     if output_path is None:
-        output_dir = SCRIPT_DIR.parent / slug
+        # --output 省略時のデフォルト: youtube/projects/{slug}/slides.pptx
+        # （過去は youtube/{slug}/ に出力するバグがあり、claudecode-ux-wins 等の残骸が発生していた）
+        output_dir = SCRIPT_DIR.parent / "projects" / slug
         output_dir.mkdir(parents=True, exist_ok=True)
         output_path = output_dir / "slides.pptx"
 
