@@ -1,133 +1,133 @@
 ---
-description: YouTube AI動画 サムネイル生成
+description: Walkers YouTube thumbnail generation with local Houta references and imagegen
 ---
 
-# YouTube AI動画 サムネイル生成
+# yt-thumbnail
 
-動画タイトルからYouTubeサムネイル画像（1280×720 PNG）を自動生成する。
+## Purpose
 
-## 入力
+Generate a Walkers-style YouTube thumbnail for a project or title. The output is a 1280x720 thumbnail that preserves the video's core title meaning, uses local Houta identity photos, borrows composition cues from recent channel thumbnails, and is generated with `imagegen`.
 
-$ARGUMENTS にタイトルまたはスラッグが渡される。
+## Inputs
 
-- タイトルの場合: そのタイトルでサムネイル生成
-- スラッグの場合: `projects/{slug}/script.md` からタイトルを取得
-- 引数なしの場合: `projects/` 内の最新の `*-script.md` からタイトルを取得
+`$ARGUMENTS` may be:
 
-## 処理フロー
+- A project slug: read `projects/{slug}/`.
+- A title string: use it directly and create artifacts in a sensible project thumbnail directory only when a project is known.
+- Empty: infer the latest project under `projects/`.
 
-1. タイトルを取得
-2. タイトルを2〜3行のキャッチコピーに分割
-3. python-pptxでサムネイル用PPTX（1枚）を生成
-4. soffice（LibreOffice）でPNG変換
-5. 必要に応じてFFmpegで1280×720にリサイズ
-6. 完成画像をFinderで開く
+For a project, read title sources in this order:
 
-## Walkersサムネイルデザイン仕様
+1. `projects/{slug}/script.md`
+   - Prefer `**タイトル案**: ...`.
+   - Fall back to the first `## ...` heading.
+2. `projects/{slug}/article.md`
+   - Use frontmatter `title:` as supporting context when present.
+   - Use major headings only to resolve ambiguity.
+3. `projects/{slug}/audio/whisper_segments.json`
+   - Optional supporting context only when title and script are ambiguous.
 
-### サイズ
-- 1280 × 720 px（YouTube推奨）
-- PPTX: Inches(13.333) × Inches(7.5) → PNG変換
+## Required Local References
 
-### レイアウト
+Read these files before choosing copy or references:
 
-```
-┌─────────────────────────────────┐
-│                                 │
-│   [キャッチコピー 1行目]         │
-│   [キャッチコピー 2行目]         │  ← 左寄せ、太字
-│   [キャッチコピー 3行目]         │
-│                                 │
-│                    ┌──────┐     │
-│                    │ 人物 │     │  ← 右下に人物画像（あれば）
-│                    │ 写真 │     │
-│                    └──────┘     │
-│  [ロゴ/チャンネル名]             │  ← 左下
-└─────────────────────────────────┘
-```
+- `assets/houta/learning/thumbnail_style_rules_v0.md`
+- `assets/houta/reference_thumbnails/metadata.tsv`
+- `assets/houta/reference_thumbnails/contact_sheet.jpg`
+- Relevant files under `assets/houta/reference_thumbnails/originals/`
+- Relevant files under `assets/houta/source_photos/`
 
-### カラー
+Use `_shared/yt-thumbnail/thumbnail_brief.py` helpers where practical for title extraction, style classification, copy candidates, metadata loading, and artifact writing.
 
-| 要素 | 色 |
-|-----|---|
-| 背景 | CHARCOAL (#2B323B) |
-| キャッチコピー | WHITE (#FFFFFF) |
-| 強調ワード | ORANGE (#E98212) で囲みor下線 |
-| サブテキスト | LIGHT_ACCENT (#FDF0DB) |
+## Workflow
 
-### フォント
+1. Resolve the project slug or title.
+2. Extract the project title from `script.md`; compare `article.md` when available.
+3. Read the learning file and metadata TSV.
+4. Classify the style group with the helper:
+   - `tool-explainer`
+   - `claude-code-list`
+   - `risk-failure-security`
+   - `method-howto`
+   - `cost-schedule`
+   - `comparison`
+   - `opinion-market`
+5. Generate exactly 3 thumbnail copy candidates.
+6. Select the strongest candidate, favoring title fidelity and mobile readability.
+7. Select 3-6 past thumbnails and 2-4 Houta photos.
+8. Create `projects/{slug}/thumbnail/` artifacts before image generation:
+   - `copy_candidates.md`
+   - `selected_references.md`
+   - `prompt.md`
+9. Call `imagegen` with the selected references and prompt.
+10. Save the final image to:
+    - `projects/{slug}/thumbnail/thumbnail.png`
+    - `projects/{slug}/thumbnail.png`
+11. Write `projects/{slug}/thumbnail/review.md` after quality review.
 
-| 要素 | フォント | サイズ | ウェイト |
-|-----|---------|-------|---------|
-| キャッチコピー | Yu Gothic | 60pt〜80pt | Bold |
-| サブテキスト | Yu Gothic | 28pt〜36pt | Regular |
-| チャンネル名 | Yu Gothic | 20pt | Regular |
+## Copy Rules
 
-### キャッチコピー変換ルール
+The thumbnail copy is a compression of the video title, not a new hook.
 
-タイトルをそのまま使わず、サムネイル用に変換する:
+- Keep the main product, tool, or topic name.
+- Keep strong title nouns such as `完全解説`, `とは?`, `N選`, `失敗事例`, `収益化方法`, `費用・相場`, `VS`, and `セキュリティ`.
+- Keep numbers and make them visually important.
+- Remove SEO wrappers and long tails such as `【2026年最新】`, `特徴や料金`, `使い方まで`, and `対策まで完全解説`.
+- Split the copy into 2-5 large visual blocks.
+- Do not replace the title with an unrelated viewer-language hook.
+- Specialist terms are allowed when they are the video's central subject.
 
-| 元タイトル | サムネイルコピー |
-|----------|---------------|
-| 「ノーコード vs バイブコーディング 徹底比較」 | 「結局どっち？」「ノーコード vs」「バイブコーディング」 |
-| 「AI開発の落とし穴5選」 | 「知らないと損する」「AI開発の」「落とし穴5選」 |
+## Reference Selection
 
-変換ルール:
-1. 疑問形 or 煽り文を1行目に
-2. メインキーワードを2-3行目に
-3. 1行あたり最大10文字
-4. ORANGEで強調するワードを1つ選ぶ
+Choose references according to the classified style:
 
-## 人物画像（オプション）
+- `tool-explainer`: bright, clear thumbnails; smiling or neutral presenter pose.
+- `claude-code-list`: recent Claude Code thumbnails with large `ClaudeCode` and oversized number treatment.
+- `risk-failure-security`: dark, red, purple, warning, serious pose, crossed arms, thinking pose, or warning gesture.
+- `method-howto`: clear step or flow compositions.
+- `cost-schedule`: money, schedule, question-style compositions.
+- `comparison`: sparse two-side layout with strong `VS`.
+- `opinion-market`: serious or analytical pose and argument-driven composition.
 
-`assets/thumbnail-avatar.png` が存在する場合、右下に配置する。
-なければテキストのみのサムネイルを生成。
+Record selected paths in `selected_references.md`. Give each selected image a role in the prompt instead of attaching references without explanation.
 
-## 生成コード（Python）
+## Imagegen Prompt Construction
 
-```python
-from pptx import Presentation
-from pptx.util import Inches, Pt, Emu
-from pptx.dml.color import RGBColor
-from pptx.enum.text import PP_ALIGN
-import subprocess
+The prompt must include:
 
-def generate_thumbnail(title, slug, highlight_word=None):
-    prs = Presentation()
-    prs.slide_width = Inches(13.333)
-    prs.slide_height = Inches(7.5)
+- Output: YouTube thumbnail, 1280x720.
+- Exact thumbnail copy and block order.
+- Style group.
+- Past thumbnail references and what to borrow from each.
+- Houta photo references and what identity details to preserve.
+- Layout direction: text placement, Houta placement, background, color, emphasis, and empty space.
+- Avoidances: distorted face, unreadable text, extra Japanese or English text, unrelated objects, off-brand palette, and important text under the YouTube time badge area.
 
-    slide = prs.slides.add_slide(prs.slide_layouts[6])  # Blank
+If text fidelity is poor, simplify the copy blocks while preserving the title meaning. If Houta's face drifts, increase identity emphasis and use fewer style transformations on the person.
 
-    # 背景
-    bg = slide.background.fill
-    bg.solid()
-    bg.fore_color.rgb = RGBColor(0x2B, 0x32, 0x3B)
+## Output Files
 
-    # キャッチコピー（左寄せ）
-    # ... テキストボックス追加
+For every project run, produce:
 
-    # 保存 & 変換
-    pptx_path = f"projects/{slug}/thumbnail.pptx"
-    prs.save(pptx_path)
+- `projects/{slug}/thumbnail/copy_candidates.md`
+- `projects/{slug}/thumbnail/selected_references.md`
+- `projects/{slug}/thumbnail/prompt.md`
+- `projects/{slug}/thumbnail/review.md`
+- `projects/{slug}/thumbnail/thumbnail.png`
+- `projects/{slug}/thumbnail.png`
 
-    # LibreOfficeでPNG変換
-    subprocess.run([
-        "soffice", "--headless", "--convert-to", "png",
-        "--outdir", "projects/", pptx_path
-    ])
-```
+Do not commit generated run artifacts unless the user explicitly asks.
 
-## 出力先
+## Quality Review
 
-- PPTX: `projects/{slug}/thumbnail.pptx`
-- PNG: `projects/{slug}/thumbnail.png`
-- 完成後は `open` コマンドでPNG画像を開く
+Before finishing, review the generated thumbnail and write `review.md` covering:
 
-## 品質チェック
+- Title fidelity: copy preserves the video's core meaning.
+- Channel fit: visual style matches the learned Walkers reference set.
+- Houta fidelity: face, hair, suit, and overall identity remain plausible.
+- Readability: main words are legible at mobile thumbnail size.
+- Composition: no important text sits under the time badge area.
+- Text discipline: no hallucinated phrases, extra labels, or broken Japanese.
+- Visual priority: the most important word or number is the largest element.
 
-- [ ] 画像サイズが1280×720以上か
-- [ ] テキストがスマホでも読めるサイズか（60pt以上）
-- [ ] ブランドカラーが正しく適用されているか
-- [ ] 強調ワードがORANGEでハイライトされているか
-- [ ] 文字が画像の端で切れていないか
+If the output fails materially, produce a concise regeneration instruction and retry when appropriate.
