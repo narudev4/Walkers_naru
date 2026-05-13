@@ -19,11 +19,14 @@ PPTXスライドとシーン別音声ファイルから、HeyGenエディタ上�
 ```
 Phase 0: PPTXアップロード（自動 / browser-use CLI）
     ↓
-Phase 1+2: 音声アップ＋アバター配置（自動 / Playwright CDP）
+Phase 1+2+2.5: 音声アップ＋アバター配置＋モーション エンジン切替（自動 / Playwright CDP）
   シーンごとに繰り返し:
     1. シーンをクリック（タイムライン）
     2. 音声をアップロード（右パネル）
     3. アバターを200x200にリサイズ＆右上角に配置
+    4. モーション エンジンを アバター V → III に切替（クレジット消費回避）
+    ↓
+BGM 設定（自動 / heygen-bgm-setup.py）
     ↓
 動画生成ボタン（手動）
 ```
@@ -92,6 +95,12 @@ HEYGEN_SLUG=what-is-make HEYGEN_DRY=1 /Users/naru/.pyenv/versions/3.13.0/bin/pyt
    - 右上角に移動（canvas右端-avatar幅, canvas上端）
    - ArrowKeyで0px誤差まで微調整（最大50回）
    - 巨大化ガード: 1.5倍超で即中断
+
+3.5. モーション エンジン切替（V → III）
+   - HeyGen改悪対策: デフォルトの「アバター V」(プレミアム/クレジット消費) を回避
+   - 右パネル「モーション エンジン」ドロップダウン → 「アバター III」(無料、リップシンク+全身モーション)
+   - Playwright locator で button[aria-haspopup="menu"] と [role="menuitem"] を特定
+   - 失敗しても次のシーンへ続行（progress.motion_engine_failed に記録）
 ```
 
 ### 安全策

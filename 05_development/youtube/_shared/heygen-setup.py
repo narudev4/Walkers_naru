@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-HeyGen セットアップ: PPTXアップロード + 音声アップロード + アバター配置 統合スクリプト
+HeyGen セットアップ: PPTXアップロード + 音声アップロード + アバター配置 + モーション エンジン切替 統合スクリプト
 
 ⚠ このファイルは速度最適化済み (2026-04-28、α+β)。詳細は heygen-automation-learnings.md Section 10。
    - α: scrollIntoView を smooth → instant 化（click_scene_by_timeline）
@@ -11,6 +11,11 @@ HeyGen セットアップ: PPTXアップロード + 音声アップロード + �
 ⚠ シーンナビは「画面下タイムライン経由」が主軸 (2026-05-07、Section 14)。
    click_scene_script は click_scene_by_timeline の薄いラッパーに変更済み。
    左パネル経由の番号 span 検索に戻すと白紙シーン誤生成事故が再発する。
+
+⚠ アバターエンジン切替 (2026-05-13、Section 15): HeyGen改悪対策。新規ドラフトはデフォルトで
+   「アバター V」(プレミアム/クレジット消費) が入る。各シーンの音声+配置の直後に
+   switch_motion_engine_avatar_iii() で「アバター III」(無料) に切り替える。
+   このステップを抜くと生成時にクレジット爆食いするので、削除してはいけない。
 
 使い方:
   # 作業ディレクトリ: 05_development/youtube/
@@ -1222,6 +1227,83 @@ async def place_avatar(page, scene_num):
     return False, f"精度不足(err={err['err_x'] if err else '?'},{err['err_y'] if err else '?'})"
 
 
+# ===== アバターのモーションエンジン切替 (アバター V → III) =====
+
+
+async def switch_motion_engine_avatar_iii(page, scene_num):
+    """右パネル「モーション エンジン」ドロップダウンから「アバター III」を選択する。
+
+    HeyGen 改悪対策: 新規ドラフトはデフォルトで「アバター V」(プレミアム/クレジット消費) が
+    入る。生成前に各シーンで「アバター III」(リップシンク+全身モーション、無料) に切り替える。
+
+    前提:
+      - 右パネルが現在のシーンのプロパティを表示中（モーション エンジン セクションが見える）
+      - 左パネル/タイムラインでシーン N が選択済み
+
+    実機検証 (2026-05-13):
+      - ラベル: div.tw-text-xs.tw-font-medium.tw-leading-4.tw-text-textTitle (text="モーション エンジン")
+      - ドロップダウン: ラベル親の親(div) 配下の button[aria-haspopup="menu"]
+      - 項目: [role="menuitem"] でテキストに「アバター III」(半角ローマ数字)を含む
+
+    返り値: (ok: bool, msg: str, before: str)
+    """
+    # キャンバスの選択状態を一旦クリア（右パネルを scene properties に戻す）
+    try:
+        await page.keyboard.press("Escape")
+        await asyncio.sleep(0.3)
+    except Exception:
+        pass
+
+    # 1. ドロップダウンボタンを locator で特定
+    try:
+        label = page.locator(
+            'div.tw-text-xs.tw-font-medium.tw-leading-4.tw-text-textTitle'
+        ).filter(has_text="モーション エンジン").first
+        section = label.locator("xpath=ancestor::div[2]")
+        dropdown_btn = section.locator('button[aria-haspopup="menu"]').first
+        before = (await dropdown_btn.inner_text(timeout=5000)).strip()
+    except Exception as e:
+        return False, f"dropdown not found: {e}", ""
+
+    # 2. 既に III なら skip
+    m = re.search(r"アバター\s+(III|II|IV|V|I)(?![IV])", before)
+    if m and m.group(1) == "III":
+        return True, f"already III ({before})", before
+
+    # 3. ドロップダウンクリック → 展開
+    try:
+        await dropdown_btn.click(timeout=5000)
+    except Exception as e:
+        return False, f"dropdown click failed: {e}", before
+    await asyncio.sleep(0.4)
+
+    # 4. menuitem「アバター III」をクリック (filter で word-boundary)
+    try:
+        avatar_iii = page.locator('[role="menuitem"]').filter(
+            has_text=re.compile(r"アバター\s+III(?![IV])")
+        ).first
+        await avatar_iii.click(timeout=3000)
+    except Exception as e:
+        # メニューを閉じる
+        try:
+            await page.keyboard.press("Escape")
+        except Exception:
+            pass
+        return False, f"avatar III menuitem not found: {e}", before
+
+    await asyncio.sleep(0.5)
+
+    # 5. 検証
+    try:
+        after = (await dropdown_btn.inner_text()).strip()
+    except Exception:
+        after = "<unreadable>"
+    m = re.search(r"アバター\s+(III|II|IV|V|I)(?![IV])", after)
+    if m and m.group(1) == "III":
+        return True, f"{before} → {after}", before
+    return False, f"verify failed (after={after})", before
+
+
 # ===== Phase 0: PPTXアップロード (Playwright CDP) =====
 
 
@@ -1853,6 +1935,20 @@ async def main():
                 fail_count += 1
                 progress["failed"].append(scene_num)
                 save_progress(SLUG, progress)
+
+            # [3.5/3] モーション エンジン アバター切替 (V → III)
+            # HeyGen改悪対策: デフォルト「アバター V」(クレジット消費) を回避
+            print(f"  [3.5/3] モーションエンジン切替...", flush=True)
+            me_ok, me_msg, me_before = await switch_motion_engine_avatar_iii(page, scene_num)
+            progress.setdefault("motion_engine", {})[str(scene_num)] = {
+                "ok": me_ok, "msg": me_msg, "before": me_before,
+            }
+            if me_ok:
+                print(f"  [OK] エンジン: {me_msg}", flush=True)
+            else:
+                print(f"  [WARN] エンジン切替失敗: {me_msg}", flush=True)
+                progress.setdefault("motion_engine_failed", []).append(scene_num)
+            save_progress(SLUG, progress)
 
             # 5シーンごとに進捗報告
             if scene_num % 5 == 0:

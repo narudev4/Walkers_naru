@@ -521,3 +521,97 @@ step 5 (右クリック): selectors = [
 - **DevTools Recorder の制約**: slider のドラッグ操作 (mousedown→move→mouseup) は記録されない。click / change 系の離散イベントのみ記録される。Volume slider のドラッグなどは別途実機検証が必要
 - **DOM 構造が変わったら fallback を残しつつ新セレクタを主軸にする**。完全置換だと旧構造復活時に動かなくなる。今回は 2 段階フォールバックで両対応
 - **HeyGen の DOM クラス命名 `tw-*` は Tailwind 由来で意味が安定している** (`tw-left-0` = 絶対配置 left:0、`tw-z-10` = z-index:10)。位置情報が selector に埋まっているため、構造的安定性が高い (cursor-pointer のような汎用クラスより信頼できる)
+
+## 16. モーション エンジン切替 (アバター V → III) — 2026-05-13
+
+### 16.1 背景
+HeyGen 改悪により、新規ドラフトはデフォルトで「アバター V」(プレミアム/クレジット消費) が
+全シーンに入る。生成すると 1 シーンあたりクレジット消費。回避策として右パネル
+「モーション エンジン」セクションのドロップダウンから「アバター III」(無料、リップシンク+全身モーション) に
+切り替える必要がある。
+
+### 16.2 実機 DOM 構造 (検証: 2026-05-13)
+- ラベル: `div.tw-text-xs.tw-font-medium.tw-leading-4.tw-text-textTitle` (text="モーション エンジン")
+  - 子要素なし、テキスト一致
+- ドロップダウンボタン: ラベルの **親の親 (div)** 配下の `button[aria-haspopup="menu"]`
+  - 表示テキスト: 「アバター V」「アバター IV」「アバター III」「アバター II」「アバター I」(半角ローマ数字)
+- 展開後のリスト項目: `[role="menuitem"]`
+  - 「アバター III」項目の説明テキスト: 「リップシンク と 全身モーション」
+- 選択値: ドロップダウンボタンの inner_text を読む
+
+### 16.3 Playwright で動く実装
+```python
+async def switch_motion_engine_avatar_iii(page, scene_num):
+    # 1. Escape で選択状態クリア
+    await page.keyboard.press("Escape")
+    await asyncio.sleep(0.3)
+
+    # 2. ラベル → ancestor::div[2] → dropdown button
+    label = page.locator(
+        'div.tw-text-xs.tw-font-medium.tw-leading-4.tw-text-textTitle'
+    ).filter(has_text="モーション エンジン").first
+    section = label.locator("xpath=ancestor::div[2]")
+    dropdown_btn = section.locator('button[aria-haspopup="menu"]').first
+    before = (await dropdown_btn.inner_text()).strip()
+
+    # 3. 既に III なら skip
+    if re.search(r"アバター\s+III(?![IV])", before):
+        return True, "already III"
+
+    # 4. dropdown click → 展開
+    await dropdown_btn.click()
+    await asyncio.sleep(0.4)
+
+    # 5. menuitem 「アバター III」 click (word-boundary 正規表現)
+    avatar_iii = page.locator('[role="menuitem"]').filter(
+        has_text=re.compile(r"アバター\s+III(?![IV])")
+    ).first
+    await avatar_iii.click()
+    await asyncio.sleep(0.5)
+
+    # 6. 検証
+    after = (await dropdown_btn.inner_text()).strip()
+    m = re.search(r"アバター\s+(III|II|IV|V|I)(?![IV])", after)
+    return bool(m and m.group(1) == "III"), f"{before} → {after}"
+```
+
+### 16.4 罠と対策
+
+#### 16.4.1 「3」単体マッチ誤検知
+ナイーブに `/3/` でマッチさせると値内の数字 (e.g. 「100px」「139%」) が拾われて誤判定する。
+対策: 単語境界つき正規表現 `アバター\s+(III|II|IV|V|I)(?![IV])` で「III の直後に I/V が来ないこと」を要求し、
+「IV」「II」と「III」を区別する。
+
+#### 16.4.2 MCP (Claude in Chrome) では JS .click() / realClick が dropdown に効かない罠
+Claude in Chrome MCP 経由で実機検証した際、`button.click()` および
+`dispatchEvent(new MouseEvent('click'))` を JS で叩いても dropdown が開かなかった。
+**PointerEvent も組み合わせた "realClick" (pointerdown→pointerup→click) は dropdown / menuitem では効くが、
+タイムラインの `[data-scene-item]` (DnD-kit sortable div) には効かない**。
+
+Playwright `locator.click()` は CDP 経由の real mouse event (isTrusted=true) を発火するため、
+DnD-kit を含めて全要素で確実に動く。**cron 自動化は Playwright CDP 一択**。
+
+#### 16.4.3 各シーンごとに切替が必要 (per-scene state)
+モーション エンジン設定は **シーン単位で独立**。シーン 1 で III にしても、シーン 2 はデフォルト V のまま。
+よって全シーンを巡回して都度切り替える必要がある。heygen-setup.py の per-scene loop に
+組み込めば「音声アップ → アバター配置 → エンジン切替」を 1 パスで完結できる (シーン間遷移コスト 1 回分)。
+
+#### 16.4.4 右パネルの状態に依存
+モーション エンジンセクションは右パネルが「アバター & ボイス (シーン N)」を表示しているときに見える。
+place_avatar() の直後はキャンバスのアバターが選択状態のままで、右パネルが別ビュー (avatar editing tools) に
+切り替わっている可能性がある。switch_motion_engine_avatar_iii() の冒頭で `Escape` を押して
+選択を解除してからドロップダウン探索する。
+
+### 16.5 検証済み・不採用のアプローチ
+1. **find→ref ベースのクリック (MCP)** ← ref_id ベースで dropdown / menuitem は動くが、毎回 find 呼び出しが必要で
+   tool call 数が多くなる。実機で 30 シーン回したときの実績はあるが、cron 自動化には Playwright のほうがシンプル
+2. **座標クリックで dropdown** ← screenshot 座標と viewport 座標の換算 (0.8167) が必要、画面サイズ依存。
+   Playwright locator なら不要
+
+### 16.6 教訓
+- **HeyGen の右パネル UI は Radix UI / Headless UI 系の `button[aria-haspopup="menu"]` + `[role="menuitem"]` の標準パターン**。
+  Playwright の `filter(has_text=...)` + word-boundary 正規表現で安定して特定できる
+- **「アバター III」(半角ローマ数字) はテキスト一致しやすい識別子だが、「II」と「III」と「IV」の区別が必要**。
+  単純な substring 検索は使わず、必ず negative lookahead 等で word-boundary を実装する
+- **per-scene 操作は 1 パスにまとめる**。シーン移動はコストが高い (タイムライン scrollIntoView + click + 右パネル更新待ち
+  で 1.5〜2 秒)。全シーンを 2 周するより、各シーンで必要な操作を全部やってから次へ進むほうが効率良い
