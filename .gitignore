@@ -40,3 +40,9 @@ output/
 
 # YouTube 動画制作の作業ディレクトリ（projects/ 配下は全て track 外）
 05_development/youtube/projects/
+
+# Top-level image dumps (use 05_development/youtube/docs/screenshots/ or 03_projects/{slug}/ instead)
+/*.png
+/*.jpg
+/*.jpeg
+/*.gif
