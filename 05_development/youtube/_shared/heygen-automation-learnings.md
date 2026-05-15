@@ -661,3 +661,61 @@ btn_handle = await page.evaluate_handle("""() => {
 **未解消の派生問題**:
 - what-is-fde の 26 シーンは現在もアバター V のまま → 生成時にクレジット爆食い
 - 修正後の heygen-setup.py で `HEYGEN_RETRY_MOTION_ENGINE=1` 的なモード追加 or `/yt-heygen-avatar` 手動 fallback でリカバリ要
+
+## 16.8 [2026-05-15] ボタン自身のテキストを anchor にして最堅牢化
+
+Section 16.7 の修正（leaf div + 「モーション エンジン」exact text → ancestor → button）は
+Tailwind 変更には強くなったが、依然として:
+- ラベルテキスト「モーション エンジン」変更で壊れる（i18n 化など）
+- 親階層 `ancestor::div[2]` 変更で壊れる（DOM ラッパー追加など）
+
+実機 DOM ダンプ (2026-05-15) で判明した事実:
+- HeyGen の右パネルで `button[aria-haspopup="menu"]` のうちテキストが
+  `^アバター\s+(I{1,3}|IV|V)$` 形式に一致するのは **page 全体で 1 個だけ**（モーション エンジン dropdown）
+- セクションには `data-pacific-component="SceneSubSection"` が付いている (HeyGen 内部 React コンポーネント名)
+- `data-testid` / `data-cy` / `aria-label` は **無い**
+- `id="radix-:rj:"` は Radix UI auto-generated で render ごとに変わる (使用不可)
+
+### 最終的な locator 戦略
+
+**ボタン自身のテキストパターンを anchor にする**:
+
+```python
+btn_handle = await page.evaluate_handle(
+    """() => {
+        return [...document.querySelectorAll('button[aria-haspopup="menu"]')].find(el =>
+            /^(アバター|Avatar)\\s+(I{1,3}|IV|V)$/.test((el.textContent || '').trim())
+        ) || null;
+    }"""
+)
+```
+
+依存ゼロのもの:
+- Tailwind クラス
+- ラベルテキスト「モーション エンジン」
+- ラベル位置・親階層
+- Radix auto-id
+- セクション内構造
+
+依存するもの (極めて安定):
+- ARIA `aria-haspopup="menu"` (accessibility 標準)
+- ボタン自身のテキストが「アバター X」or「Avatar X」(UX の根幹)
+
+### 脆弱性ランク表 (HeyGen UI 自動化の一般則)
+
+| 識別子 | 安定性 | 採用基準 |
+|---|---|---|
+| `data-testid` / `data-cy` | ★★★★ | あれば最優先 (HeyGen には無い) |
+| `data-<custom>="<stable-value>"` | ★★★★ | 例: `data-pacific-component="SceneSubSection"` |
+| ARIA role / aria-* | ★★★ | accessibility 由来、変えにくい |
+| Element 自身のテキスト (ユーザ可視) | ★★★ | UX 根幹、変えにくい (ただし i18n に注意) |
+| 親要素のテキスト | ★★ | ラベル変更で死ぬ可能性 |
+| 親階層 (ancestor::div[2] 等) | ★★ | DOM ラッパー追加で死ぬ |
+| Tailwind class (部分一致) | ★ | プリセット変更で死ぬ |
+| Tailwind class (完全一致) | ☆ | **完全一致は禁止** (Section 16.7 で実証) |
+| Radix auto-id (`radix-:rj:` 等) | ☆ | render ごとに変わる |
+
+### 教訓
+- 「Element 自身のテキスト」が anchor として使える場合、それが最強。親や属性は不要
+- HeyGen の `data-pacific-component` は内部 React 名で、将来的に fallback として使える (要監視)
+- 日英両対応の regex (`(?:アバター|Avatar)\s+...`) は cost 低、i18n 切替に備える価値あり

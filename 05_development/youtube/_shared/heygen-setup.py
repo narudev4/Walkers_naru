@@ -1231,7 +1231,7 @@ async def place_avatar(page, scene_num):
 
 
 async def switch_motion_engine_avatar_iii(page, scene_num):
-    """右パネル「モーション エンジン」ドロップダウンから「アバター III」を選択する。
+    r"""右パネル「モーション エンジン」ドロップダウンから「アバター III」を選択する。
 
     HeyGen 改悪対策: 新規ドラフトはデフォルトで「アバター V」(プレミアム/クレジット消費) が
     入る。生成前に各シーンで「アバター III」(リップシンク+全身モーション、無料) に切り替える。
@@ -1240,14 +1240,20 @@ async def switch_motion_engine_avatar_iii(page, scene_num):
       - 右パネルが現在のシーンのプロパティを表示中（モーション エンジン セクションが見える）
       - 左パネル/タイムラインでシーン N が選択済み
 
-    実機検証 (2026-05-15 / 改修):
-      - ラベル: テキスト一致のみ（クラス完全一致は HeyGen の Tailwind 設定変更で壊れる罠あり）
-        過去観測クラス: 2026-05-13 は tw-text-xs/tw-font-medium/tw-leading-4
-                       2026-05-15 は tw-text-sm/tw-font-semibold/tw-leading-5
-        → クラス依存をやめ、テキストノードを含む leaf div (children=0) で「モーション エンジン」exact match
-      - ドロップダウン: ラベル親の親(div) 配下の button[aria-haspopup="menu"]
-        ※ ancestor 階層は HeyGen の DOM 構造変更で要見直しの可能性あり
+    実機検証 (2026-05-15 / 第 2 次改修):
+      - **ドロップダウンボタン自身のテキスト**を anchor にする (最堅牢)
+        - `button[aria-haspopup="menu"]` で text が `^(アバター|Avatar)\s+(I{1,3}|IV|V)$` パターン
+        - page 全体で 1 個だけ一致することを実機確認 (2026-05-15)
+        - ラベル・親階層・Tailwind クラスへの依存ゼロ
+      - フォールバック anchor として利用可 (今は使わない):
+        - `[data-pacific-component="SceneSubSection"]` (HeyGen 内部 React コンポーネント名)
       - 項目: [role="menuitem"] でテキストに「アバター III」(半角ローマ数字)を含む
+
+    脆弱性ランク (低 → 高):
+      ✅ ARIA role (button[aria-haspopup="menu"]) — accessibility 由来、変えにくい
+      ✅ button 自身のテキスト「アバター X」 — UX の根幹、変えにくい
+      ⚠ アバター名が i18n で英語化される可能性 → regex に Avatar 形式も入れて両対応
+      ❌ Tailwind class / Radix auto-id / 親階層 → 使わない
 
     返り値: (ok: bool, msg: str, before: str)
     """
@@ -1258,34 +1264,25 @@ async def switch_motion_engine_avatar_iii(page, scene_num):
     except Exception:
         pass
 
-    # 1. ドロップダウンボタンを locator で特定
-    #    クラス依存を避け、JS 評価で「leaf div + テキスト exact match」→ DOM 親辿りで btn を直接取得
+    # 1. ドロップダウンボタンを特定: button[aria-haspopup="menu"] でテキストが「アバター X」形式のものを探す
+    #    page 全体で 1 個だけ一致するため、追加の絞り込み不要 (実機確認済み)
     try:
-        # JS で label と dropdown btn の存在を確認、btn の bounding rect を取得
         btn_handle = await page.evaluate_handle(
             """() => {
-                const labels = [...document.querySelectorAll('div')].filter(el =>
-                    el.children.length === 0 && /^モーション\\s*エンジン$/.test((el.textContent || '').trim())
-                );
-                if (labels.length === 0) return null;
-                const label = labels[0];
-                const section = label.parentElement?.parentElement;
-                return section?.querySelector('button[aria-haspopup="menu"]') || null;
+                return [...document.querySelectorAll('button[aria-haspopup="menu"]')].find(el =>
+                    /^(アバター|Avatar)\\s+(I{1,3}|IV|V)$/.test((el.textContent || '').trim())
+                ) || null;
             }"""
         )
-        # ElementHandle が null かどうか判定
         is_null = await btn_handle.evaluate("el => el === null || el === undefined")
         if is_null:
-            return False, "dropdown not found: label or button missing in DOM", ""
-        # ElementHandle を locator のように使えないので、テキストを直接取得
+            return False, "dropdown not found: no button matched 'アバター X' / 'Avatar X' pattern", ""
         before = (await btn_handle.evaluate("el => (el.textContent || '').trim()")).strip()
-        # クリック用にも btn_handle を保持する → ロケータ用に locator を再構築
-        # ※ Playwright は handle.click() をサポートするのでそれを使う
     except Exception as e:
         return False, f"dropdown not found: {e}", ""
 
-    # 2. 既に III なら skip
-    m = re.search(r"アバター\s+(III|II|IV|V|I)(?![IV])", before)
+    # 2. 既に III なら skip (日英両対応)
+    m = re.search(r"(?:アバター|Avatar)\s+(III|II|IV|V|I)(?![IV])", before)
     if m and m.group(1) == "III":
         return True, f"already III ({before})", before
 
@@ -1296,10 +1293,10 @@ async def switch_motion_engine_avatar_iii(page, scene_num):
         return False, f"dropdown click failed: {e}", before
     await asyncio.sleep(0.4)
 
-    # 4. menuitem「アバター III」をクリック (filter で word-boundary)
+    # 4. menuitem「アバター III」をクリック (filter で word-boundary、日英両対応)
     try:
         avatar_iii = page.locator('[role="menuitem"]').filter(
-            has_text=re.compile(r"アバター\s+III(?![IV])")
+            has_text=re.compile(r"(?:アバター|Avatar)\s+III(?![IV])")
         ).first
         await avatar_iii.click(timeout=3000)
     except Exception as e:
@@ -1313,20 +1310,19 @@ async def switch_motion_engine_avatar_iii(page, scene_num):
     await asyncio.sleep(0.5)
 
     # 5. 検証（btn_handle はクリックで stale になる可能性あり、再評価で取り直し）
+    #    同じ「ボタン自身のテキストパターン」で再特定
     try:
         after = (await page.evaluate(
             """() => {
-                const labels = [...document.querySelectorAll('div')].filter(el =>
-                    el.children.length === 0 && /^モーション\\s*エンジン$/.test((el.textContent || '').trim())
+                const btn = [...document.querySelectorAll('button[aria-haspopup="menu"]')].find(el =>
+                    /^(アバター|Avatar)\\s+(I{1,3}|IV|V)$/.test((el.textContent || '').trim())
                 );
-                if (labels.length === 0) return '';
-                const btn = labels[0].parentElement?.parentElement?.querySelector('button[aria-haspopup="menu"]');
                 return (btn?.textContent || '').trim();
             }"""
         )).strip()
     except Exception:
         after = "<unreadable>"
-    m = re.search(r"アバター\s+(III|II|IV|V|I)(?![IV])", after)
+    m = re.search(r"(?:アバター|Avatar)\s+(III|II|IV|V|I)(?![IV])", after)
     if m and m.group(1) == "III":
         return True, f"{before} → {after}", before
     return False, f"verify failed (after={after})", before
