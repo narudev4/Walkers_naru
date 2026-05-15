@@ -33,8 +33,10 @@ Read these files before choosing copy or references:
 
 - `assets/houta/learning/thumbnail_style_rules_v0.md`
 - `assets/houta/reference_thumbnails/metadata.tsv`
+- `assets/houta/reference_thumbnails/generated/metadata.tsv` when present
 - `assets/houta/reference_thumbnails/contact_sheet.jpg`
 - Relevant files under `assets/houta/reference_thumbnails/originals/`
+- Approved generated thumbnails under `assets/houta/reference_thumbnails/generated/`
 - Relevant files under `assets/houta/source_photos/`
 
 Use `_shared/yt-thumbnail/thumbnail_brief.py` helpers where practical for title extraction, style classification, copy candidates, metadata loading, and artifact writing.
@@ -43,7 +45,7 @@ Use `_shared/yt-thumbnail/thumbnail_brief.py` helpers where practical for title 
 
 1. Resolve the project slug or title.
 2. Extract the project title from `script.md`; compare `article.md` when available.
-3. Read the learning file and metadata TSV.
+3. Read the learning file, channel metadata TSV, and approved generated metadata TSV when present.
 4. Classify the style group with the helper:
    - `tool-explainer`
    - `claude-code-list`
@@ -54,7 +56,7 @@ Use `_shared/yt-thumbnail/thumbnail_brief.py` helpers where practical for title 
    - `opinion-market`
 5. Generate exactly 3 thumbnail copy candidates.
 6. Select the strongest candidate, favoring title fidelity and mobile readability.
-7. Select 3-6 past thumbnails and 2-4 Houta photos.
+7. Select 3-6 past thumbnails and 2-4 Houta photos. Use approved generated thumbnails only as composition/style references, never as Houta identity references.
 8. Create `projects/{slug}/thumbnail/` artifacts before image generation:
    - `copy_candidates.md`
    - `selected_references.md`
@@ -64,6 +66,7 @@ Use `_shared/yt-thumbnail/thumbnail_brief.py` helpers where practical for title 
     - `projects/{slug}/thumbnail/thumbnail.png`
     - `projects/{slug}/thumbnail.png`
 11. Write `projects/{slug}/thumbnail/review.md` after quality review.
+12. Ask whether the final output should be promoted into `assets/houta/reference_thumbnails/generated/`. Promote only user-approved or Houta-approved thumbnails.
 
 ## Copy Rules
 
@@ -91,6 +94,8 @@ Choose references according to the classified style:
 
 Record selected paths in `selected_references.md`. Give each selected image a role in the prompt instead of attaching references without explanation.
 
+Approved generated thumbnails are allowed as references when they have already passed human review. Treat them as layout, copy hierarchy, color, and channel-fit references. Do not use them as the source of Houta's face; use `assets/houta/source_photos/` for identity fidelity.
+
 ## Imagegen Prompt Construction
 
 The prompt must include:
@@ -117,6 +122,16 @@ For every project run, produce:
 - `projects/{slug}/thumbnail.png`
 
 Do not commit generated run artifacts unless the user explicitly asks.
+
+## Reference Promotion
+
+After each imagegen run, classify the generated output as:
+
+- `approved`: user or Houta explicitly accepts it. Copy the final image into `assets/houta/reference_thumbnails/generated/` and add a row to `assets/houta/reference_thumbnails/generated/metadata.tsv`.
+- `hold`: direction is useful but revisions are expected. Keep it only under `projects/{slug}/thumbnail/`.
+- `reject`: face, text, or channel fit is materially wrong. Do not use it as a future reference.
+
+Generated reference metadata should include the project slug, thumbnail copy, style group, approval source, source path, and notes. Future prompts may borrow composition and typography from approved generated references, but Houta identity must still come from source photos.
 
 ## Quality Review
 
