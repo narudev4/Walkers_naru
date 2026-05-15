@@ -615,3 +615,49 @@ place_avatar() の直後はキャンバスのアバターが選択状態のま�
   単純な substring 検索は使わず、必ず negative lookahead 等で word-boundary を実装する
 - **per-scene 操作は 1 パスにまとめる**。シーン移動はコストが高い (タイムライン scrollIntoView + click + 右パネル更新待ち
   で 1.5〜2 秒)。全シーンを 2 周するより、各シーンで必要な操作を全部やってから次へ進むほうが効率良い
+
+## 16.7 [2026-05-15] Tailwind 完全一致クラスは脆弱だった ← Section 16.6 撤回
+
+**事故**: what-is-fde (2026-05-15 02:00 cron) で全 26 シーンの `switch_motion_engine_avatar_iii` が Timeout 5000ms exceeded で失敗。Phase 1+2 は完走、アバター切替だけ 0/26 で動かなかった（progress.json `motion_engine_failed: [1..26]`）。
+
+**原因**: HeyGen が右パネルラベルの Tailwind スタイルを変更
+- 2026-05-13 (claudecode-pre-development 成功時): `tw-text-xs tw-font-medium tw-leading-4 tw-text-textTitle`
+- 2026-05-15 (what-is-fde 失敗時): `tw-text-sm tw-font-semibold tw-leading-5 tw-text-textTitle`
+
+`tw-text-textTitle` 以外の 3 クラスすべてが置換。完全一致セレクタ (`div.tw-text-xs.tw-font-medium.tw-leading-4.tw-text-textTitle`) は 0 ヒット → 5 秒 timeout × 26 シーンで 130 秒空転。
+
+**Section 16.6 教訓の撤回**:
+> 旧記述: 「HeyGen の DOM クラス命名 `tw-*` は Tailwind 由来で意味が安定している」
+これは **観測 1 日分の楽観論**。実際には Tailwind の typography preset を変更しただけで全部入れ替わる（HeyGen のデザイントークン更新による）。**`tw-*` の完全一致依存は禁止**。
+
+**修正パターン**:
+```python
+# Bad (Section 16.3 の旧コード):
+label = page.locator('div.tw-text-xs.tw-font-medium.tw-leading-4.tw-text-textTitle').filter(...)
+
+# Good (Section 16.7 の新コード):
+btn_handle = await page.evaluate_handle("""() => {
+    const labels = [...document.querySelectorAll('div')].filter(el =>
+        el.children.length === 0 && /^モーション\\s*エンジン$/.test((el.textContent || '').trim())
+    );
+    if (labels.length === 0) return null;
+    const section = labels[0].parentElement?.parentElement;
+    return section?.querySelector('button[aria-haspopup="menu"]') || null;
+}""")
+```
+
+ポイント:
+- **クラス完全一致禁止**: Tailwind のスタイルプリセットは変わる
+- **テキスト exact match + leaf 制約**: `children.length === 0` で「テキストノードしか含まない最末端 div」に絞れる
+- **role 属性は安定**: `[role="menuitem"]` や `button[aria-haspopup="menu"]` は ARIA セマンティクスなので変えにくい
+- **ElementHandle.click()** で `evaluate_handle` の戻りを直接クリック可（locator chain で再構築する必要なし）
+
+**改修後のクラス依存ポリシー**:
+- ARIA role / aria-* 属性 → 第一優先（最も安定）
+- text exact match (leaf div) → 第二優先（テキストが識別子になる場合）
+- Tailwind class → **fallback としてのみ**、完全一致は使わない（部分一致 + 他属性との組合せ）
+- structural CSS selector → 直近の親子関係（`> button`）程度に留める
+
+**未解消の派生問題**:
+- what-is-fde の 26 シーンは現在もアバター V のまま → 生成時にクレジット爆食い
+- 修正後の heygen-setup.py で `HEYGEN_RETRY_MOTION_ENGINE=1` 的なモード追加 or `/yt-heygen-avatar` 手動 fallback でリカバリ要

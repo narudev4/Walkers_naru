@@ -1240,9 +1240,13 @@ async def switch_motion_engine_avatar_iii(page, scene_num):
       - 右パネルが現在のシーンのプロパティを表示中（モーション エンジン セクションが見える）
       - 左パネル/タイムラインでシーン N が選択済み
 
-    実機検証 (2026-05-13):
-      - ラベル: div.tw-text-xs.tw-font-medium.tw-leading-4.tw-text-textTitle (text="モーション エンジン")
+    実機検証 (2026-05-15 / 改修):
+      - ラベル: テキスト一致のみ（クラス完全一致は HeyGen の Tailwind 設定変更で壊れる罠あり）
+        過去観測クラス: 2026-05-13 は tw-text-xs/tw-font-medium/tw-leading-4
+                       2026-05-15 は tw-text-sm/tw-font-semibold/tw-leading-5
+        → クラス依存をやめ、テキストノードを含む leaf div (children=0) で「モーション エンジン」exact match
       - ドロップダウン: ラベル親の親(div) 配下の button[aria-haspopup="menu"]
+        ※ ancestor 階層は HeyGen の DOM 構造変更で要見直しの可能性あり
       - 項目: [role="menuitem"] でテキストに「アバター III」(半角ローマ数字)を含む
 
     返り値: (ok: bool, msg: str, before: str)
@@ -1255,13 +1259,28 @@ async def switch_motion_engine_avatar_iii(page, scene_num):
         pass
 
     # 1. ドロップダウンボタンを locator で特定
+    #    クラス依存を避け、JS 評価で「leaf div + テキスト exact match」→ DOM 親辿りで btn を直接取得
     try:
-        label = page.locator(
-            'div.tw-text-xs.tw-font-medium.tw-leading-4.tw-text-textTitle'
-        ).filter(has_text="モーション エンジン").first
-        section = label.locator("xpath=ancestor::div[2]")
-        dropdown_btn = section.locator('button[aria-haspopup="menu"]').first
-        before = (await dropdown_btn.inner_text(timeout=5000)).strip()
+        # JS で label と dropdown btn の存在を確認、btn の bounding rect を取得
+        btn_handle = await page.evaluate_handle(
+            """() => {
+                const labels = [...document.querySelectorAll('div')].filter(el =>
+                    el.children.length === 0 && /^モーション\\s*エンジン$/.test((el.textContent || '').trim())
+                );
+                if (labels.length === 0) return null;
+                const label = labels[0];
+                const section = label.parentElement?.parentElement;
+                return section?.querySelector('button[aria-haspopup="menu"]') || null;
+            }"""
+        )
+        # ElementHandle が null かどうか判定
+        is_null = await btn_handle.evaluate("el => el === null || el === undefined")
+        if is_null:
+            return False, "dropdown not found: label or button missing in DOM", ""
+        # ElementHandle を locator のように使えないので、テキストを直接取得
+        before = (await btn_handle.evaluate("el => (el.textContent || '').trim()")).strip()
+        # クリック用にも btn_handle を保持する → ロケータ用に locator を再構築
+        # ※ Playwright は handle.click() をサポートするのでそれを使う
     except Exception as e:
         return False, f"dropdown not found: {e}", ""
 
@@ -1270,9 +1289,9 @@ async def switch_motion_engine_avatar_iii(page, scene_num):
     if m and m.group(1) == "III":
         return True, f"already III ({before})", before
 
-    # 3. ドロップダウンクリック → 展開
+    # 3. ドロップダウンクリック → 展開（ElementHandle 経由）
     try:
-        await dropdown_btn.click(timeout=5000)
+        await btn_handle.click(timeout=5000)
     except Exception as e:
         return False, f"dropdown click failed: {e}", before
     await asyncio.sleep(0.4)
@@ -1293,9 +1312,18 @@ async def switch_motion_engine_avatar_iii(page, scene_num):
 
     await asyncio.sleep(0.5)
 
-    # 5. 検証
+    # 5. 検証（btn_handle はクリックで stale になる可能性あり、再評価で取り直し）
     try:
-        after = (await dropdown_btn.inner_text()).strip()
+        after = (await page.evaluate(
+            """() => {
+                const labels = [...document.querySelectorAll('div')].filter(el =>
+                    el.children.length === 0 && /^モーション\\s*エンジン$/.test((el.textContent || '').trim())
+                );
+                if (labels.length === 0) return '';
+                const btn = labels[0].parentElement?.parentElement?.querySelector('button[aria-haspopup="menu"]');
+                return (btn?.textContent || '').trim();
+            }"""
+        )).strip()
     except Exception:
         after = "<unreadable>"
     m = re.search(r"アバター\s+(III|II|IV|V|I)(?![IV])", after)
