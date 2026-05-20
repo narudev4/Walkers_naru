@@ -535,6 +535,17 @@ def run_regen(
         trim_silence(pcm, out)
         dur = get_duration(out)
         print(f"  → {out.name} ({dur:.2f}s)")
+        # 2026-05-20: HeyGen 制約「> 1 秒」対策。1.0秒未満は scene21=「まとめ」3文字事故と同型。
+        if dur < 1.0:
+            print(
+                f"\nERROR: {out.name} が {dur:.2f}s。HeyGen は 1.0秒未満の音声をアップロードできません。\n"
+                f"対処: script.md の【スライド{sn}】のナレーション原稿を膨らませて再実行してください。\n"
+                f"  REGEN_SCENES={sn} HEYGEN_SLUG={os.environ.get('HEYGEN_SLUG','<slug>')} python3 _shared/yt-voice.py\n"
+                f"目安: 1秒以上にするには日本語で最低15文字程度（句読点含む）。\n"
+                f"詳細ルール: .claude/skills/yt-script/SKILL.md 「scene の最低秒数」セクション参照。",
+                file=sys.stderr,
+            )
+            sys.exit(1)
 
     # 2026-05-08 H': Whisper で誤読チェック (yt-script SKILL.md の TTS-friendly 戦略 5)
     verify_scenes_with_whisper(scenes_dir, scene_nos, slide_map)

@@ -86,6 +86,8 @@ PRONUNCIATION_MAP = {
     'Android': 'アンドロイド',
     'VS Code': 'ブイエスコード',
     'Dify': 'ディフィ',
+    '皆様': '皆さま',
+    'やまぐち': '山口',
 }
 
 KANJI_NUM = {'一': '1', '二': '2', '三': '3', '四': '4', '五': '5',
@@ -193,6 +195,10 @@ def similarity_score(narration_head, segment_text):
     n = min(len(a), len(b), MATCH_HEAD_LEN)
     if n == 0:
         return 0
+    # 先頭1文字が数字／漢数字どちらも数字化された結果で不一致 → 序数違い（1つ目↔3つ目）。
+    # 後ろがそっくりでも別シーンなので即 0。"1つ目の方法はですね実際" vs "3つ目の方法はですね実際" 事故防止。
+    if a[0] != b[0] and a[0].isdigit() and b[0].isdigit():
+        return 0
     match = sum(1 for i in range(n) if a[i] == b[i])
     # 先頭3文字のうち2文字以上一致しなければ、明らかに別シーン候補なので大幅減点
     if a[:3] != b[:3]:
@@ -203,12 +209,26 @@ def similarity_score(narration_head, segment_text):
 
 
 def find_best_segment(narration, segments, start_idx):
-    """ナレーション先頭にもっとも近いセグメントを返す。start_idx 以降のみ探索。"""
+    """ナレーション先頭にもっとも近いセグメントを返す。start_idx 以降のみ探索。
+
+    探索戦略:
+      1. 先頭から見て **最初に MIN_SCORE_OK 以上スコアしたセグメント** を採用（greedy）。
+         過去には "ウィンドウ内最大スコア" を採用していたが、それだと
+         "1つ目の方法はですね実際" と "3つ目の方法はですね実際" のように
+         後続シーンの方が偶然マッチ字数が多いと、後ろに誤マッチして以降全部ズレる事故が起きた。
+      2. しきい値未達なら、ウィンドウ内のベスト（medium 候補）を返す。
+    """
     if not narration:
         return None, 0
     head = narration[:30]
-    best_idx, best_score = None, 0
     end_idx = min(start_idx + SEARCH_AHEAD, len(segments))
+    # Pass 1: 先頭から見て最初に高信頼スコアを満たしたセグメントを採用
+    for i in range(start_idx, end_idx):
+        score = similarity_score(head, segments[i]['text'])
+        if score >= MIN_SCORE_OK:
+            return i, score
+    # Pass 2: 高信頼ヒットなし → ウィンドウ内ベストを返す（medium / unmatched 判定は呼び元）
+    best_idx, best_score = None, 0
     for i in range(start_idx, end_idx):
         score = similarity_score(head, segments[i]['text'])
         if score > best_score:
@@ -396,6 +416,41 @@ def main():
                 print(f"  scene{r['idx']}: '{r['narration'][:30]}'")
         sys.exit(2)
 
+    # 4b. 安全弁: 補間が 3 件以上連続したら停止（マッチング崩壊のサイン）
+    consecutive = 0
+    max_consecutive = 0
+    streak_start = None
+    worst_streak = (0, None)
+    for r in matched:
+        if r['confidence'] == 'interpolated':
+            if consecutive == 0:
+                streak_start = r['idx']
+            consecutive += 1
+            if consecutive > worst_streak[0]:
+                worst_streak = (consecutive, streak_start)
+            max_consecutive = max(max_consecutive, consecutive)
+        else:
+            consecutive = 0
+    if max_consecutive >= 3:
+        print(f"\n❌ 補間 {worst_streak[0]} 件連続（scene{worst_streak[1]} 以降）。")
+        print("   ナレーションと whisper のマッチングが壊れている可能性が高い。proposed_cuts.json を確認してください。")
+        sys.exit(3)
+
+    # 4c. 安全弁: 尺の妥当性チェック（警告のみ）。日本語ナレーション 〜7文字/秒。
+    CHARS_PER_SEC = 7
+    for i, r in enumerate(matched):
+        if i + 1 >= len(matched):
+            continue
+        if r['cut_time'] is None or matched[i+1]['cut_time'] is None:
+            continue
+        actual = matched[i+1]['cut_time'] - r['cut_time']
+        expected = len(r['narration']) / CHARS_PER_SEC
+        if expected < 1:
+            continue
+        ratio = actual / expected
+        if ratio < 0.5 or ratio > 2.0:
+            print(f"⚠ scene{r['idx']}: 実尺 {actual:.1f}s vs 期待 {expected:.1f}s (ratio {ratio:.2f}) — マッチ位置を要確認")
+
     # 5. proposed_cuts.json 出力
     proposed_json.write_text(json.dumps(matched, ensure_ascii=False, indent=2))
     print(f"[output] {proposed_json}")
@@ -410,6 +465,7 @@ def main():
     print(f"\n[cut] full.wav ({full_dur:.2f}s) を {len(sorted_scenes)} シーンに分割...")
 
     ok = 0
+    short_scenes = []  # 2026-05-20: HeyGen「> 1秒」制約違反シーンを収集
     for i, scene in enumerate(sorted_scenes):
         idx = scene['idx']
         start = scene['cut_time']
@@ -435,10 +491,28 @@ def main():
             tail_note = " [no-trim]" if is_last else ""
             print(f"  ✅ scene{idx:02d}.wav  {m:>2d}:{s:05.2f}〜  ({actual:5.2f}s)  [{scene['confidence']}]{tail_note}")
             ok += 1
+            # 2026-05-20: HeyGen は 1.0秒未満の音声をアップロードできない（実機確認「> 1 秒」制約）
+            if actual < 1.0:
+                short_scenes.append((idx, actual))
         else:
             print(f"  ❌ scene{idx:02d}.wav: 切り出し失敗")
 
     print(f"\n[done] {ok}/{len(sorted_scenes)} 完了 → {scenes_dir}")
+
+    # 2026-05-20: 1.0秒未満シーンがあれば HeyGen アップロード不可。エラー停止して修正を促す。
+    if short_scenes:
+        print(
+            f"\nERROR: {len(short_scenes)} シーンが 1.0秒未満。HeyGen は 1.0秒未満の音声をアップロードできません。",
+            file=sys.stderr,
+        )
+        for idx, dur in short_scenes:
+            print(f"  - scene{idx:02d}.wav ({dur:.2f}s) → script.md 【スライド{idx}】のナレーション原稿を膨らませて再実行", file=sys.stderr)
+        print(
+            f"\n目安: 1秒以上にするには日本語で最低15文字程度（句読点含む）。\n"
+            f"詳細ルール: .claude/skills/yt-script/SKILL.md 「scene の最低秒数」セクション参照。",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
 
 if __name__ == "__main__":

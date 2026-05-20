@@ -109,6 +109,10 @@ voice_pronunciation.json（ユーザー手動上書き）
 4. **CTA テンプレートは `cta_audio_pcm.wav` を使う**（`cta_audio.wav` は中身 MP3 で結合に失敗する）
 5. **結合は filter_complex concat**（`-c copy` はチャンク境界で音切れ）
 6. **結合後の秒数検証**（チャンク合計 + 無音パッド + CTA ≒ full.wav、±5秒以内 assert）
+7. **scene wav は 1.0 秒以上**（HeyGen 制約「> 1 秒」・2026-05-20 追加）
+   - 1.0秒未満で生成された場合、`yt-voice.py` Mode 2 と `yt-split-audio.py` が `sys.exit(1)` で停止
+   - 対処: `script.md` の該当 scene ナレーション原稿を膨らます（最低15文字目安）
+   - 事前防止ルールの詳細は `.claude/skills/yt-script/SKILL.md` 「scene の最低秒数」セクション参照
 
 ## 編集禁止（CRITICAL）
 
