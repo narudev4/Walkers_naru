@@ -51,6 +51,28 @@
 |---|---|---|
 | `vercel` コマンドを使う／デプロイ作業 | `.claude/refs/vercel-deploy.md` | 別チームに新規プロジェクト作成事故を防ぐ |
 | `WebFetch` が失敗（403／タイムアウト／JS 必須） | `.claude/refs/web-fetch.md` | フォールバック手順 |
+| AWS 操作・S3 同期セットアップ | `docs/aws-setup.md` | バケット作成・IAM・rclone 設定の正規手順 |
+| Agent SDK ランタイムの変更／デプロイ | `docs/agent-runtime.md` | ECS Fargate + MCP + タスクグラフの設計 |
+
+## クロスデバイス同期運用ルール（CRITICAL）
+
+Mac ↔ S3 ↔ Windows/WSL2 の双方向同期で「コンテキストの真理源」を S3 に置く。
+作業の各段階で対応するスキルを呼ぶ:
+
+| タイミング | スキル | 内容 |
+|---|---|---|
+| セッション開始時 | `/sync-down` | S3 から最新コンテキストを取り込む |
+| 重要編集後・セッション終了時 | `/sync-up` | ローカル変更を S3 へ反映 + HTML ビュー再生成 |
+| スマホ閲覧用 HTML を更新したい | `/context-view` | view bucket に publish |
+| 同期トラブル時 | `/context-doctor` | 競合・整合性チェック |
+| 初回・新端末セットアップ | `/aws-bootstrap` | S3 + IAM の対話的構築 |
+
+**連鎖規約**:
+- `/session-checkpoint` の末尾で `/sync-up` を必ず呼ぶ (人手忘れ防止)
+- `/morning-routine` の冒頭で `/sync-down` を呼ぶ
+- `pre-sync-guard.sh` が `credentials/`・100MB 超・gitleaks secrets を検出したら **絶対に上書き回避しない**
+
+詳細手順: `docs/aws-setup.md` / `docs/agent-runtime.md`
 
 ## MCP 使用ルール（CRITICAL）
 

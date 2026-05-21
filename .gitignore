@@ -46,3 +46,20 @@ output/
 /*.jpg
 /*.jpeg
 /*.gif
+
+# Cross-device sync (rclone bisync state, locks, conflict copies, logs)
+.sync.lock
+.sync-logs/
+.sync-daily/
+.sync-gitleaks-report.json
+*.conflict-*
+**/*.conflict-*
+
+# rclone config は credentials/ 配下に置く (credentials/ は既に除外済)
+# 念のため top-level の rclone.conf も除外
+/rclone.conf
+**/rclone.conf
+
+# Agent runtime のローカル開発用ファイル
+05_development/agent-runtime/.env.local
+05_development/agent-runtime/.workspace-mcp/
