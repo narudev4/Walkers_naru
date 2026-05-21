@@ -52,6 +52,22 @@
 | `vercel` コマンドを使う／デプロイ作業 | `.claude/refs/vercel-deploy.md` | 別チームに新規プロジェクト作成事故を防ぐ |
 | `WebFetch` が失敗（403／タイムアウト／JS 必須） | `.claude/refs/web-fetch.md` | フォールバック手順 |
 
+## MCP 使用ルール（CRITICAL）
+
+### Google 系操作
+
+Google Calendar / Gmail / Google Drive / Sheets / Docs / Slides 等の操作は **必ず `mcp__google-workspace__*` 系ツール** を使う。これは `.mcp.json` の `google-workspace`（uvx `workspace-mcp`）から起動され、`naru.hosoya@walker-s.co.jp` で OAuth 連携されている本人ルート。
+
+**禁止**: UUID プレフィックスの MCP ツール（`mcp__<UUID>__*` 形式）で Google 系操作を行うこと。これらは Claude.ai アカウント側で連携された外部コネクター由来で、本プロジェクトの環境では**第三者の Google アカウント**に紐づいている。誤って呼ぶと第三者のメール・カレンダー・ファイルに影響が及ぶ。
+
+2026-05-20 時点で観測された禁止 UUID（環境によって変わり得るため UUID 形式自体を一律避ける）:
+
+- `mcp__93471d68-818e-4248-8177-5fce952c8979__*` → Calendar 連携
+- `mcp__4bb7248c-bb3d-40e6-a8d9-4bf68773920c__*` → Gmail 連携
+- `mcp__0fc0fa35-70f5-4ed8-ba79-2dd890350d11__*` → Drive 連携
+
+**原則**: Google 系操作のツール選択時、`mcp__google-workspace__*` が見つからない／使えない場合は、UUID 形式コネクターに勝手に切り替えず、**必ずユーザーに報告して指示を仰ぐ**。
+
 ## スキルの自律的な活用
 
 **スキルが使える場面では必ずスキルを使う。手動でツールを叩いて代替することは禁止。**
