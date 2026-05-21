@@ -30,6 +30,15 @@ Thumbs.db
 # Node.js
 node_modules/
 
+# Playwright MCP (自動生成のコンソールログ／aria tree スナップショット)
+.playwright-mcp/
+
+# Python キャッシュ
+**/__pycache__/
+
+# Remotion レンダリング成果物（ai-video-conte は再生成可能、out/ 配下の他ファイルは追跡継続）
+05_development/remotion/out/ai-video-conte*.mp4
+
 # shinkoku 確定申告データ（個人情報を含む — 削除しないこと）
 shinkoku.config.yaml
 shinkoku.db
@@ -41,8 +50,12 @@ output/
 # YouTube 動画制作の作業ディレクトリ（projects/ 配下は全て track 外）
 05_development/youtube/projects/
 
+# PTJ AI健康相談PoC（nested 独立 git リポ・後で個人GitHubに切り出す）
+03_projects/PTJ_パーソナルトレーナージャパン/app/
+
 # Top-level image dumps (use 05_development/youtube/docs/screenshots/ or 03_projects/{slug}/ instead)
 /*.png
 /*.jpg
 /*.jpeg
 /*.gif
+.vercel
