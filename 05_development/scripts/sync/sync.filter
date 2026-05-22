@@ -1,0 +1,67 @@
+# rclone filter for Walkers cross-device context sync
+# Applied identically on both Mac and Windows by sync-up.sh / sync-down.sh
+# - prefix excludes ('- pattern') drop files; '+ pattern' would include
+# - bisync requires identical filters on both peers
+
+# --- Build artifacts / dependency directories ---
+- node_modules/**
+- .git/**
+- .next/**
+- .shinkoku/**
+- .turbo/**
+- .vercel/**
+- .nuxt/**
+- .svelte-kit/**
+- target/**
+- dist/**
+- build/**
+
+# --- iOS / Android build outputs ---
+- ios/Pods/**
+- ios/build/**
+- ios/DerivedData/**
+- android/build/**
+- android/app/build/**
+- android/.gradle/**
+- **/*.xcframework/**
+- **/*.framework/**
+- **/DerivedData/**
+
+# --- Native / packaged binaries ---
+- **/*.apk
+- **/*.aab
+- **/*.ipa
+- **/*.dylib
+- **/*.so
+- **/*.dll
+- **/*.node
+- **/*.dex
+- **/*.o
+- **/*.a
+
+# --- Archives / large download artifacts ---
+- **/*.zip
+- **/*.tar
+- **/*.tar.gz
+- **/*.tgz
+- **/*.7z
+- **/*.rar
+
+# --- Python virtualenv / cache ---
+- **/__pycache__/**
+- **/*.pyc
+- **/.venv/**
+- **/venv/**
+
+# --- OS / editor metadata ---
+- **/.DS_Store
+- **/Thumbs.db
+- **/.idea/**
+- **/.vscode/**
+
+# --- Sync internals (would create recursion if synced) ---
+- .sync-logs/**
+- .sync-daily/**
+- .sync.lock
+- .sync-gitleaks-report.json
+- output/**

@@ -1,6 +1,10 @@
 # Authentication & Secrets
 .env
 .env.*
+!.env.example
+!.env.sample
+# 例外: 実 API キーが含まれてるため除外（1Password 移行後にダミー化予定）
+05_development/youtube/comment_automation/.env.example
 .mcp.json
 *.key
 *.pem
@@ -63,3 +67,14 @@ output/
 # Agent runtime のローカル開発用ファイル
 05_development/agent-runtime/.env.local
 05_development/agent-runtime/.workspace-mcp/
+.vercel
+.review/
+
+# 独立 git リポジトリ（個別 GitHub で管理 or 参照用 clone）
+# OKWEB 案件: 技術検証 + リプレース対象システムの参照用 clone
+03_projects/OKWEB/aikata-auth-test/
+03_projects/OKWEB/repos/
+# PTJ 案件: github.com/narudev4/ptj-poc-ai-trainer
+03_projects/PTJ_パーソナルトレーナージャパン/app/
+# mailmag 自動化: github.com/narudev4/Walkers_mailmag-automation
+05_development/mailmag-automation/

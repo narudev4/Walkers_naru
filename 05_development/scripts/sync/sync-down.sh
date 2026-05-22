@@ -75,8 +75,12 @@ PAIRS=(
   "learning|06_learning"
 )
 
+SCRIPT_DIR="${PROJ_ROOT}/05_development/scripts/sync"
+FILTER_FILE="${SCRIPT_DIR}/sync.filter"
+
 FLAGS=(
   --config "$RCLONE_CONF"
+  --filter-from "$FILTER_FILE"
   --checksum
   --conflict-resolve newer
   --conflict-loser pathname

@@ -39,46 +39,33 @@ SYNC_INCLUDES=(
   'DAILY.md'
 )
 
+# filter 適用後にだけ残る範囲をチェック対象とするため、build/cache 系ディレクトリを prune する
+# (sync.filter と同じ pattern を find で再現)
+FIND_PRUNE=( -type d \( \
+  -name node_modules -o -name .git -o -name .next -o -name .turbo \
+  -o -name .vercel -o -name .shinkoku -o -name .venv -o -name venv \
+  -o -name Pods -o -name build -o -name DerivedData -o -name '__pycache__' \
+  -o -name '.idea' -o -name '.vscode' -o -name dist -o -name target \
+\) -prune )
+
 violations=()
 for inc in "${SYNC_INCLUDES[@]}"; do
   [[ -e "$inc" ]] || continue
   for pat in "${FORBIDDEN_PATTERNS[@]}"; do
     while IFS= read -r -d '' f; do
       violations+=("$f")
-    done < <(find "$inc" -type f -name "${pat##*/}" -print0 2>/dev/null || true)
+    done < <(find "$inc" "${FIND_PRUNE[@]}" -o -type f -name "${pat##*/}" -print0 2>/dev/null || true)
   done
 done
 
-# credentials/ , output/ , node_modules/ 配下の混入チェック
-for inc in "${SYNC_INCLUDES[@]}"; do
-  [[ -d "$inc" ]] || continue
-  while IFS= read -r -d '' d; do
-    violations+=("$d (混入禁止ディレクトリ)")
-  done < <(find "$inc" -type d \( -name credentials -o -name node_modules -o -name '.git' -o -name '.shinkoku' \) -print0 2>/dev/null || true)
-done
-
 if (( ${#violations[@]} > 0 )); then
-  echo "${RED}[GUARD] 秘匿ファイル / 禁止ディレクトリを検出。sync を中止します:${NC}" >&2
+  echo "${RED}[GUARD] 秘匿ファイル名パターンを検出 (sync.filter で除外されない領域)。sync を中止します:${NC}" >&2
   printf '  - %s\n' "${violations[@]}" >&2
   exit 1
 fi
 
-# ---- 2. 巨大ファイルチェック (100MB 超は除外) --------------------------------
-
-oversize=()
-for inc in "${SYNC_INCLUDES[@]}"; do
-  [[ -e "$inc" ]] || continue
-  while IFS= read -r -d '' f; do
-    oversize+=("$f")
-  done < <(find "$inc" -type f -size +100M -print0 2>/dev/null || true)
-done
-
-if (( ${#oversize[@]} > 0 )); then
-  echo "${YELLOW}[GUARD] 100MB 超のファイルを検出。S3 コストと帯域を考慮し中止します:${NC}" >&2
-  printf '  - %s\n' "${oversize[@]}" >&2
-  echo "  圧縮するか output/ 配下に移動してください。" >&2
-  exit 2
-fi
+# 注: 旧版で行っていた 100MB 上限 / node_modules 混入チェックは sync.filter に統合済。
+# 必要に応じて手動 sanity check は `rclone lsf walkers-s3:walkers-context-prod --recursive --include '*' --max-size 100M=false` で実施。
 
 # ---- 3. gitleaks による secrets スキャン ------------------------------------
 
