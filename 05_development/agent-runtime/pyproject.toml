@@ -1,0 +1,29 @@
+[project]
+name = "walkers-agent-runtime"
+version = "0.1.0"
+description = "Walkers クラウド常駐 Agent SDK ランタイム (S3 + Google Workspace MCP + プロジェクトタスクグラフ)"
+requires-python = ">=3.12"
+
+dependencies = [
+    "anthropic>=0.92.0",
+    "boto3>=1.34.0",
+    "mcp>=1.0.0",
+    "pydantic>=2.6.0",
+    "python-dateutil>=2.9.0",
+    "tenacity>=8.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.4.0",
+    "mypy>=1.10.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "W", "UP"]
+ignore = ["E501"]
