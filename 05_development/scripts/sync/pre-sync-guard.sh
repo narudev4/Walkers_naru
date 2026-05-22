@@ -59,6 +59,7 @@ FIND_PRUNE=( \( \
     -o -name 'love-search*' -o -name 'love_search*' \
   \) \
   -o -path '*/PTJ_*/app' \
+  -o -path '*/PTJ_*/app/*' \
 \) -prune )
 
 violations=()

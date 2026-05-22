@@ -67,8 +67,8 @@
 - output/**
 
 # --- 独立 git リポジトリ (.gitignore と同期、各 git で別管理されているので S3 同期不要) ---
-# PTJ Next.js アプリ
-- **/PTJ_パーソナルトレーナージャパン/app/**
+# PTJ Next.js アプリ (PTJ_xxx/app glob で将来の改称・別案件にも対応)
+- **/PTJ_*/app/**
 # OKWEB 配下の独立リポ (love-search-match 等のハイフン系も含む)
 - **/aikata-auth-test/**
 - **/love-search*/**
