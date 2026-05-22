@@ -20,11 +20,19 @@ RED=$'\033[31m'; YELLOW=$'\033[33m'; GREEN=$'\033[32m'; NC=$'\033[0m'
 # ---- 1. 機密ファイル名パターンチェック ---------------------------------------
 
 FORBIDDEN_PATTERNS=(
+  # 鍵ファイル
   '*.key' '*.pem' '*.p12' '*.pfx'
-  '.env' '.env.*'
+  # 実 .env ファイル (.env.example / .env.sample は対象外として明示列挙)
+  '.env' '.env.local' '.env.production' '.env.development' '.env.staging'
+  # MCP 設定 (個人 OAuth トークン等含む)
   '.mcp.json'
-  '**/credentials.json'
-  '**/api_key*' '**/token*' '**/secret*'
+  # 認証情報
+  'credentials.json'
+  # API キー・トークン (具体名、'token' のみでは過剰検出)
+  'api_key*' 'apikey*' 'access_token*' 'auth_token*' 'tokens.json'
+  # secret は接頭辞でなく接尾辞ベース or 具体名で
+  'secret.json' 'secrets.json' '*.secret'
+  # Shinkoku 系
   'shinkoku.config.yaml' 'shinkoku.db' 'shinkoku.db-wal' 'shinkoku.db-shm'
 )
 
@@ -41,11 +49,17 @@ SYNC_INCLUDES=(
 
 # filter 適用後にだけ残る範囲をチェック対象とするため、build/cache 系ディレクトリを prune する
 # (sync.filter と同じ pattern を find で再現)
-FIND_PRUNE=( -type d \( \
-  -name node_modules -o -name .git -o -name .next -o -name .turbo \
-  -o -name .vercel -o -name .shinkoku -o -name .venv -o -name venv \
-  -o -name Pods -o -name build -o -name DerivedData -o -name '__pycache__' \
-  -o -name '.idea' -o -name '.vscode' -o -name dist -o -name target \
+FIND_PRUNE=( \( \
+  -type d \( \
+    -name node_modules -o -name .git -o -name .next -o -name .turbo \
+    -o -name .vercel -o -name .shinkoku -o -name .venv -o -name venv \
+    -o -name Pods -o -name build -o -name DerivedData -o -name '__pycache__' \
+    -o -name '.idea' -o -name '.vscode' -o -name dist -o -name target \
+    -o -name 'aikata-auth-test' -o -name 'mailmag-automation' \
+    -o -name 'love-search*' -o -name 'love_search*' \
+  \) \
+  -o -path '*/PTJ_*/app' \
+  -o -path '*/PTJ_*/app/*' \
 \) -prune )
 
 violations=()
@@ -71,11 +85,18 @@ fi
 
 if command -v gitleaks >/dev/null 2>&1; then
   # --no-git: ワーキングツリー直スキャン (git index 関係なく検査)
+  # --config: 独立 git リポ等の allowlist (../.gitleaks.toml)
+  GITLEAKS_CONFIG="$PROJ_ROOT/.gitleaks.toml"
+  config_arg=()
+  [[ -f "$GITLEAKS_CONFIG" ]] && config_arg=( --config "$GITLEAKS_CONFIG" )
+
   if ! gitleaks detect --no-git --source "$PROJ_ROOT" \
+        "${config_arg[@]}" \
         --redact --exit-code 3 \
         --report-format json --report-path "$PROJ_ROOT/.sync-gitleaks-report.json" \
         >/dev/null 2>&1; then
     echo "${RED}[GUARD] gitleaks が secrets を検出。詳細: .sync-gitleaks-report.json${NC}" >&2
+    echo "  対処: 検出されたファイルを credentials/ へ退避、または .gitleaks.toml の allowlist に追加 (既知/別管理の場合のみ)" >&2
     exit 3
   fi
   rm -f "$PROJ_ROOT/.sync-gitleaks-report.json"

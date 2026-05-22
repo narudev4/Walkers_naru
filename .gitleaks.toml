@@ -1,0 +1,49 @@
+# gitleaks config for Walkers cross-device sync
+# pre-sync-guard.sh 経由で sync 前のスキャンに使う
+# このリポは独立 git リポを内包してる (S3 同期からは除外済み) ので、
+# それらの内部スキャン結果は同期判定に関係ない → allowlist で除外する。
+
+# gitleaks 公式 default ruleset を継承
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Walkers S3 同期対象外のパス (sync.filter で除外しているもの)"
+paths = [
+  # 独立 git リポジトリ (各リポ個別で gitleaks 管理されるべき)
+  # ※ パス境界 / を明示してディレクトリ名の部分一致を防ぐ
+  '''.*/aikata-auth-test/.*''',
+  '''.*/PTJ_[^/]+/app/.*''',
+  '''.*/love-search[_-][^/]+/.*''',
+  '''.*/love_search[_-][^/]+/.*''',
+  '''.*/mailmag-automation/.*''',
+
+  # Walkers ローカル設定 (gitignore 済 + S3 同期対象外)
+  '''.*/credentials/.*''',
+  '''.*/\.mcp\.json(\.bak.*)?$''',
+
+  # サブモジュール内の検出 (各サブモジュール側で管理)
+  '''.*/05_development/walkers-kintai-gas/.*''',
+  '''.*/05_development/migration_qa/.*''',
+  '''.*/05_development/walkers-dashboard/.*''',
+
+  # 既知の課題: 1Password 移行待ち (commit log で言及済み)
+  '''.*05_development/youtube/comment_automation/\.env.*''',
+
+  # 同期内部 / レビュー
+  '''.*/\.sync-logs/.*''',
+  '''.*/\.review/.*''',
+  '''.*/\.workspace-mcp/.*''',
+
+  # output/ 配下は sync 対象外 (sync.filter で除外)
+  # .next ビルドキャッシュ等に generic-api-key 風文字列が紛れ込みやすい
+  # ※ output/articles/ output/digest/ output/trends/ は S3 同期対象に追加予定だが、
+  #   gitleaks は中身もスキャンするので 本物 secret は別途検出される
+  '''.*/output/.*''',
+
+  # MCP サーバ用 credentials (個別管理、S3 同期対象外)
+  '''.*/05_development/mcp-google/.*''',
+
+  # 記事 .md 内の API キー風文字列は誤検知 (使い方の説明等)
+  '''.*/05_development/youtube/projects/.*/article\.md$''',
+]
