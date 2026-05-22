@@ -65,3 +65,13 @@
 - .sync.lock
 - .sync-gitleaks-report.json
 - output/**
+
+# --- 独立 git リポジトリ (.gitignore と同期、各 git で別管理されているので S3 同期不要) ---
+# PTJ Next.js アプリ
+- **/PTJ_パーソナルトレーナージャパン/app/**
+# OKWEB 配下の独立リポ (love-search-match 等のハイフン系も含む)
+- **/aikata-auth-test/**
+- **/love-search*/**
+- **/love_search*/**
+# 開発ツール
+- **/mailmag-automation/**
