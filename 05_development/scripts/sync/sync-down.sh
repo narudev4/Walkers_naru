@@ -81,7 +81,7 @@ FILTER_FILE="${SCRIPT_DIR}/sync.filter"
 FLAGS=(
   --config "$RCLONE_CONF"
   --filter-from "$FILTER_FILE"
-  --checksum
+  --compare size,modtime,checksum
   --conflict-resolve newer
   --conflict-loser pathname
   --conflict-suffix conflict-$(date +%Y%m%d-%H%M%S)
@@ -101,7 +101,7 @@ for pair in "${PAIRS[@]}"; do
     remote_path="${S3_REMOTE}:${BUCKET}/daily"
     local_path="${PROJ_ROOT}/.sync-daily"
     mkdir -p "$local_path"
-    [[ -f "$PROJ_ROOT/DAILY.md" && ! -e "$local_path/DAILY.md" ]] && cp "$PROJ_ROOT/DAILY.md" "$local_path/DAILY.md"
+    [[ -f "$PROJ_ROOT/DAILY.md" && ! -e "$local_path/DAILY.md" ]] && cp -p "$PROJ_ROOT/DAILY.md" "$local_path/DAILY.md"
   else
     remote_path="${S3_REMOTE}:${BUCKET}/${prefix}"
     local_path="${PROJ_ROOT}/${localpath}"
@@ -116,7 +116,7 @@ for pair in "${PAIRS[@]}"; do
 
   # DAILY.md は本体に反映
   if [[ "$localpath" == "DAILY.md" && -f "$local_path/DAILY.md" ]]; then
-    cp "$local_path/DAILY.md" "$PROJ_ROOT/DAILY.md"
+    cp -p "$local_path/DAILY.md" "$PROJ_ROOT/DAILY.md"
   fi
 done
 

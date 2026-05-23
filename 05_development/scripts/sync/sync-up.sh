@@ -75,7 +75,7 @@ FILTER_FILE="${SCRIPT_DIR}/sync.filter"
 FLAGS=(
   --config "$RCLONE_CONF"
   --filter-from "$FILTER_FILE"
-  --checksum
+  --compare size,modtime,checksum
   --conflict-resolve newer
   --conflict-loser pathname
   --conflict-suffix conflict-$(date +%Y%m%d-%H%M%S)
@@ -89,7 +89,7 @@ FLAGS=(
 # DAILY.md は専用ステージングへコピーしてから bisync (rclone は単一ファイル bisync 非対応)
 if [[ -f "$PROJ_ROOT/DAILY.md" ]]; then
   mkdir -p "$PROJ_ROOT/.sync-daily"
-  cp "$PROJ_ROOT/DAILY.md" "$PROJ_ROOT/.sync-daily/DAILY.md"
+  cp -p "$PROJ_ROOT/DAILY.md" "$PROJ_ROOT/.sync-daily/DAILY.md"
 fi
 
 for pair in "${PAIRS[@]}"; do
@@ -112,7 +112,7 @@ for pair in "${PAIRS[@]}"; do
   fi
 
   if [[ "$localpath" == "DAILY.md" && -f "$PROJ_ROOT/.sync-daily/DAILY.md" ]]; then
-    cp "$PROJ_ROOT/.sync-daily/DAILY.md" "$PROJ_ROOT/DAILY.md"
+    cp -p "$PROJ_ROOT/.sync-daily/DAILY.md" "$PROJ_ROOT/DAILY.md"
   fi
 done
 
