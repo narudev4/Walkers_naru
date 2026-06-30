@@ -23,21 +23,3 @@ jobs:
           path: 03_projects/1LC/auto_archive/logs/
           retention-days: 90
 
-  notify-failure:
-    needs: cleanup
-    if: failure()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Send failure notification to Chatwork
-        env:
-          CHATWORK_TOKEN: ${{ secrets.CHATWORK_TOKEN }}
-          CHATWORK_ROOM_ID: ${{ secrets.CHATWORK_ROOM_ID }}
-        run: |
-          if [ -z "$CHATWORK_TOKEN" ] || [ -z "$CHATWORK_ROOM_ID" ]; then
-            echo "::warning::CHATWORK_TOKEN or CHATWORK_ROOM_ID not set — skipping notification"
-            exit 0
-          fi
-          curl -s -X POST \
-            -H "X-ChatWorkToken: ${CHATWORK_TOKEN}" \
-            -d "body=[info][title]Airtable定期削除 失敗[/title]GitHub Actions の定期削除が失敗しました。%0Ahttps://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}[/info]" \
-            "https://api.chatwork.com/v2/rooms/${CHATWORK_ROOM_ID}/messages"
