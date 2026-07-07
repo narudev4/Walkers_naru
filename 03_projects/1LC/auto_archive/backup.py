@@ -1,4 +1,4 @@
-import os, json, time, urllib.request
+import os, json, time, urllib.request, hashlib
 
 
 def get_webhook_url():
@@ -36,7 +36,10 @@ def send_backup(records, phase_label):
     for i in range(0, len(rows), CHUNK):
         chunk = rows[i : i + CHUNK]
         chunk_idx = i // CHUNK
-        payload = json.dumps({"rows": chunk}, ensure_ascii=False).encode("utf-8")
+        chunk_id = hashlib.sha256(
+            "|".join(sorted(r["id"] for r in chunk)).encode("utf-8")
+        ).hexdigest()
+        payload = json.dumps({"rows": chunk, "chunkId": chunk_id}, ensure_ascii=False).encode("utf-8")
 
         ok = False
         for attempt in range(MAX_RETRIES):
