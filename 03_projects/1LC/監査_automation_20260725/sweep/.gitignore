@@ -1,0 +1,16 @@
+# Airtable / チタンから取得した生データは再取得可能なのでコミットしない
+# （スクリプトを実行すれば再生成できる）
+records.json
+history_all.json
+history_today.json
+investors.json
+year_seikei.json
+props_created_today.json
+props_modified_today.json
+counts_all.json
+step1_mapping.json
+compare_sets.json
+sweep_extra.json
+
+# 掲載状況の判定結果（772KB）はコミットする＝再スイープに20分かかるため
+# sweep_result.json は意図的に除外しない

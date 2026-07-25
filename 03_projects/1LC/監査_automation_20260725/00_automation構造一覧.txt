@@ -1,0 +1,64 @@
+# Airtable Automation 構造一覧（CRM appksEWIuKl7N2ftS）
+# 吸い出し日: 2026-07-25（読み取り専用で取得。変更・Test実行なし）
+
+====================================================================
+[本番]Airtableメール配信希望条件転送 (ON)
+====================================================================
+TRIGGER: At scheduled time — 毎日 9:00 JST
+ACTIONS:
+  1. Find records — ★個人投資家（紹介許可 is checked）
+  2. Repeat for each found record:
+     a. Run a script「物件データのマッチング」 → 02a_物件データのマッチング.js
+     b. Run a script「メール配信を行う」 → 02b_メール配信を行う.js
+
+====================================================================
+[本番]紹介履歴作成 (wflSLXN8hEunC6nyW)
+====================================================================
+TRIGGER: When a webhook is received
+ACTIONS:
+  1. Run a script「物件紹介履歴を追加する」 → 03_紹介履歴作成.js
+     - input.config: record_id, matchedRecords
+     - ★物件紹介履歴 テーブルに createRecordAsync
+       （★個人投資家 リンク = record_id、物件紹介_投資家 リンク = 各 matchedRecord）
+
+====================================================================
+企業物件マッチング (wflcnqVFLd1Z17hQD)
+====================================================================
+TRIGGER: When a button is clicked
+ACTIONS:
+  1. Run a script「Custom script from code editor」 → 04_企業物件マッチング.js
+     - input.config: kinds, budgetUpper, budgetLower, structures, profitLower,
+       years, to_stations, name, email, record_id, history, area
+     - チタン物件一覧（view viwPDkWFB8zHPraRL）を条件マッチング（最大10件）
+       条件: 履歴未紹介 / URLあり / 価格帯 / 利回り下限 / エリア正規表現 /
+             種別（こだわらない可）/ 建物構造（こだわらない可）/ 築年数
+     - マッチ結果を webhook POST:
+       https://hooks.airtable.com/workflows/v1/genericWebhook/appksEWIuKl7N2ftS/wflko7uZj184zCoea/wtrGouJBurSzZKi7v
+       （= [企業]物件紹介提案 のトリガー）
+     - output: infos, matchedCount, matchedRecords
+
+====================================================================
+[企業]物件紹介提案 (wflko7uZj184zCoea)
+====================================================================
+TRIGGER: When a webhook is received（企業物件マッチングのスクリプトから POST される）
+ACTIONS:
+  1. Run a script「Custom script from code editor」 → 05_企業物件紹介提案.js
+     - input.config: record_id, matchedRecords
+     - ★物件紹介履歴 テーブルに createRecordAsync
+       （★企業一覧_マッチング用 リンク = record_id、★物件紹介_企業用 リンク = 各 matchedRecord）
+
+====================================================================
+企業へのメール配信 (wflegrxzcddPbj9yD) ※OFF
+====================================================================
+TRIGGER: When a record is created — In アクション履歴
+CONDITIONAL LOGIC:
+  If 結果 is exactly「メール送付｜物件紹介」
+     and 公開用URL (from 紹介した物件) Value is not empty
+     and 過去紹介 is empty
+  → Run a script and Send an email using Gmail
+ACTIONS:
+  1. Run a script「Custom script from code editor」 → 06_企業へのメール配信.js
+     - input.config: rec_house_name, rec_house_url（配列）
+     - 物件名とURLを [name](url) 形式で連結し <br> 区切りの HTML に整形
+     - output: house_links_html（次の Gmail アクションで本文に埋め込む想定）
+  2. Gmail: Send email（スクリプト以外のアクション。詳細設定は未吸い出し）
