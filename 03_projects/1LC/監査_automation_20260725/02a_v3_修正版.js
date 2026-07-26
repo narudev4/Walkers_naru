@@ -1,27 +1,39 @@
 // ========================================
-// 物件マッチング v3 — 掲載終了の除外 + 新しい物件優先
+// 物件マッチング v3.1 — 掲載終了の除外 + 新しい物件優先（実行時間の最適化込み）
 // Airtable Automation Script (Step 1)
 //
-// v2 からの変更点（naru承認済みの2点＋ログ出力のみ1点）:
-//   【1】掲載終了（成約済）物件を候補から除外
-//        → 条件に `!isEnded` を1つ追加（78行目付近）
+// v2 からの変更点:
+//   【1】掲載終了（成約済）物件を候補から除外（ループ先頭で continue）
 //        判定は「掲載終了」チェックボックスを見るだけ。
-//        このフラグは日次スイープ（sweep/02_sweep.py）が書き込む
-//   【2】走査順を「新規登録日の降順（新しい順）」に変更
-//        → 従来は Airtable 既定順（≒作成順＝古い順）で先頭から5件で
-//          打ち切っていたため、掲載終了率が最も高い古い物件が
-//          優先的に紹介されていた（2026-07-25 の実測で混入率43.1%）
+//        このフラグは掲載状況スイープ（sweep/02_sweep.py）が書き込む
+//   【2】走査順を反転して新しい物件から探す
+//        従来は Airtable 既定順（≒作成順＝古い順）で先頭から5件で
+//        打ち切っていたため、掲載終了率が最も高い古い物件が
+//        優先的に紹介されていた（2026-07-25 の実測で混入率43.1%）
 //   【3】debugLog を output に出力（挙動は変わらない。障害時の可視化のため）
+//
+// v3 → v3.1 の変更（2026-07-26。実行時間の最適化）:
+//   本 Automation は 2026-07-10 以前から毎日 "Failed to run" になっており、
+//   原因は「Your script exceeded the 180s run time limit.」だった。
+//   築年数が 9999（＝フォームの「下限無し」）の投資家は
+//   `age > 9999` により1件も一致せず、25,908件を最後まで走査するため
+//   180秒を超過し、そこで Automation 全体が停止していた
+//   （＝以降の投資家にメールが届かない。実測で322人中26%しか届いていない）。
+//   そのため以下2点で走査コストを削減した:
+//     - 新旧比較のための sort()（getCellValue を伴い高コスト）を廃止し
+//       reverse() に変更
+//     - 掲載終了の判定をループ先頭に移し、他の値を読む前に continue
+//       （半数以上が掲載終了のため、走査コストが約半分になる）
 //
 // ※ 築年数の条件（age > years）は v2 のまま変更していない。
 //   フォームの選択肢は「◯年以内」なので本来は age <= years が正しいが、
 //   新規登録フォームの保存値が未確認のため保留（岩下様へ確認中）。
+//   なおこの反転こそが上記タイムアウトの根本原因でもあるため、
+//   確認が取れ次第の修正が望ましい。
 //
 // 【元に戻す方法】
-//   変更1: 78行目の `!isEnded &&` の行を削除
-//   変更2: 45行目の `sortedRecords` を `query.records` に戻す
-//   変更3: 末尾の output.set("debugLog", ...) を削除
-//   （または監査_automation_20260725/02a_物件データのマッチング.js を全文貼り戻す）
+//   監査_automation_20260725/02a_物件データのマッチング.js（v2の本番コード）
+//   の全文をコードエディタに貼り付けて Finish editing → Update
 // ========================================
 
 let {
@@ -38,12 +50,9 @@ let infoList = [];
 let debugLog = [];
 
 // 【変更2】新しい物件から探す（従来は古い順＝掲載終了率が高い順だった）
-let sortedRecords = query.records.slice().sort((a, b) => {
-  let da = a.getCellValue("新規登録日") || "";
-  let db = b.getCellValue("新規登録日") || "";
-  if (da === db) return 0;
-  return da > db ? -1 : 1;   // 降順（新しい順）
-});
+// v3.1: 25,908件に対する sort() は 180秒の実行時間上限を圧迫するため、
+//       getCellValue を伴わない reverse() に変更（既定順≒作成順なので反転＝新しい順）
+let sortedRecords = query.records.slice().reverse();
 
 // 履歴の確認（現行と同じロジック）
 let historyInfos = [];
@@ -66,6 +75,10 @@ for (let record of sortedRecords) {
   if (matchedRecords.length >= 5) break;
 
   try {
+    // 【変更1】掲載終了（成約済）は他の値を読む前に除外する
+    // v3.1: 半数以上が掲載終了のため、先頭で弾くと走査コストが約半分になる
+    if (record.getCellValue("掲載終了")) { skippedEnded++; continue; }
+
     // --- マッチング判定用 (raw values, 現行と同一) ---
     let recordKinds = record.getCellValueAsString("種別");
     let recordStructure = record.getCellValueAsString("建物構造");
@@ -80,13 +93,8 @@ for (let record of sortedRecords) {
 
     let age = currentYear - recordYearBuilt;
 
-    // 【変更1】掲載終了（成約済）の判定
-    let isEnded = !!record.getCellValue("掲載終了");
-    if (isEnded) skippedEnded++;
-
     // マッチング条件（v2の7条件 + 掲載終了の除外）
     if (
-      !isEnded &&
       !historyInfos.includes(info) &&
       areaPattern.test(recordArea) &&
       (kinds.includes(recordKinds) || kinds.includes("こだわらない")) &&
