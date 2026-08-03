@@ -124,8 +124,8 @@ MTG実施 → ① 情報収集 → ② 骨子策定（承認必須） → ③ Go
 > `copy_drive_file` + `replaceAllText` はデザインが壊れる既知の問題があるため、使わない。
 
 ### Google Drive 格納先（必須）
-- **提案書フォルダID**: `1k5pmN_SCWyWhjG2lPM_PT5vdtPYh9BUS`
-- **URL**: https://drive.google.com/drive/folders/1k5pmN_SCWyWhjG2lPM_PT5vdtPYh9BUS
+- **提案書フォルダID**: `14NMX2LoSluaJkiNdz-iQy_HU_joJKXRK`
+- **URL**: https://drive.google.com/drive/folders/14NMX2LoSluaJkiNdz-iQy_HU_joJKXRK
 
 ### デザイン仕様（厳守）
 
@@ -157,7 +157,7 @@ import_to_google_doc(
   user_google_email="naru.hosoya@walker-s.co.jp",
   file_path="output/proposals/{ファイル名}.html",
   document_title="【{クライアント名}様】{案件名}のご提案",
-  target_folder_id="1k5pmN_SCWyWhjG2lPM_PT5vdtPYh9BUS"
+  target_folder_id="14NMX2LoSluaJkiNdz-iQy_HU_joJKXRK"
 )
 ```
 > **CRITICAL**: `import_to_google_doc` はHTMLを自動的にGoogle Docs形式に変換してアップロードする。`target_folder_id` を指定することで直接提案書フォルダに配置される。
@@ -179,6 +179,8 @@ import_to_google_doc(
 
 ### 執筆ルール
 - 文体: ですます調、ビジネス文書として適切なトーン
+- **文末は句点「。」**: 本文・箇条書きの各項目・表のセル内すべて。文になっていれば必ず付ける（体言止め・単語のみの項目は不要）。詳細は `.claude/refs/external-docs.md`「文末は句点」を参照
+- **モックアップURLは提案書に記載しない**: 「画面イメージ」節やURL追記用の HTML コメントを差し込まない
 - 図表: テキストベースで構成案を示す（Docs段階ではテキスト中心）
 - 見積もり: 金額部分は `【要入力】` プレースホルダーを置き、ユーザーが記入
 
