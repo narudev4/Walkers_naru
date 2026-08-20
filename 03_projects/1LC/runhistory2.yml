@@ -1,0 +1,308 @@
+- generic [ref=f7e3]:
+  - generic [ref=f7e21]:
+    - region [ref=f7e22]:
+      - generic [ref=f7e23]:
+        - button "Close sidebar" [ref=f7e24] [cursor=pointer]
+        - heading "Automations - Automation is on ON ON OFF [本番]Airtableメール配信希望条件転送 At a scheduled time, find records, and 2 more actions" [level=2] [ref=f7e27]:
+          - generic [ref=f7e28]: Automations
+          - generic [ref=f7e31]: "-"
+          - generic [ref=f7e32]:
+            - generic [ref=f7e36]:
+              - generic [ref=f7e37]: Automation is on
+              - checkbox "Automation is on" [checked] [ref=f7e38] [cursor=pointer]:
+                - generic [ref=f7e39]:
+                  - generic [ref=f7e41]: "ON"
+                  - generic [ref=f7e42]: "ON"
+                  - generic [ref=f7e43]: "OFF"
+            - button "[本番]Airtableメール配信希望条件転送 At a scheduled time, find records, and 2 more actions" [ref=f7e46] [cursor=pointer]:
+              - generic [ref=f7e47]:
+                - generic [ref=f7e48]: "[本番]Airtableメール配信希望条件転送"
+                - paragraph [ref=f7e49]: At a scheduled time, find records, and 2 more actions
+      - generic [ref=f7e53]:
+        - generic [ref=f7e54]:
+          - generic [ref=f7e55]:
+            - paragraph [ref=f7e56]: 31 runs this month
+            - paragraph [ref=f7e57]: ·
+            - paragraph [ref=f7e58]: Last updated by カスタマーサポート 1LC株式会社
+          - button "History" [ref=f7e59] [cursor=pointer]
+          - generic [ref=f7e60]:
+            - button "Test automation" [disabled]
+        - generic [ref=f7e62]:
+          - generic [ref=f7e64]:
+            - button "Run history" [ref=f7e65] [cursor=pointer]
+            - button "Revision history" [ref=f7e66] [cursor=pointer]
+          - button "Close Automation history pane" [ref=f7e67] [cursor=pointer]
+    - navigation [ref=f7e70]:
+      - generic [ref=f7e71]:
+        - generic [ref=f7e72]:
+          - button "Create new..." [ref=f7e74] [cursor=pointer]
+          - textbox "Find an automation" [ref=f7e79]
+        - region "Automations list" [ref=f7e83]:
+          - listitem [ref=f7e85]:
+            - list [ref=f7e86]:
+              - list [ref=f7e87]:
+                - listitem [ref=f7e88] [cursor=pointer]:
+                  - button "エリア別物件取得" [ref=f7e89]:
+                    - generic [ref=f7e113]:
+                      - paragraph [ref=f7e115]: エリア別物件取得
+                      - paragraph [ref=f7e116]: At a scheduled time, run a script
+                    - generic [ref=f7e117]:
+                      - generic [ref=f7e118]: "ON"
+                      - button "Automation menu" [ref=f7e121]
+                      - button "Automation drag handle" [ref=f7e124]
+                - listitem [ref=f7e127] [cursor=pointer]:
+                  - button "[本番]Airtableメール配信希望条件転送" [ref=f7e128]:
+                    - generic [ref=f7e141]:
+                      - paragraph [ref=f7e143]: "[本番]Airtableメール配信希望条件転送"
+                      - paragraph [ref=f7e144]: At a scheduled time, find records, and 2 more actions
+                    - generic [ref=f7e145]:
+                      - generic [ref=f7e146]: "ON"
+                      - button "Automation menu" [ref=f7e149]
+                      - button "Automation drag handle" [ref=f7e152]
+                - listitem [ref=f7e155] [cursor=pointer]:
+                  - button "[テスト]Airtableメール配信希望条件転送 copy" [ref=f7e156]:
+                    - generic [ref=f7e169]:
+                      - paragraph [ref=f7e171]: "[テスト]Airtableメール配信希望条件転送 copy"
+                      - paragraph [ref=f7e172]: At a scheduled time, find records, and 2 more actions
+                    - generic [ref=f7e173]:
+                      - generic [ref=f7e174]: "OFF"
+                      - button "Automation menu" [ref=f7e177]
+                      - button "Automation drag handle" [ref=f7e180]
+                - listitem [ref=f7e183] [cursor=pointer]:
+                  - button "[本番]紹介履歴作成" [ref=f7e184]:
+                    - generic [ref=f7e202]:
+                      - paragraph [ref=f7e204]: "[本番]紹介履歴作成"
+                      - paragraph [ref=f7e205]: When a webhook is received, run a script
+                    - generic [ref=f7e206]:
+                      - generic [ref=f7e207]: "ON"
+                      - button "Automation menu" [ref=f7e210]
+                      - button "Automation drag handle" [ref=f7e213]
+                - listitem [ref=f7e216] [cursor=pointer]:
+                  - button "企業物件マッチング" [ref=f7e217]:
+                    - generic [ref=f7e235]:
+                      - paragraph [ref=f7e237]: 企業物件マッチング
+                      - paragraph [ref=f7e238]: When a button is clicked, run a script
+                    - generic [ref=f7e239]:
+                      - generic [ref=f7e240]: "ON"
+                      - button "Automation menu" [ref=f7e243]
+                      - button "Automation drag handle" [ref=f7e246]
+                - listitem [ref=f7e249] [cursor=pointer]:
+                  - button "[企業]物件紹介提案" [ref=f7e250]:
+                    - generic [ref=f7e268]:
+                      - paragraph [ref=f7e270]: "[企業]物件紹介提案"
+                      - paragraph [ref=f7e271]: When a webhook is received, run a script
+                    - generic [ref=f7e272]:
+                      - generic [ref=f7e273]: "ON"
+                      - button "Automation menu" [ref=f7e276]
+                      - button "Automation drag handle" [ref=f7e279]
+                - listitem [ref=f7e282] [cursor=pointer]:
+                  - button "企業へのメール配信" [ref=f7e283]:
+                    - img "Gmail logo" [ref=f7e293]
+                    - generic [ref=f7e294]:
+                      - paragraph [ref=f7e296]: 企業へのメール配信
+                      - paragraph [ref=f7e297]: When a record is created, run a script, and 1 more action
+                    - generic [ref=f7e298]:
+                      - generic [ref=f7e299]: "OFF"
+                      - button "Automation menu" [ref=f7e302]
+                      - button "Automation drag handle" [ref=f7e305]
+      - separator "Resize sidebar" [ref=f7e308]
+    - main [ref=f7e309]:
+      - generic [ref=f7e312]:
+        - main [ref=f7e314]:
+          - button "Trigger Test step At a scheduled time Every 1 day at 9:00午前 JST Actions Review test results Find records Where 紹介許可 is checked" [ref=f7e315]:
+            - generic [ref=f7e317]:
+              - generic [ref=f7e318]:
+                - generic [ref=f7e319]: Trigger
+                - button "Test step At a scheduled time Every 1 day at 9:00午前 JST" [ref=f7e322]:
+                  - generic [ref=f7e324]:
+                    - button "Test step" [ref=f7e325] [cursor=pointer]
+                    - button "At a scheduled time Every 1 day at 9:00午前 JST" [expanded] [ref=f7e329] [cursor=pointer]:
+                      - generic [ref=f7e347]:
+                        - generic [ref=f7e348]: At a scheduled time
+                        - generic [ref=f7e350]: Every 1 day at 9:00午前 JST
+              - generic [ref=f7e351]:
+                - generic [ref=f7e352]: Actions
+                - generic [ref=f7e354]:
+                  - generic [ref=f7e358]:
+                    - button [ref=f7e359] [cursor=pointer]
+                    - generic [ref=f7e361]:
+                      - generic [ref=f7e363]:
+                        - button "Review test results" [ref=f7e364] [cursor=pointer]
+                        - button "Find records Where 紹介許可 is checked" [expanded] [ref=f7e368] [cursor=pointer]:
+                          - generic [ref=f7e374]:
+                            - generic [ref=f7e375]: Find records
+                            - generic [ref=f7e377]: Where 紹介許可 is checked
+                        - button [ref=f7e378]
+                      - button [ref=f7e379] [cursor=pointer]
+                  - group [ref=f7e383] [cursor=pointer]:
+                    - generic [ref=f7e384]:
+                      - generic [ref=f7e386]:
+                        - text: Repeat for each in
+                        - button "List of records" [disabled] [ref=f7e388]:
+                          - button "List of records" [disabled] [ref=f7e389]:
+                            - generic "List of records" [ref=f7e399]
+                      - generic [ref=f7e400]:
+                        - button [ref=f7e401]
+                        - button "Open group options menu" [ref=f7e405]
+                    - generic [ref=f7e408]: Run a script and Run a script
+                    - button "Test may be out of date Run a script 物件データのマッチング Test step Run a script メール配信を行う Open action options menu" [ref=f7e410]:
+                      - generic [ref=f7e411]:
+                        - button [ref=f7e412]
+                        - generic [ref=f7e414]:
+                          - generic [ref=f7e416]:
+                            - button "Test may be out of date" [ref=f7e417]
+                            - button "Run a script 物件データのマッチング" [expanded] [ref=f7e421]
+                            - button [ref=f7e431]
+                          - button [ref=f7e432]
+                        - generic [ref=f7e434]:
+                          - generic [ref=f7e436]:
+                            - button "Test step" [ref=f7e437]
+                            - button "Run a script メール配信を行う" [expanded] [ref=f7e442]
+                            - button "Open action options menu" [ref=f7e452]
+                            - button [ref=f7e457]
+                          - button [ref=f7e460]
+        - generic [active] [ref=f7e462]:
+          - button [ref=f7e463]
+          - generic [ref=f7e467]:
+            - generic [ref=f7e468]:
+              - generic [ref=f7e469]: You can now subscribe yourself and others to notifications for this automation. Try it out.
+              - button "Dismiss banner" [ref=f7e475] [cursor=pointer]
+            - generic [ref=f7e478]:
+              - generic [ref=f7e479]:
+                - paragraph [ref=f7e480]: Status
+                - button "All" [ref=f7e482] [cursor=pointer]
+              - generic [ref=f7e486]:
+                - paragraph [ref=f7e487]: Before
+                - textbox "Today" [ref=f7e489]
+                - generic [ref=f7e490]:
+                  - generic [ref=f7e491]: "Time format: Now"
+                  - textbox "Time" [ref=f7e492]:
+                    - /placeholder: Now
+                  - listbox "Time"
+            - generic [ref=f7e493]:
+              - list [ref=f7e494]:
+                - listitem [ref=f7e495]:
+                  - button "In progress... 2026/7/27 at 午後12時7分" [ref=f7e497] [cursor=pointer]:
+                    - generic [ref=f7e498]: In progress...
+                    - generic [ref=f7e506]: 2026/7/27 at 午後12時7分
+                - listitem [ref=f7e508]:
+                  - button "In progress... 2026/7/27 at 午後12時7分" [ref=f7e510] [cursor=pointer]:
+                    - generic [ref=f7e511]: In progress...
+                    - generic [ref=f7e519]: 2026/7/27 at 午後12時7分
+                - listitem [ref=f7e521]:
+                  - button "Failed to run 2026/7/27 at 午前9時0分" [ref=f7e523] [cursor=pointer]:
+                    - generic [ref=f7e524]: Failed to run
+                    - generic [ref=f7e532]: 2026/7/27 at 午前9時0分
+                - listitem [ref=f7e534]:
+                  - button "Failed to run 2026/7/26 at 午前9時24分" [ref=f7e536] [cursor=pointer]:
+                    - generic [ref=f7e537]: Failed to run
+                    - generic [ref=f7e545]: 2026/7/26 at 午前9時24分
+                - listitem [ref=f7e547]:
+                  - button "Failed to run 2026/7/26 at 午前9時24分" [ref=f7e549] [cursor=pointer]:
+                    - generic [ref=f7e550]: Failed to run
+                    - generic [ref=f7e558]: 2026/7/26 at 午前9時24分
+                - listitem [ref=f7e560]:
+                  - button "Failed to run 2026/7/26 at 午前9時0分" [ref=f7e562] [cursor=pointer]:
+                    - generic [ref=f7e563]: Failed to run
+                    - generic [ref=f7e571]: 2026/7/26 at 午前9時0分
+                - listitem [ref=f7e573]:
+                  - button "Failed to run 2026/7/25 at 午前9時1分" [ref=f7e575] [cursor=pointer]:
+                    - generic [ref=f7e576]: Failed to run
+                    - generic [ref=f7e584]: 2026/7/25 at 午前9時1分
+                - listitem [ref=f7e586]:
+                  - button "Failed to run 2026/7/24 at 午前9時2分" [ref=f7e588] [cursor=pointer]:
+                    - generic [ref=f7e589]: Failed to run
+                    - generic [ref=f7e597]: 2026/7/24 at 午前9時2分
+                - listitem [ref=f7e599]:
+                  - button "Failed to run 2026/7/23 at 午前9時0分" [ref=f7e601] [cursor=pointer]:
+                    - generic [ref=f7e602]: Failed to run
+                    - generic [ref=f7e610]: 2026/7/23 at 午前9時0分
+                - listitem [ref=f7e612]:
+                  - button "Failed to run 2026/7/22 at 午前9時0分" [ref=f7e614] [cursor=pointer]:
+                    - generic [ref=f7e615]: Failed to run
+                    - generic [ref=f7e623]: 2026/7/22 at 午前9時0分
+                - listitem [ref=f7e625]:
+                  - button "Failed to run 2026/7/21 at 午前9時2分" [ref=f7e627] [cursor=pointer]:
+                    - generic [ref=f7e628]: Failed to run
+                    - generic [ref=f7e636]: 2026/7/21 at 午前9時2分
+                - listitem [ref=f7e638]:
+                  - button "Failed to run 2026/7/20 at 午前9時0分" [ref=f7e640] [cursor=pointer]:
+                    - generic [ref=f7e641]: Failed to run
+                    - generic [ref=f7e649]: 2026/7/20 at 午前9時0分
+                - listitem [ref=f7e651]:
+                  - button "Failed to run 2026/7/19 at 午前9時0分" [ref=f7e653] [cursor=pointer]:
+                    - generic [ref=f7e654]: Failed to run
+                    - generic [ref=f7e662]: 2026/7/19 at 午前9時0分
+                - listitem [ref=f7e664]:
+                  - button "Failed to run 2026/7/18 at 午前9時0分" [ref=f7e666] [cursor=pointer]:
+                    - generic [ref=f7e667]: Failed to run
+                    - generic [ref=f7e675]: 2026/7/18 at 午前9時0分
+                - listitem [ref=f7e677]:
+                  - button "Failed to run 2026/7/17 at 午前9時0分" [ref=f7e679] [cursor=pointer]:
+                    - generic [ref=f7e680]: Failed to run
+                    - generic [ref=f7e688]: 2026/7/17 at 午前9時0分
+                - listitem [ref=f7e690]:
+                  - button "Failed to run 2026/7/16 at 午前9時0分" [ref=f7e692] [cursor=pointer]:
+                    - generic [ref=f7e693]: Failed to run
+                    - generic [ref=f7e701]: 2026/7/16 at 午前9時0分
+                - listitem [ref=f7e703]:
+                  - button "Failed to run 2026/7/15 at 午前9時1分" [ref=f7e705] [cursor=pointer]:
+                    - generic [ref=f7e706]: Failed to run
+                    - generic [ref=f7e714]: 2026/7/15 at 午前9時1分
+                - listitem [ref=f7e716]:
+                  - button "Failed to run 2026/7/14 at 午前9時0分" [ref=f7e718] [cursor=pointer]:
+                    - generic [ref=f7e719]: Failed to run
+                    - generic [ref=f7e727]: 2026/7/14 at 午前9時0分
+                - listitem [ref=f7e729]:
+                  - button "Failed to run 2026/7/13 at 午前9時1分" [ref=f7e731] [cursor=pointer]:
+                    - generic [ref=f7e732]: Failed to run
+                    - generic [ref=f7e740]: 2026/7/13 at 午前9時1分
+                - listitem [ref=f7e742]:
+                  - button "Failed to run 2026/7/12 at 午前9時2分" [ref=f7e744] [cursor=pointer]:
+                    - generic [ref=f7e745]: Failed to run
+                    - generic [ref=f7e753]: 2026/7/12 at 午前9時2分
+              - button "Show more" [ref=f7e756] [cursor=pointer]
+              - generic [ref=f7e762]:
+                - text: You have 2 years of run history.
+                - link "Learn more" [ref=f7e764] [cursor=pointer]:
+                  - /url: /wspP1jubtFJwwUN9K/workspace/plans?ref=bp.arh
+  - complementary [ref=f7e765]:
+    - generic [ref=f7e766]:
+      - generic [ref=f7e767]:
+        - link "Back to home" [ref=f7e769] [cursor=pointer]:
+          - /url: /
+        - button "Open Omni" [ref=f7e783] [cursor=pointer]
+      - generic [ref=f7e857]:
+        - button "Help menu" [ref=f7e858] [cursor=pointer]
+        - button "99 unseen notifications" [ref=f7e861] [cursor=pointer]:
+          - generic [ref=f7e862]: 99+
+        - button "Account" [ref=f7e871] [cursor=pointer]:
+          - img [ref=f7e875]:
+            - generic [ref=f7e876]: カ
+  - banner [ref=f7e879]:
+    - generic [ref=f7e880]:
+      - button "Open base settings menu" [ref=f7e887] [cursor=pointer]:
+        - generic [ref=f7e888]: CRM
+      - list [ref=f7e891]:
+        - listitem [ref=f7e892]:
+          - link [ref=f7e893] [cursor=pointer]:
+            - /url: /appksEWIuKl7N2ftS
+            - paragraph [ref=f7e894]: Data
+        - listitem [ref=f7e895]:
+          - link [ref=f7e896] [cursor=pointer]:
+            - /url: /appksEWIuKl7N2ftS/automations
+            - paragraph [ref=f7e897]: Automations
+        - listitem [ref=f7e899]:
+          - link [ref=f7e900] [cursor=pointer]:
+            - /url: /appksEWIuKl7N2ftS/interfaces?origin=topnav
+            - paragraph [ref=f7e901]: Interfaces
+        - listitem [ref=f7e902]:
+          - link [ref=f7e903] [cursor=pointer]:
+            - /url: /appksEWIuKl7N2ftS/forms?origin=topnav
+            - paragraph [ref=f7e904]: Forms
+      - generic [ref=f7e907]:
+        - button "Base history" [ref=f7e908] [cursor=pointer]
+        - link "Launch" [ref=f7e911] [cursor=pointer]:
+          - /url: /appksEWIuKl7N2ftS/pagNAqeOHIDKX1wmi
+        - button "Copy link" [ref=f7e912] [cursor=pointer]
+        - button "Share" [ref=f7e915] [cursor=pointer]

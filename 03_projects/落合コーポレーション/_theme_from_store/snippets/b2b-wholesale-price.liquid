@@ -1,0 +1,46 @@
+{%- comment -%}
+  B2B 卸価格表示（ログイン法人顧客のみ・顧客×商品区分の掛け率を適用）
+  データ: customer.metafields.b2b.{customer_type,discount_group,custom_overrides}
+        / product.metafields.b2b.category / shop.metaobjects.discount_matrix
+  レート決定: ① custom_overrides[category] → ② matrix[group][category] → ③ 1.0(正価)
+  ※ 表示専用。実際の発注確定（卸単価の Draft Order 化）は裏側 createDraftOrder.js が担う（Basic制約）。
+  Accepts: product
+{%- endcomment -%}
+{%- if customer and customer.metafields.b2b.customer_type.value == 'corporate' -%}
+  {%- assign b2b_variant = product.selected_or_first_available_variant -%}
+  {%- assign group = customer.metafields.b2b.discount_group.value -%}
+  {%- assign category = product.metafields.b2b.category.value -%}
+  {%- assign rate = 1.0 -%}
+
+  {%- assign overrides = customer.metafields.b2b.custom_overrides.value -%}
+  {%- if overrides != blank and category != blank and overrides[category] -%}
+    {%- assign rate = overrides[category] -%}
+  {%- elsif group != blank and category != blank -%}
+    {%- for entry in shop.metaobjects.discount_matrix.values -%}
+      {%- if entry.group.value == group and entry.category.value == category -%}
+        {%- assign rate = entry.discount_rate.value -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+
+  {%- assign wholesale = b2b_variant.price | times: rate -%}
+  {%- assign pct = rate | times: 100 | minus: 100 | times: -1 -%}
+
+  <div class="b2b-wholesale" style="margin:1.25rem 0;padding:1rem 1.25rem;border:2px solid #1a3a6b;border-radius:10px;background:#f4f7fc;">
+    <div style="font-size:.8rem;color:#1a3a6b;font-weight:700;letter-spacing:.06em;">
+      🏢 法人卸価格{%- if group != blank %}（{{ group }}ランク）{%- endif -%}
+    </div>
+    {%- if rate < 1.0 -%}
+      <div style="display:flex;align-items:baseline;gap:.75rem;margin-top:.4rem;flex-wrap:wrap;">
+        <span style="text-decoration:line-through;color:#999;font-size:1rem;">{{ b2b_variant.price | money }}</span>
+        <span style="font-size:1.7rem;font-weight:800;color:#c0392b;line-height:1;">{{ wholesale | money }}</span>
+        <span style="background:#c0392b;color:#fff;font-size:.78rem;padding:.15rem .55rem;border-radius:4px;font-weight:700;">{{ pct | round }}% OFF</span>
+      </div>
+      <div style="font-size:.72rem;color:#666;margin-top:.4rem;">税抜卸単価（消費税は別途）／ 商品区分: {{ category }}</div>
+      <div style="font-size:.72rem;color:#888;margin-top:.2rem;">※ カートに追加後、カートページの「法人価格で注文する」ボタンから卸価格で決済できます</div>
+    {%- else -%}
+      <div style="margin-top:.4rem;font-size:.95rem;color:#333;">この商品は卸対象外（正価）です。</div>
+    {%- endif -%}
+  </div>
+{%- endif -%}

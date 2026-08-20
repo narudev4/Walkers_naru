@@ -1,0 +1,350 @@
+{% comment %}
+  一般のお客様向け（B2C）のメインビジュアル。
+  Vercel 側の実装 output/deploy/ochiai-b2c-concept/src/app/store/b2c/_components/Hero.tsx を
+  Liquid に落としたもの。見た目を変える場合は両方を必ず同時に直すこと。
+
+  - 面全体が反転面（配色スキーム3 = 黒地 #0A0A0A）。
+  - 商品画像は背景として右に敷き、画面外へ少しはみ出させる。
+  - 左からの黒のグラデーションで文字の可読性を確保する。
+  - 静止画で作る（naru 判断 2026-07-28）。動的表現は確認事項 #7 で先方に確認中。
+
+  色は配色スキームの CSS 変数（--color-background / --color-foreground / --color-button）
+  から取る。実装に色を書かないこと（管理画面の配色を変えれば追従する）。
+{% endcomment %}
+
+<div class="ochiai-hero color-{{ section.settings.color_scheme }} gradient">
+  {%- if section.settings.image != blank -%}
+    <div class="ochiai-hero__media" aria-hidden="true">
+      {{ section.settings.image | image_url: width: 1400 | image_tag: loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 990px) 58vw, 86vw', widths: '600, 900, 1200, 1400' }}
+    </div>
+  {%- else -%}
+    <div class="ochiai-hero__media" aria-hidden="true">
+      <img src="{{ 'ochiai-shuttle-hero.png' | asset_url }}" alt="" loading="eager" fetchpriority="high" width="1400" height="1279">
+    </div>
+  {%- endif -%}
+
+  <div class="ochiai-hero__scrim" aria-hidden="true"></div>
+
+  <div class="ochiai-hero__trail color-scheme-4" aria-hidden="true">
+    <svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" focusable="false">
+      <path d="M -50 620 C 250 620, 320 120, 620 90 S 1050 300, 1260 40"
+            fill="none" stroke="currentColor" stroke-width="8" stroke-opacity="0.12"/>
+      <path d="M -50 620 C 250 620, 320 120, 620 90 S 1050 300, 1260 40"
+            fill="none" stroke="currentColor" stroke-width="2.5"/>
+      <circle cx="-50" cy="620" r="4" fill="currentColor" fill-opacity="0.6"/>
+      <circle cx="620" cy="90" r="6" fill="currentColor"/>
+    </svg>
+  </div>
+
+  <div class="ochiai-hero__inner page-width">
+    <div class="ochiai-hero__body">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="ochiai-hero__eyebrow"><span class="ochiai-accent color-scheme-4">{{ section.settings.eyebrow }}</span></p>
+      {%- endif -%}
+
+      <h1 class="ochiai-hero__title">
+        {{ section.settings.headline_top }}<br>
+        <span class="ochiai-accent color-scheme-4">{{ section.settings.headline_accent }}</span>
+      </h1>
+
+      {%- if section.settings.lead != blank -%}
+        <p class="ochiai-hero__lead">{{ section.settings.lead }}</p>
+      {%- endif -%}
+
+      <div class="ochiai-hero__actions">
+        {%- if section.settings.button_label_1 != blank -%}
+          <a href="{{ section.settings.button_link_1 | default: '#' }}" class="ochiai-btn ochiai-btn--primary">
+            {{ section.settings.button_label_1 }}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.button_label_2 != blank -%}
+          <a href="{{ section.settings.button_link_2 | default: '#' }}" class="ochiai-btn ochiai-btn--secondary">
+            {{ section.settings.button_label_2 }}
+          </a>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.notes != blank -%}
+        <ul class="ochiai-hero__notes">
+          {%- assign note_items = section.settings.notes | split: '|' -%}
+          {%- for note in note_items -%}
+            <li>{{ note | strip }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+.ochiai-hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  min-height: 60rem;
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+}
+
+@media screen and (min-width: 990px) {
+  .ochiai-hero { min-height: 66rem; }
+}
+
+/* 商品画像。右に寄せて画面外へ少しはみ出させる。 */
+.ochiai-hero__media {
+  position: absolute;
+  inset-block: 0;
+  right: -10%;
+  width: 86%;
+  pointer-events: none;
+}
+
+.ochiai-hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+@media screen and (min-width: 750px) {
+  .ochiai-hero__media { right: -6%; width: 72%; }
+}
+
+@media screen and (min-width: 990px) {
+  .ochiai-hero__media { right: 1%; width: 55%; }
+}
+
+/* 左からの黒。文字の可読性を確保する。 */
+.ochiai-hero__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    rgb(var(--color-background)) 0%,
+    rgba(var(--color-background), 0.92) 38%,
+    rgba(var(--color-background), 0.35) 62%,
+    transparent 88%
+  );
+}
+
+/*
+  軌道ライン。7/22 のトンマナ提示で先方が見ていた曲線をそのまま静止で置く
+  （naru 指示 2026-07-28）。動かす場合は確認事項 #7 の結論を待つこと。
+  色はアクセント面（配色4）の背景から取るので、管理画面の配色4に追従する。
+*/
+.ochiai-hero .ochiai-hero__trail,
+.ochiai-hero .ochiai-hero__trail.color-scheme-4 {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: none !important;
+  color: rgb(var(--color-background)) !important;
+}
+
+.ochiai-hero__trail svg { width: 100%; height: 100%; }
+
+.ochiai-hero__inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding-block: 8rem;
+}
+
+@media screen and (min-width: 750px) {
+  .ochiai-hero__inner { padding-block: 11rem; }
+}
+
+.ochiai-hero__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2.8rem;
+  max-width: 58rem;
+}
+
+.ochiai-hero__eyebrow {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+}
+
+/*
+  アクセント色（一般のお客様向け＝青）。Vercel 側 Accent.tsx と同じ手口で、
+  アクセント面（配色4）を巻いてその background を文字色として取り出す。
+  反転面では --color-button が白に切り替わりアクセント色を取り出せないため。
+  色をここに書かないこと。管理画面の配色4を変えれば追従する。
+*/
+/* Rise の .color-scheme-* が color: rgba(var(--color-foreground), .75) を当てるため、
+   詳細度を上げて打ち消す（実測 2026-07-28）。 */
+.ochiai-hero .ochiai-accent,
+.ochiai-hero .ochiai-accent.color-scheme-4 {
+  color: rgb(var(--color-background)) !important;
+  background: none !important;
+}
+
+.ochiai-hero__title {
+  margin: 0;
+  font-family: 'Unbounded', var(--font-heading-family), sans-serif;
+  font-size: 9.5vw;
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: rgb(var(--color-foreground));
+}
+
+@media screen and (min-width: 750px) {
+  .ochiai-hero__title { font-size: 6rem; }
+}
+
+@media screen and (min-width: 990px) {
+  .ochiai-hero__title { font-size: 6.8rem; }
+}
+
+.ochiai-hero__lead {
+  margin: 0;
+  max-width: 44rem;
+  font-size: 1.6rem;
+  line-height: 1.8;
+  color: rgba(var(--color-foreground), 0.7);
+  word-break: auto-phrase;
+  text-wrap: pretty;
+}
+
+.ochiai-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+}
+
+/* ボタン。角丸なし・太字・字間広め（Vercel 側 StoreButton と同じ）。 */
+.ochiai-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.6rem 3.2rem;
+  border: 1px solid transparent;
+  border-radius: var(--buttons-radius, 0);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.ochiai-btn--primary {
+  background: rgb(var(--color-button));
+  border-color: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+}
+
+.ochiai-btn--primary:hover { opacity: 0.9; }
+
+.ochiai-btn--secondary {
+  background: transparent;
+  border-color: rgb(var(--color-foreground));
+  color: rgb(var(--color-foreground));
+}
+
+.ochiai-btn--secondary:hover {
+  background: rgb(var(--color-button));
+  border-color: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+}
+
+.ochiai-hero__notes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem 1.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  color: rgba(var(--color-foreground), 0.5);
+}
+
+.ochiai-hero__notes li + li { border-left: 1px solid rgba(var(--color-foreground), 0.2); padding-left: 1.6rem; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "落合ヒーロー",
+  "tag": "section",
+  "class": "ochiai-hero-section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "配色",
+      "default": "scheme-3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "商品画像（背景に敷く。白背景を抜いた PNG を使うこと）"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "小見出し",
+      "default": "シャトル製造メーカー直販"
+    },
+    {
+      "type": "text",
+      "id": "headline_top",
+      "label": "キャッチコピー1行目",
+      "default": "Feel the"
+    },
+    {
+      "type": "text",
+      "id": "headline_accent",
+      "label": "キャッチコピー2行目（アクセント色）",
+      "default": "Heartbeat."
+    },
+    {
+      "type": "textarea",
+      "id": "lead",
+      "label": "リード文",
+      "default": "シャトルとプレーヤーの鼓動が重なる、試合前のあの高揚感。自社製造のシャトルから、その一瞬を届けます。"
+    },
+    {
+      "type": "text",
+      "id": "button_label_1",
+      "label": "ボタン1のラベル",
+      "default": "商品一覧を見る"
+    },
+    {
+      "type": "url",
+      "id": "button_link_1",
+      "label": "ボタン1のリンク"
+    },
+    {
+      "type": "text",
+      "id": "button_label_2",
+      "label": "ボタン2のラベル",
+      "default": "カテゴリーから探す"
+    },
+    {
+      "type": "url",
+      "id": "button_link_2",
+      "label": "ボタン2のリンク"
+    },
+    {
+      "type": "text",
+      "id": "notes",
+      "label": "補足（縦線区切り。| で区切る）",
+      "default": "自社製造のシャトル | バドミントン／テニス"
+    }
+  ],
+  "presets": [
+    {
+      "name": "落合ヒーロー"
+    }
+  ]
+}
+{% endschema %}

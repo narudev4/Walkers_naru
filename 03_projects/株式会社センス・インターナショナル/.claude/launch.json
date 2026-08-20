@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "sense-pr-mockup",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": ["-c", "cd /Users/naru/Walkers_naru/output/deploy/sense-pr-mockup && npm run dev"],
+      "port": 3000,
+      "autoPort": true
+    }
+  ]
+}

@@ -1,0 +1,216 @@
+{%- comment -%}
+  B2B/B2C ナビゲーション分岐 snippet
+  =====================================================================
+  ログイン状態と customer.metafields.b2b.customer_type の値に応じて
+  表示するメニューを切り替える。
+
+  判定ロジック:
+    - B2B顧客: ログイン済み AND customer_type == 'corporate'
+    - B2C顧客: 未ログイン OR customer_type != 'corporate'
+
+  前提:
+    - Shopify Admin > Settings > Custom data > Customers に
+      namespace: b2b / key: customer_type (single_line_text) を定義済み
+    - Shopify Admin > Online Store > Navigation に以下の 2 メニュー:
+      * b2c-main-menu  … B2C 用（商品カテゴリ・お買い物ガイド等）
+      * b2b-main-menu  … B2B 用（卸商品一覧・取引条件・マイページ等）
+
+  組み込み方法:
+    header-dropdown-menu.liquid または header-mega-menu.liquid の
+    <nav class="header__inline-menu"> ブロック全体をこの snippet の
+    render 呼び出しに置き換える:
+
+      {% render 'b2b-nav-switcher' %}
+
+    あるいは sections/header.liquid 内で menu 描画部分を差し替え。
+
+  注意:
+    - B2C 側には「B2B」という文字列やコーポレート向けリンクを一切表示しない
+    - メニューハンドルは Shopify Admin で作成した Navigation のハンドルに合わせること
+{%- endcomment -%}
+
+{%- liquid
+  assign is_b2b = false
+  if customer and customer.metafields.b2b.customer_type.value == 'corporate'
+    assign is_b2b = true
+  endif
+-%}
+
+{%- if is_b2b -%}
+  {%- comment -%} === B2B ナビゲーション === {%- endcomment -%}
+  {%- assign b2b_menu = linklists['b2b-main-menu'] -%}
+  <nav class="header__inline-menu" aria-label="法人メニュー">
+    <ul class="list-menu list-menu--inline" role="list">
+      {%- for link in b2b_menu.links -%}
+        <li>
+          {%- if link.links != blank -%}
+            <header-menu>
+              <details id="Details-B2BMenu-{{ forloop.index }}">
+                <summary
+                  id="B2BMenu-{{ link.handle }}"
+                  class="header__menu-item list-menu__item link focus-inset"
+                >
+                  <span
+                    {%- if link.child_active %} class="header__active-menu-item"{% endif %}
+                  >
+                    {{- link.title | escape -}}
+                  </span>
+                  {{- 'icon-caret.svg' | inline_asset_content -}}
+                </summary>
+                <ul
+                  id="B2BMenu-MenuList-{{ forloop.index }}"
+                  class="header__submenu list-menu list-menu--disclosure color-{{ section.settings.menu_color_scheme }} gradient caption-large motion-reduce global-settings-popup"
+                  role="list"
+                  tabindex="-1"
+                >
+                  {%- for childlink in link.links -%}
+                    <li>
+                      {%- if childlink.links != blank -%}
+                        <details id="Details-B2BSubMenu-{{ forloop.index }}-{{ forloop.parentloop.index }}">
+                          <summary
+                            class="header__menu-item list-menu__item link focus-inset caption-large"
+                          >
+                            <span>{{ childlink.title | escape }}</span>
+                            {{- 'icon-caret.svg' | inline_asset_content -}}
+                          </summary>
+                          <ul
+                            class="header__submenu list-menu motion-reduce"
+                            role="list"
+                          >
+                            {%- for grandchild in childlink.links -%}
+                              <li>
+                                <a
+                                  href="{{ grandchild.url }}"
+                                  class="header__menu-item list-menu__item link focus-inset caption-large{% if grandchild.current %} list-menu__item--active{% endif %}"
+                                  {% if grandchild.current %} aria-current="page"{% endif %}
+                                >
+                                  {{ grandchild.title | escape }}
+                                </a>
+                              </li>
+                            {%- endfor -%}
+                          </ul>
+                        </details>
+                      {%- else -%}
+                        <a
+                          href="{{ childlink.url }}"
+                          class="header__menu-item list-menu__item link focus-inset caption-large{% if childlink.current %} list-menu__item--active{% endif %}"
+                          {% if childlink.current %} aria-current="page"{% endif %}
+                        >
+                          {{ childlink.title | escape }}
+                        </a>
+                      {%- endif -%}
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              </details>
+            </header-menu>
+          {%- else -%}
+            <a
+              href="{{ link.url }}"
+              class="header__menu-item list-menu__item link link--text focus-inset"
+              {% if link.current %} aria-current="page"{% endif %}
+            >
+              <span
+                {%- if link.current %} class="header__active-menu-item"{% endif %}
+              >
+                {{- link.title | escape -}}
+              </span>
+            </a>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </nav>
+
+{%- else -%}
+  {%- comment -%} === B2C ナビゲーション（デフォルト） === {%- endcomment -%}
+  {%- assign b2c_menu = linklists['b2c-main-menu'] -%}
+  {%- comment -%}
+    b2c-main-menu が未作成の場合は section.settings.menu（テーマエディタ設定）にフォールバック
+  {%- endcomment -%}
+  {%- if b2c_menu.links.size == 0 -%}
+    {%- assign b2c_menu = section.settings.menu -%}
+  {%- endif -%}
+  <nav class="header__inline-menu" aria-label="メインメニュー">
+    <ul class="list-menu list-menu--inline" role="list">
+      {%- for link in b2c_menu.links -%}
+        <li>
+          {%- if link.links != blank -%}
+            <header-menu>
+              <details id="Details-HeaderMenu-{{ forloop.index }}">
+                <summary
+                  id="HeaderMenu-{{ link.handle }}"
+                  class="header__menu-item list-menu__item link focus-inset"
+                >
+                  <span
+                    {%- if link.child_active %} class="header__active-menu-item"{% endif %}
+                  >
+                    {{- link.title | escape -}}
+                  </span>
+                  {{- 'icon-caret.svg' | inline_asset_content -}}
+                </summary>
+                <ul
+                  id="HeaderMenu-MenuList-{{ forloop.index }}"
+                  class="header__submenu list-menu list-menu--disclosure color-{{ section.settings.menu_color_scheme }} gradient caption-large motion-reduce global-settings-popup"
+                  role="list"
+                  tabindex="-1"
+                >
+                  {%- for childlink in link.links -%}
+                    <li>
+                      {%- if childlink.links != blank -%}
+                        <details id="Details-SubMenu-{{ forloop.index }}-{{ forloop.parentloop.index }}">
+                          <summary
+                            class="header__menu-item list-menu__item link focus-inset caption-large"
+                          >
+                            <span>{{ childlink.title | escape }}</span>
+                            {{- 'icon-caret.svg' | inline_asset_content -}}
+                          </summary>
+                          <ul
+                            class="header__submenu list-menu motion-reduce"
+                            role="list"
+                          >
+                            {%- for grandchild in childlink.links -%}
+                              <li>
+                                <a
+                                  href="{{ grandchild.url }}"
+                                  class="header__menu-item list-menu__item link focus-inset caption-large{% if grandchild.current %} list-menu__item--active{% endif %}"
+                                  {% if grandchild.current %} aria-current="page"{% endif %}
+                                >
+                                  {{ grandchild.title | escape }}
+                                </a>
+                              </li>
+                            {%- endfor -%}
+                          </ul>
+                        </details>
+                      {%- else -%}
+                        <a
+                          href="{{ childlink.url }}"
+                          class="header__menu-item list-menu__item link focus-inset caption-large{% if childlink.current %} list-menu__item--active{% endif %}"
+                          {% if childlink.current %} aria-current="page"{% endif %}
+                        >
+                          {{ childlink.title | escape }}
+                        </a>
+                      {%- endif -%}
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              </details>
+            </header-menu>
+          {%- else -%}
+            <a
+              href="{{ link.url }}"
+              class="header__menu-item list-menu__item link link--text focus-inset"
+              {% if link.current %} aria-current="page"{% endif %}
+            >
+              <span
+                {%- if link.current %} class="header__active-menu-item"{% endif %}
+              >
+                {{- link.title | escape -}}
+              </span>
+            </a>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </nav>
+{%- endif -%}

@@ -1,0 +1,18 @@
+{
+  "name": "ochiai-mf-invoice",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "落合コーポ — Shopify 注文 → マネーフォワード クラウド請求書 API で請求書1枚を発行する実証（③都度払い・即時発行相当）",
+  "scripts": {
+    "auth": "node --env-file=.env src/auth.js",
+    "auth:manual": "node --env-file=.env src/auth.js --manual",
+    "whoami": "node --env-file=.env src/whoami.js",
+    "invoice": "node --env-file=.env src/createInvoice.js",
+    "invoice:sample": "node --env-file=.env src/createInvoice.js samples/order.sample.json",
+    "map:sample": "node src/mapOrder.cli.js samples/order.sample.json"
+  },
+  "engines": {
+    "node": ">=20.6.0"
+  }
+}

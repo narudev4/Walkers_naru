@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>不動産業務のAI活用支援 導入・伴走のご提案</title>
+<style>
+  :root {
+    --navy: #1B2F55;
+    --navy-dark: #152444;
+    --navy-mid: #3A5480;
+    --navy-light: #5B739B;
+    --gold: #C9A45C;
+    --cream: #F5F1E6;
+    --text: #333333;
+    --text-gray: #888888;
+    --border: #D8D8D8;
+    --border-light: #E5E5E5;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", sans-serif;
+    color: var(--text);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  @page { size: A4; margin: 0; }
+  .page {
+    width: 210mm;
+    height: 296.8mm;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+    background: #fff;
+  }
+  .page:last-child { page-break-after: auto; }
+  .page-inner { padding: 16mm 18mm 22mm; }
+
+  /* ===== Cover ===== */
+  .cover {
+    background: var(--navy-dark);
+    color: #fff;
+  }
+  .cover::before {
+    content: "";
+    position: absolute;
+    width: 150mm; height: 150mm;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.025);
+    top: -50mm; right: -40mm;
+  }
+  .cover::after {
+    content: "";
+    position: absolute;
+    width: 120mm; height: 120mm;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.025);
+    bottom: -30mm; left: -40mm;
+  }
+  .cover-inner {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    padding: 20mm 20mm 18mm;
+    display: flex;
+    flex-direction: column;
+  }
+  .cover-brand {
+    font-size: 10.5pt;
+    letter-spacing: 0.35em;
+    color: #E8E8E8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cover-brand::before {
+    content: "";
+    display: inline-block;
+    width: 22px; height: 2px;
+    background: var(--gold);
+  }
+  .cover-main { margin-top: 62mm; }
+  .cover-label {
+    display: inline-block;
+    border: 1px solid rgba(255,255,255,0.5);
+    padding: 5px 14px;
+    font-size: 8.5pt;
+    letter-spacing: 0.25em;
+    color: #E8E8E8;
+  }
+  .cover-title {
+    margin-top: 9mm;
+    font-size: 27pt;
+    font-weight: 700;
+    line-height: 1.45;
+    color: #fff;
+  }
+  .cover-rule {
+    width: 34px; height: 3px;
+    background: var(--gold);
+    margin: 9mm 0 8mm;
+  }
+  .cover-lead {
+    font-size: 10.5pt;
+    line-height: 2.0;
+    color: #E3E7EE;
+  }
+  .cover-lead .gold { color: var(--gold); font-weight: 700; }
+  .cover-footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .cover-to {
+    border-top: 1px solid rgba(255,255,255,0.35);
+    padding-top: 5mm;
+    min-width: 62mm;
+  }
+  .cover-to .to-label { font-size: 8pt; color: #B8C0CE; letter-spacing: 0.15em; }
+  .cover-to .to-name { font-size: 13pt; font-weight: 700; margin-top: 3.5mm; }
+  .cover-from {
+    border-top: 1px solid rgba(255,255,255,0.35);
+    padding-top: 5mm;
+    text-align: right;
+    min-width: 72mm;
+  }
+  .cover-from .from-name { font-size: 11.5pt; font-weight: 700; }
+  .cover-from .from-detail { font-size: 8.5pt; color: #CBD2DD; line-height: 1.9; margin-top: 1.5mm; }
+
+  /* ===== Section header ===== */
+  .sec-head {
+    display: flex;
+    align-items: center;
+    border-bottom: 3px solid var(--navy);
+    padding-bottom: 3.2mm;
+    margin-bottom: 7mm;
+  }
+  .sec-num {
+    background: var(--navy);
+    color: #fff;
+    font-size: 9pt;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 3px 9px;
+    margin-right: 4mm;
+  }
+  .sec-title {
+    font-size: 14.5pt;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .sec-en {
+    margin-left: auto;
+    font-size: 8pt;
+    letter-spacing: 0.3em;
+    color: #9A9A9A;
+  }
+
+  /* ===== Common blocks ===== */
+  .para { font-size: 9.8pt; line-height: 1.95; margin-bottom: 5.5mm; }
+  .callout {
+    background: var(--cream);
+    border-left: 4px solid var(--gold);
+    padding: 4.5mm 6mm;
+    margin-bottom: 6mm;
+  }
+  .callout .co-title { font-size: 10pt; font-weight: 700; color: var(--navy); margin-bottom: 2.5mm; }
+  .callout .co-body { font-size: 9.3pt; line-height: 1.9; }
+  .callout .co-body li { list-style: none; margin-bottom: 1.2mm; padding-left: 1em; text-indent: -1em; }
+
+  .sub-head {
+    border-left: 4px solid var(--gold);
+    padding-left: 3.5mm;
+    font-size: 11pt;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 7mm 0 4mm;
+  }
+  .sub-head:first-of-type { margin-top: 0; }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5mm;
+    margin-bottom: 6mm;
+  }
+  .card {
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--navy);
+    padding: 4.5mm 5mm;
+  }
+  .card .card-title { font-size: 10.5pt; font-weight: 700; color: var(--navy); margin-bottom: 2.5mm; }
+  .card .card-body { font-size: 9.2pt; line-height: 1.85; }
+  .card .card-body li { list-style: none; margin-bottom: 1.5mm; padding-left: 1em; text-indent: -1em; }
+
+  table.tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9.2pt;
+    margin-bottom: 5mm;
+  }
+  table.tbl th {
+    background: var(--navy);
+    color: #fff;
+    font-weight: 700;
+    padding: 3mm 4mm;
+    text-align: center;
+    border: 1px solid var(--navy);
+    font-size: 9.3pt;
+  }
+  table.tbl td {
+    border: 1px solid var(--border);
+    padding: 3.2mm 4mm;
+    line-height: 1.75;
+    vertical-align: top;
+  }
+  table.tbl td.center { text-align: center; }
+  table.tbl td.right { text-align: right; }
+  table.tbl tr.total td {
+    background: var(--cream);
+    font-weight: 700;
+  }
+  table.tbl td.lbl { font-weight: 700; color: var(--navy); white-space: nowrap; }
+
+  /* step blocks (導入の進め方) */
+  .step {
+    border: 1px solid var(--border);
+    margin-bottom: 4.5mm;
+  }
+  .step-head {
+    background: #EFEFEF;
+    padding: 2.8mm 5mm;
+    font-size: 10.3pt;
+    font-weight: 700;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+  }
+  .step-head .step-no {
+    background: var(--navy);
+    color: #fff;
+    font-size: 8.5pt;
+    padding: 1px 8px;
+    margin-right: 3.5mm;
+  }
+  .step-body {
+    padding: 3.2mm 5mm;
+    font-size: 9.3pt;
+    line-height: 1.85;
+  }
+
+  /* estimate banner */
+  .banner {
+    background: var(--navy);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6mm 8mm;
+    margin: 2mm 0 7mm;
+  }
+  .banner .bn-label { font-size: 10.5pt; }
+  .banner .bn-value { text-align: right; }
+  .banner .bn-num { font-size: 21pt; font-weight: 700; }
+  .banner .bn-unit { font-size: 10.5pt; font-weight: 700; }
+  .banner .bn-sub { font-size: 8.3pt; color: #C8D0DD; margin-top: 1.5mm; }
+
+  .note { font-size: 8.3pt; color: #777; line-height: 1.7; margin-bottom: 5mm; }
+
+  /* company page */
+  .company-card {
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--navy);
+    padding: 7mm 8mm;
+    margin-bottom: 8mm;
+  }
+  .company-card .cc-name { font-size: 14pt; font-weight: 700; color: var(--navy); margin-bottom: 5mm; }
+  .company-card table { border-collapse: collapse; font-size: 9.5pt; }
+  .company-card td { padding: 1.8mm 0; line-height: 1.8; vertical-align: top; }
+  .company-card td.k { color: var(--text-gray); width: 26mm; }
+  .brand-bar {
+    display: flex;
+    align-items: center;
+    gap: 6mm;
+    margin-top: 14mm;
+  }
+  .brand-bar .bb-logo {
+    background: var(--navy);
+    color: #fff;
+    font-size: 9pt;
+    letter-spacing: 0.25em;
+    padding: 3mm 6mm;
+    white-space: nowrap;
+  }
+  .brand-bar .bb-tag {
+    flex: 1;
+    text-align: center;
+    font-size: 8.5pt;
+    color: #999;
+    letter-spacing: 0.2em;
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+    padding: 2mm 0;
+  }
+  .brand-bar .bb-url { font-size: 8.5pt; color: #666; white-space: nowrap; }
+  .copyright { text-align: center; font-size: 8pt; color: #AAA; margin-top: 10mm; font-style: italic; }
+
+  /* footer */
+  .pfoot {
+    position: absolute;
+    left: 18mm; right: 18mm; bottom: 9mm;
+    border-top: 1px solid var(--border-light);
+    padding-top: 2.5mm;
+    display: flex;
+    justify-content: space-between;
+    font-size: 7.8pt;
+    color: #999;
+    letter-spacing: 0.08em;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<div class="page cover">
+  <div class="cover-inner">
+    <div class="cover-brand">WALKERS INC.</div>
+    <div class="cover-main">
+      <div class="cover-label">SYSTEM PROPOSAL ／ 2026.08.05</div>
+      <div class="cover-title">不動産業務のAI活用支援<br>導入・伴走のご提案</div>
+      <div class="cover-rule"></div>
+      <div class="cover-lead">
+        販売図面の作成と営業数値の集計を、<br>
+        <span class="gold">検算まで含めて</span>自動化します。
+      </div>
+    </div>
+    <div class="cover-footer">
+      <div class="cover-to">
+        <div class="to-label">ご提案先</div>
+        <div class="to-name">株式会社T2ハウス様</div>
+      </div>
+      <div class="cover-from">
+        <div class="from-name">株式会社Walkers</div>
+        <div class="from-detail">
+          代表取締役 渡邊 敦司<br>
+          〒112-0015 東京都文京区目白台2-9-4 1F<br>
+          walker-s.co.jp
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 01 提案概要 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <span class="sec-title">提案概要</span>
+      <span class="sec-en">OVERVIEW</span>
+    </div>
+
+    <p class="para">弊社では、御社の販売図面の作成と営業数値の集計を自動化するご提案をいたします。目的は2つです。作成と集計にかかっている時間を、AIとシステムで短くすること。そのうえで、出来上がった図面と数値に誤りが残らない状態をつくることです。</p>
+
+    <div class="callout">
+      <div class="co-title">進め方は初回MTGでお伝えした通りです</div>
+      <div class="co-body">まず販売図面と営業数値の2つを、実データでの試運転の期間を確保して仕上げます。この2つが実運用に乗ったあとは、1〜2週間で1つの業務を自動化するペースで積み上げます。</div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">ターゲット</div>
+        <div class="card-body">
+          <li>・販売図面を作成される営業のご担当者</li>
+          <li>・媒体別・担当者別の数値をご確認になる経営層の皆様</li>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">特徴</div>
+        <div class="card-body">
+          <li>・販売図面の生成と検算をセットでご提供します。</li>
+          <li>・営業数値の3つのファイルを1つに統合し、月をまたいだ比較を可能にします。</li>
+          <li>・最初のサンプルは無料でご確認いただき、費用は要件定義を経てお見積もりをご提示します。</li>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-head">ローンチ目標</div>
+    <p class="para">販売図面の自動生成・自動検算の実運用化に着手し、実データでの試運転期間を含めて約1ヶ月での実運用開始を目指します。</p>
+
+    <div class="pfoot">
+      <span>株式会社Walkers</span>
+      <span>不動産業務のAI活用支援 導入・伴走のご提案</span>
+      <span>1</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 02 現状整理 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <span class="sec-title">現状整理</span>
+      <span class="sec-en">CURRENT STATE</span>
+    </div>
+
+    <p class="para">サンプル作成のため、NDA締結後にご提供いただいた販売図面のExcelと営業数値の3ファイルを拝見しました。いずれの業務も、サンプルの形まで自動化できることを確認しています。一方で、面積や坪数の計算、図面の複製、月ごと・ファイルごとの転記は現在すべて手作業のため、ここに時間がかかり、誤りにも気づきにくくなっていると考えています。拝見して確認した点は以下の4つです。</p>
+
+    <div class="sub-head">2-1. 販売図面の数値に検算の仕組みがない</div>
+    <p class="para">面積の合計や坪換算が手計算のため、作成した値を元の数値と照合する手段がありません。弊社の検算では、坪換算や床面積の合計に小さなずれが複数見つかりました。</p>
+
+    <div class="sub-head">2-2. 前の物件の記載や更新前の表記が次の図面に残る</div>
+    <p class="para">駅名の不一致や免許番号の版ずれなど、前の物件の記載や更新前の表記が残っている箇所がありました。図面を複製して次の物件を作成される際の、書き換え漏れと考えられます。</p>
+
+    <div class="sub-head">2-3. 営業の数値が3つのファイルに分かれ、月をまたいだ比較ができない</div>
+    <p class="para">購入反響数・査定対応数・業者訪問一覧が別々のExcelで管理され、反響数と査定はさらに月ごとに別シートに分かれています。期中のご担当者の交代や表記の揺れもあり、月をまたいだ比較には手作業での組み替えが必要な状態です。</p>
+
+    <div class="sub-head">2-4. 業者訪問の優先度がセルの塗り色で管理されている</div>
+    <p class="para">一覧表には「黄色は月に1度は必ず訪問する」と注記があり、対象はセルの塗り色で指定されています。最終訪問日からの経過を機械的に追う手段がないため、訪問の間隔が空いた先の拾い上げが、ご担当者の記憶と目視に頼る形になっています。</p>
+
+    <div class="pfoot">
+      <span>株式会社Walkers</span>
+      <span>不動産業務のAI活用支援 導入・伴走のご提案</span>
+      <span>2</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 03 提案ソリューション ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <span class="sec-title">提案ソリューション</span>
+      <span class="sec-en">SOLUTION</span>
+    </div>
+
+    <div class="sub-head">支援内容：販売図面の自動生成・自動検算と、営業数値の統合</div>
+    <p class="para">初回MTGで新島様より、ChatGPT等で見栄えの良い図面は作れるものの、細かなミスやエラーが解消しきれないとお伺いしました。謄本などからの情報の読み取りと文章の下書きはAIが担い、図面そのものはシステムのテンプレートが正確に組版します。面積や坪換算といった数値の整合性は、システムによる厳密な計算で検証し、この自動検算をクリアした正確なデータのみをPDF化する仕組みです。この検算機能は、自動生成時だけでなく、現行の手作業で作成されている図面の不備チェックにもそのままご活用いただけます。営業数値については、集計するだけでなく、ご担当者の交代や表記の揺れを吸収したうえで、比較できる形に整えます。</p>
+
+    <div class="sub-head">主要機能一覧</div>
+    <table class="tbl">
+      <tr><th style="width:34mm;">機能カテゴリ</th><th>概要</th></tr>
+      <tr>
+        <td class="lbl">販売図面の自動生成</td>
+        <td>住所・面積・構造・接道などの物件情報を入力すると、販売図面をPDFで出力します。謄本や物件調査メモからの読み取りにも対応します。レイアウトは現行の再現を基本に、デザインを改善した案もあわせてご用意しています。</td>
+      </tr>
+      <tr>
+        <td class="lbl">販売図面の自動検算</td>
+        <td>出力の前に、面積の合計・坪換算・建ぺい率・容積率を計算し直して照合します。最寄駅と交通欄の不一致、宅建業免許番号の版ずれ、法令用語の誤字も検出し、該当箇所を一覧で表示します。</td>
+      </tr>
+      <tr>
+        <td class="lbl">営業数値の統合</td>
+        <td>購入反響数・査定対応数・業者訪問一覧の3ファイルを、1つのデータに統合します。月ごとに分かれたシートと、期中に変わったご担当者の列を突き合わせ、月をまたいで比較できる形に揃えます。</td>
+      </tr>
+      <tr>
+        <td class="lbl">媒体別・担当者別の集計</td>
+        <td>統合したデータから、媒体別の反響数、ご担当者別の成約率、査定から専任媒介までの推移を自動で集計します。数値の入力は現在の運用のまま、集計だけを自動化します。</td>
+      </tr>
+      <tr>
+        <td class="lbl">業者訪問のフォロー管理</td>
+        <td>重点先の最終訪問日からの経過日数を自動で計算し、訪問の間隔が空いている先を一覧で表示します。セルの塗り色による管理を、日付にもとづく管理に置き換えます。</td>
+      </tr>
+    </table>
+
+    <div class="pfoot">
+      <span>株式会社Walkers</span>
+      <span>不動産業務のAI活用支援 導入・伴走のご提案</span>
+      <span>3</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 04 導入の進め方 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <span class="sec-title">導入の進め方</span>
+      <span class="sec-en">PROCESS</span>
+    </div>
+
+    <div class="step">
+      <div class="step-head"><span class="step-no">STEP 1</span>モックアップのご確認</div>
+      <div class="step-body">弊社にて、販売図面の生成と検算、営業数値の統合のサンプルを作成します。</div>
+    </div>
+    <div class="step">
+      <div class="step-head"><span class="step-no">STEP 2</span>ご契約</div>
+      <div class="step-body">サンプルの内容にご満足いただけた場合に、要件定義へ進みます。仕様を確定したうえで、最初の2機能の開発費のお見積もりをご提示します。</div>
+    </div>
+    <div class="step">
+      <div class="step-head"><span class="step-no">STEP 3</span>業務のヒアリングと優先順位づけ</div>
+      <div class="step-body">自動化する業務を弊社と御社で洗い出し、着手する順番を決めます。御社にお願いするのは業務フローのご説明のみで、エンジニアの方をご用意いただく必要はありません。</div>
+    </div>
+    <div class="step">
+      <div class="step-head"><span class="step-no">STEP 4</span>最初の2テーマを実運用に載せる</div>
+      <div class="step-body">販売図面と営業数値の2テーマを、実物件のデータでの試運転と、入力ルールの確定に期間を確保して仕上げます。</div>
+    </div>
+    <div class="step">
+      <div class="step-head"><span class="step-no">STEP 5</span>その後は1〜2週間で1つずつ広げる</div>
+      <div class="step-body">2テーマが実運用に乗ったあとは、1つの業務につき1〜2週間で動くものを作り、対象を広げます。使ってみて出たご要望は、次の1〜2週間で反映します。初回MTGでは、ポータルサイトへの投稿、プロジェクト表の作成、メール・SMSの下書きなどが挙がっています。</div>
+    </div>
+
+    <div class="pfoot">
+      <span>株式会社Walkers</span>
+      <span>不動産業務のAI活用支援 導入・伴走のご提案</span>
+      <span>4</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 05 システム構成 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <span class="sec-title">システム構成</span>
+      <span class="sec-en">ARCHITECTURE</span>
+    </div>
+
+    <div class="sub-head">開発形態・推奨技術スタック</div>
+    <table class="tbl">
+      <tr><th style="width:34mm;">項目</th><th>内容</th></tr>
+      <tr><td class="lbl">プラットフォーム</td><td>ブラウザベースのWebアプリケーション</td></tr>
+      <tr><td class="lbl">対応デバイス</td><td>PC・スマートフォン・タブレット（レスポンシブデザイン）</td></tr>
+      <tr><td class="lbl">フロントエンド</td><td>React（Next.js）を想定しています。</td></tr>
+      <tr><td class="lbl">バックエンド</td><td>Pythonを想定しています。Excelの読み書き、PDFの生成、検算の処理を扱うライブラリが揃っているためです。</td></tr>
+      <tr><td class="lbl">データの保管</td><td>扱う件数と参照の仕方が決まった段階で選定します。最初の2つの自動化では、既存のExcelをそのまま入力として扱う想定です。</td></tr>
+      <tr><td class="lbl">インフラ</td><td>クラウドの利用を想定しています。専用サーバーの購入や設置が不要で、利用量に応じた費用で運用できるためです。</td></tr>
+    </table>
+    <p class="note">※ 上記は現時点の想定です。最初のタスクの要件が固まった段階で確定し、あらためてご報告します。</p>
+
+    <div class="sub-head">セキュリティ対策</div>
+    <div class="callout">
+      <div class="co-body">
+        <li>・通信はすべてHTTPSで暗号化します。物件情報・顧客情報を平文でやり取りしません。</li>
+        <li>・利用はIDとパスワードによる認証制とし、御社の関係者以外はアクセスできない状態にします。</li>
+        <li>・生成AIには、送信したデータを学習に使わない設定のAPIを利用します。個人情報は送信の対象から除外します。</li>
+      </div>
+    </div>
+
+    <div class="pfoot">
+      <span>株式会社Walkers</span>
+      <span>不動産業務のAI活用支援 導入・伴走のご提案</span>
+      <span>5</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 06 開発スケジュール ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="sec-head">
+      <span class="sec-num">06</span>
+      <span class="sec-title">開発スケジュール</span>
+      <span class="sec-en">SCHEDULE</span>
+    </div>
+
+    <p class="para">ご契約後の進め方です。まず要件定義を行い、サンプルでご提示した販売図面と営業数値の2機能を完成させます。その後は1〜2週間で1つの業務を自動化するペースで積み上げます。以下はご契約後3ヶ月間の想定です。</p>
+
+    <table class="tbl">
+      <tr><th style="width:24mm;">フェーズ</th><th style="width:32mm;">期間</th><th>主な作業内容</th></tr>
+      <tr>
+        <td class="lbl center">Phase 1</td>
+        <td class="center">約2〜3週間</td>
+        <td>要件定義。業務フローのヒアリングを行い、販売図面と営業数値の2機能の仕様を確定させます。この期間で、初期開発費のお見積もりをご提示します。</td>
+      </tr>
+      <tr>
+        <td class="lbl center">Phase 2</td>
+        <td class="center">約3〜4週間</td>
+        <td>2機能の実装。販売図面の自動生成・自動検算から着手し、過去の物件で検算結果を突き合わせながら仕上げます。続けて営業数値の統合・集計と業者訪問のフォロー一覧を完成させます。</td>
+      </tr>
+      <tr>
+        <td class="lbl center">Phase 3</td>
+        <td class="center">約1〜2週間 / 1機能</td>
+        <td>メール・SMSの下書き、プロジェクト表の作成など、軽めの業務から1〜2週間に1件のペースで自動化を広げます。ポータルサイトへの投稿は、要件を確認のうえ着手時期をご相談します。</td>
+      </tr>
+    </table>
+
+    <div class="pfoot">
+      <span>株式会社Walkers</span>
+      <span>不動産業務のAI活用支援 導入・伴走のご提案</span>
+      <span>6</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 07 概算見積もり ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="sec-head">
+      <span class="sec-num">07</span>
+      <span class="sec-title">概算見積もり</span>
+      <span class="sec-en">ESTIMATE</span>
+    </div>
+
+    <p class="para">費用は、最初の2機能の初期開発費と、その後の月額伴走費用の2本立てです。月額伴走の条件は、初回MTGでお伝えした通りです。想定する稼働時間が変わる場合は、あらためて月額をご提案します。</p>
+
+    <table class="tbl">
+      <tr><th>項目</th><th style="width:40mm;">概算金額</th><th style="width:52mm;">備考</th></tr>
+      <tr>
+        <td class="lbl">月額伴走費用（想定稼働30時間/月）</td>
+        <td class="right">400,000円/月</td>
+        <td>一月あたり2業務の自動化を目指します。</td>
+      </tr>
+      <tr class="total">
+        <td>合計</td>
+        <td class="right">初期開発費＋月額400,000円</td>
+        <td>初期開発費は要件定義後に確定します。月額は想定稼働30時間の場合です。</td>
+      </tr>
+    </table>
+
+    <div class="banner">
+      <div class="bn-label">月額伴走費用</div>
+      <div class="bn-value">
+        <span class="bn-num">400,000</span><span class="bn-unit">円/月（税別）</span>
+        <div class="bn-sub">初期開発費は要件定義後に確定します。</div>
+      </div>
+    </div>
+
+    <div class="sub-head">ランニングコスト（月額）</div>
+    <table class="tbl">
+      <tr><th style="width:52mm;">項目</th><th>内容</th></tr>
+      <tr>
+        <td class="lbl">月額伴走費用（固定）</td>
+        <td>400,000円。想定稼働30時間で算出しています。</td>
+      </tr>
+      <tr>
+        <td class="lbl">生成AIの利用料・サーバー利用料（変動）</td>
+        <td>ご精算の方式をご相談させてください。実費でのご精算と、上限額を定めた定額の2案をご用意しています。金額は処理する物件数によって変動するため、最初の自動化を実運用に載せた時点の実測値をもって確定いたします。</td>
+      </tr>
+    </table>
+
+    <div class="pfoot">
+      <span>株式会社Walkers</span>
+      <span>不動産業務のAI活用支援 導入・伴走のご提案</span>
+      <span>7</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 08 会社概要 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="sec-head">
+      <span class="sec-num">08</span>
+      <span class="sec-title">会社概要</span>
+      <span class="sec-en">COMPANY</span>
+    </div>
+
+    <div class="company-card">
+      <div class="cc-name">株式会社Walkers</div>
+      <table>
+        <tr><td class="k">代表者</td><td>代表取締役 渡邊 敦司</td></tr>
+        <tr><td class="k">設立</td><td>2021年8月</td></tr>
+        <tr><td class="k">事業内容</td><td>システム開発事業 ／ 補助金申請支援事業 ／ DX支援事業 ／ マーケティング支援事業</td></tr>
+        <tr><td class="k">所在地</td><td>〒112-0015 東京都文京区目白台2-9-4 1F</td></tr>
+        <tr><td class="k">Web</td><td>https://walker-s.co.jp/</td></tr>
+      </table>
+    </div>
+
+    <div class="brand-bar">
+      <span class="bb-logo">WALKERS INC.</span>
+      <span class="bb-tag">テクノロジーと自由、人類の幸福の共存</span>
+      <span class="bb-url">walker-s.co.jp</span>
+    </div>
+
+    <div class="copyright">Copyright © 2026 Walkers. All Rights Reserved.</div>
+
+    <div class="pfoot">
+      <span>株式会社Walkers</span>
+      <span>不動産業務のAI活用支援 導入・伴走のご提案</span>
+      <span>8</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

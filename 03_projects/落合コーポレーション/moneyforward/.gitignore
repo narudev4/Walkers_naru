@@ -1,0 +1,8 @@
+node_modules/
+.env
+.env.*
+!.env.example
+# 認可で取得したトークン（絶対にコミットしない）
+.mf-tokens.json
+*.log
+.DS_Store

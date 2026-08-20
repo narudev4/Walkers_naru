@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PTJ｜YouTube区間指定 実証（編集なしで該当部分だけ再生）</title>
+<style>
+  :root { --ink:#0f172a; --sub:#475569; --line:#e2e8f0; --accent:#dc2626; --chip:#eff6ff; --chipink:#1d4ed8; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif; color:var(--ink); background:#f8fafc; line-height:1.6; }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 20px 16px 56px; }
+  h1 { font-size: 1.3rem; margin: 8px 0 4px; }
+  .lead { color:var(--sub); font-size:.95rem; margin:0 0 20px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:20px; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+  .chip { display:inline-block; background:var(--chip); color:var(--chipink); font-size:.75rem; font-weight:700; padding:2px 10px; border-radius:999px; margin-bottom:8px; }
+  .title { font-weight:700; font-size:1.05rem; margin:0 0 2px; }
+  .seg { color:var(--accent); font-weight:700; font-size:.9rem; margin:0 0 10px; }
+  .frame { position:relative; width:100%; aspect-ratio:16/9; border-radius:10px; overflow:hidden; background:#000; }
+  .frame iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+  .play-note { font-size:.8rem; color:var(--sub); margin:8px 0 0; }
+  .url { display:block; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.72rem; color:#334155; background:#f1f5f9; border:1px solid var(--line); border-radius:8px; padding:8px 10px; margin-top:10px; word-break:break-all; }
+  .point { background:#fff7ed; border:1px solid #fed7aa; border-radius:12px; padding:14px 16px; font-size:.9rem; }
+  .point b { color:#9a3412; }
+  ul { margin:6px 0 0; padding-left:1.2em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>YouTube区間指定 ＝ 編集ゼロで「該当部分だけ」</h1>
+  <p class="lead">枝光さんの既存動画を<strong>そのまま</strong>使い、URLに「開始秒・終了秒」を足すだけ。動画編集は不要。再生数も通常どおりカウントされます。</p>
+
+  <div class="card">
+    <span class="chip">課題例①　梨状筋緊張（坐骨神経痛）</span>
+    <p class="title">【坐骨神経痛】寝ながら簡単！坐骨神経痛の痛みを和らげるストレッチ</p>
+    <p class="seg">▶ この動画の 2:00〜3:00 だけ再生し、3:00 で自動停止します（仮の区間・例）</p>
+    <div class="frame">
+      <iframe
+        src="https://www.youtube.com/embed/2yEeB6YhwDU?start=120&end=180&rel=0&playsinline=1"
+        title="坐骨神経痛ストレッチ（区間指定）"
+        allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+    </div>
+    <p class="play-note">※ プレーヤー中央の再生ボタンを1回押してください（2:00から始まり3:00で止まります）。</p>
+    <code class="url">https://www.youtube.com/embed/2yEeB6YhwDU?<b>start=120</b>&amp;<b>end=180</b>&amp;rel=0&amp;playsinline=1</code>
+  </div>
+
+  <div class="card">
+    <span class="chip">課題例②　胸椎可動域低下（猫背）</span>
+    <p class="title">【猫背解消】老化で丸くなった背中を真っ直ぐにするなら、「ココ」を動かしてください！</p>
+    <p class="seg">▶ この動画の 1:30〜2:30 だけ再生し、2:30 で自動停止します（仮の区間・例）</p>
+    <div class="frame">
+      <iframe
+        src="https://www.youtube.com/embed/nf4FEHAnsp8?start=90&end=150&rel=0&playsinline=1"
+        title="猫背改善（区間指定）"
+        allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+    </div>
+    <p class="play-note">※ プレーヤー中央の再生ボタンを1回押してください（1:30から始まり2:30で止まります）。</p>
+    <code class="url">https://www.youtube.com/embed/nf4FEHAnsp8?<b>start=90</b>&amp;<b>end=150</b>&amp;rel=0&amp;playsinline=1</code>
+  </div>
+
+  <div class="point">
+    <b>この方式のポイント</b>
+    <ul>
+      <li>動画は<strong>無加工</strong>。各動画の「ここ〜ここ」秒数を決めるだけ。</li>
+      <li>埋め込み再生も<strong>YouTubeの再生数にカウント</strong>される。</li>
+      <li>注意：物理カットではないので、シークすれば前後も見られます（完全に隠したい場合のみ別途編集）。</li>
+      <li>注意：動画側が「埋め込み許可」でないと再生できません（このページで再生できれば＝許可済みの確認になります）。</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

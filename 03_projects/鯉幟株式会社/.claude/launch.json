@@ -1,0 +1,15 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "koinobori-cockpit",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/naru/Walkers_naru/output/deploy/koinobori-cockpit && npm run dev"
+      ],
+      "port": 3000,
+      "autoPort": true
+    }
+  ]
+}

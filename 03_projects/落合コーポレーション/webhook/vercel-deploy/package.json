@@ -1,0 +1,13 @@
+{
+  "name": "ochiai-webhook-vercel",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "落合コーポレーション — Shopify orders/create Webhook → MF請求書 自動作成（Vercel Function）",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@vercel/functions": "^2.0.0"
+  }
+}

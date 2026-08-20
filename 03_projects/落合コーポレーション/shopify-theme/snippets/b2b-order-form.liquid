@@ -1,0 +1,200 @@
+{%- comment -%}
+  B2B 注文リクエストフォーム（商品詳細ページ用）
+  =====================================================================
+  法人顧客向けに、通常の「カートに追加」ボタンの代わりに
+  数量入力 + 注文リクエストボタンを表示する。
+
+  Phase1 の B2B 注文フロー: 電話 → 営業が Draft Order 作成
+  このフォームはデモ用 UI。実際の注文は営業経由で処理。
+
+  Accepts:
+    - product: {Object} 商品 Liquid オブジェクト（必須）
+    - block: {Object} ブロック情報（必須）
+    - section_id: {String} セクション ID
+
+  組み込み方法:
+    main-product.liquid の buy_buttons ブロック内で
+    B2B 顧客判定後に render:
+
+      {% render 'b2b-order-form', product: product, block: block, section_id: section.id %}
+{%- endcomment -%}
+
+<div {{ block.shopify_attributes }}>
+  {%- if product != blank -%}
+    {%- assign b2b_variant = product.selected_or_first_available_variant -%}
+    {%- assign group = customer.metafields.b2b.discount_group.value -%}
+    {%- assign category = product.metafields.b2b.category.value -%}
+    {%- assign rate = 1.0 -%}
+
+    {%- assign overrides = customer.metafields.b2b.custom_overrides.value -%}
+    {%- if overrides != blank and category != blank and overrides[category] -%}
+      {%- assign rate = overrides[category] -%}
+    {%- elsif group != blank and category != blank -%}
+      {%- for entry in shop.metaobjects.discount_matrix.values -%}
+        {%- if entry.group.value == group and entry.category.value == category -%}
+          {%- assign rate = entry.discount_rate.value -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+
+    {%- if rate < 1.0 -%}
+      {%- assign wholesale_price = b2b_variant.price | times: rate -%}
+    {%- else -%}
+      {%- assign wholesale_price = b2b_variant.price -%}
+    {%- endif -%}
+
+    <div class="b2b-order-form" style="
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      border: 2px solid #1a3a6b;
+      border-radius: 10px;
+      background: #f4f7fc;
+    ">
+      <div style="
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #1a3a6b;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 0.75rem;
+      ">法人注文</div>
+
+      <div style="
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+      ">
+        <label for="b2b-qty-{{ section_id }}" style="
+          font-size: 0.85rem;
+          font-weight: 600;
+          color: #333;
+          white-space: nowrap;
+        ">数量:</label>
+        <div style="
+          display: flex;
+          align-items: center;
+          border: 1.5px solid #ccc;
+          border-radius: 6px;
+          overflow: hidden;
+          background: #fff;
+        ">
+          <button type="button" class="b2b-qty-btn" onclick="
+            var el = document.getElementById('b2b-qty-{{ section_id }}');
+            var v = parseInt(el.value) || 1;
+            if (v > 1) { el.value = v - 1; updateB2bSubtotal{{ section_id | replace: '-', '_' }}(); }
+          " style="
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f0f0f0;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          ">−</button>
+          <input
+            type="number"
+            id="b2b-qty-{{ section_id }}"
+            value="1"
+            min="1"
+            max="999"
+            oninput="updateB2bSubtotal{{ section_id | replace: '-', '_' }}()"
+            style="
+              width: 60px;
+              height: 36px;
+              border: none;
+              text-align: center;
+              font-size: 1rem;
+              font-weight: 600;
+              -moz-appearance: textfield;
+            "
+          >
+          <button type="button" class="b2b-qty-btn" onclick="
+            var el = document.getElementById('b2b-qty-{{ section_id }}');
+            var v = parseInt(el.value) || 1;
+            el.value = v + 1; updateB2bSubtotal{{ section_id | replace: '-', '_' }}();
+          " style="
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f0f0f0;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          ">+</button>
+        </div>
+        <span id="b2b-subtotal-{{ section_id }}" style="
+          font-size: 0.95rem;
+          color: #555;
+        ">小計: {{ wholesale_price | money }}</span>
+      </div>
+
+      <a
+        href="/pages/contact"
+        class="b2b-order-request-btn"
+        style="
+          display: block;
+          width: 100%;
+          padding: 0.85rem 1rem;
+          background: #1a3a6b;
+          color: #fff;
+          font-size: 1rem;
+          font-weight: 700;
+          text-align: center;
+          text-decoration: none;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: background 0.2s;
+          box-sizing: border-box;
+        "
+        onmouseover="this.style.background='#15305a'"
+        onmouseout="this.style.background='#1a3a6b'"
+      >
+        注文のお問い合わせ
+      </a>
+
+      <p style="
+        font-size: 0.72rem;
+        color: #888;
+        margin: 0.75rem 0 0 0;
+        line-height: 1.5;
+        text-align: center;
+      ">
+        ※ 法人のご注文は担当営業が承ります。お電話またはお問い合わせフォームよりご連絡ください。
+      </p>
+    </div>
+
+    <script>
+      function updateB2bSubtotal{{ section_id | replace: '-', '_' }}() {
+        var qty = parseInt(document.getElementById('b2b-qty-{{ section_id }}').value) || 1;
+        var unitPrice = Math.round({{ wholesale_price }} / 100);
+        var subtotal = (qty * unitPrice).toLocaleString('ja-JP');
+        document.getElementById('b2b-subtotal-{{ section_id }}').textContent = '小計: ¥' + subtotal;
+      }
+    </script>
+
+    <style>
+      .b2b-order-form input[type="number"]::-webkit-outer-spin-button,
+      .b2b-order-form input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      @media screen and (max-width: 749px) {
+        .b2b-order-form {
+          padding: 1rem !important;
+        }
+      }
+    </style>
+  {%- endif -%}
+</div>

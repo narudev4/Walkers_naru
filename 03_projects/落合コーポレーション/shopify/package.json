@@ -1,0 +1,15 @@
+{
+  "name": "ochiai-b2b-discount",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "落合コーポ B2B 掛け率 技術検証（Draft Order ベース実装・Shopify Basic 対応）",
+  "scripts": {
+    "test": "node --test",
+    "create-draft": "node --env-file=.env src/createDraftOrder.js",
+    "probe": "node --env-file=.env src/probe.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

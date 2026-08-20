@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ochiai-b2c-concept",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": ["-c", "cd /Users/naru/Walkers_naru/output/deploy/ochiai-b2c-concept && npm run dev"],
+      "port": 3000,
+      "autoPort": true
+    }
+  ]
+}

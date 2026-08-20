@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "gibson-mockup",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": ["-c", "cd /Users/naru/Walkers_naru/output/deploy/gibson-mockup && npm run dev"],
+      "port": 3000,
+      "autoPort": true
+    }
+  ]
+}

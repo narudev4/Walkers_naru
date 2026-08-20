@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wi2 Sales テストハブ | Walkers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0055B8;
+      --primary-dark: #003D85;
+      --primary-light: #E8F0FE;
+      --bg: #F3F5F9;
+      --card: #FFFFFF;
+      --text: #1A1D23;
+      --text-secondary: #6B7280;
+      --text-muted: #9CA3AF;
+      --border: #E5E7EB;
+      --radius: 8px;
+      --radius-lg: 12px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .hub-container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 48px 24px 64px;
+    }
+
+    /* Header */
+    .hub-header {
+      animation: fadeUp 0.5s ease both;
+    }
+    .hub-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+    .hub-badge-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hub-title {
+      margin-top: 16px;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .hub-title small {
+      margin-left: 8px;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-muted);
+      vertical-align: middle;
+    }
+    .hub-subtitle {
+      margin-top: 8px;
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .hub-subtitle strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* Screen grid */
+    .hub-section-title {
+      margin-top: 32px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.05em;
+      animation: fadeUp 0.5s ease 0.12s both;
+    }
+    .hub-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    .hub-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+    .hub-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 85, 184, 0.12);
+      border-color: var(--primary-light);
+    }
+    .hub-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .hub-card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .hub-card:hover .hub-card-icon {
+      background: var(--primary);
+      color: #fff;
+    }
+    .hub-card-no {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .hub-card-title {
+      margin-top: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .hub-card-desc {
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      flex: 1;
+    }
+    .hub-card-footer {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+.hub-card-link {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--primary);
+    }
+
+    /* Note */
+    .hub-note {
+      margin-top: 32px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: rgba(243, 245, 249, 0.5);
+      padding: 16px;
+      animation: fadeUp 0.5s ease 0.5s both;
+    }
+    .hub-note p {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    /* Footer */
+    .hub-footer {
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      animation: fadeUp 0.5s ease 0.55s both;
+    }
+    .hub-footer-company {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .hub-footer-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 640px) {
+      .hub-container { padding: 32px 16px 48px; }
+      .hub-title { font-size: 24px; }
+      .hub-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hub-container">
+    <!-- Header -->
+    <header class="hub-header">
+      <div class="hub-badge">
+        <span class="hub-badge-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/>
+          </svg>
+        </span>
+        Walkers · モックアップ
+      </div>
+
+      <h1 class="hub-title">
+        Wi2 Sales
+        <small>営業管理システム</small>
+      </h1>
+      <p class="hub-subtitle">
+        Salesforce リプレイス — 営業部門向け基幹システムのデモ画面<br>
+        <strong>株式会社ワイヤ・アンド・ワイヤレス 様向け</strong> テストハブ
+      </p>
+    </header>
+
+    <!-- Dashboard Section -->
+    <div class="hub-section-title">ダッシュボード</div>
+    <div class="hub-grid">
+      <a href="dashboard.html" class="hub-card" style="animation: fadeUp 0.5s ease 0.14s both;">
+        <div class="hub-card-top">
+          <div class="hub-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1"/>
+              <rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/>
+              <rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+          </div>
+          <span class="hub-card-no">A-1</span>
+        </div>
+        <div class="hub-card-title">メインダッシュボード</div>
+        <div class="hub-card-desc">KPI（月次計上額・商談数・受注率・新規取引先）、計上額推移、商談フェーズ分布、営業本部別実績、直近活動</div>
+        <div class="hub-card-footer">
+<span class="hub-card-link">
+            開く
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Deal Management Section -->
+    <div class="hub-section-title">商談管理</div>
+    <div class="hub-grid">
+      <a href="deals-list.html" class="hub-card" style="animation: fadeUp 0.5s ease 0.2s both;">
+        <div class="hub-card-top">
+          <div class="hub-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+              <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+          </div>
+          <span class="hub-card-no">B-1</span>
+        </div>
+        <div class="hub-card-title">商談一覧（リスト）</div>
+        <div class="hub-card-desc">全商談のテーブル表示。フェーズ・営業本部・担当者・期間でフィルタ、検索、ページネーション対応</div>
+        <div class="hub-card-footer">
+<span class="hub-card-link">
+            開く
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a href="deals-pipeline.html" class="hub-card" style="animation: fadeUp 0.5s ease 0.26s both;">
+        <div class="hub-card-top">
+          <div class="hub-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="5" height="18" rx="1"/><rect x="10" y="8" width="5" height="13" rx="1"/><rect x="17" y="5" width="5" height="16" rx="1"/>
+            </svg>
+          </div>
+          <span class="hub-card-no">B-2</span>
+        </div>
+        <div class="hub-card-title">パイプライン（カンバン）</div>
+        <div class="hub-card-desc">フェーズ別カンバンビュー。ドラッグ&ドロップでフェーズ変更。リード→提案中→見積提出→交渉中→受注/失注</div>
+        <div class="hub-card-footer">
+<span class="hub-card-link">
+            開く
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a href="deal-detail.html" class="hub-card" style="animation: fadeUp 0.5s ease 0.32s both;">
+        <div class="hub-card-top">
+          <div class="hub-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </div>
+          <span class="hub-card-no">B-3</span>
+        </div>
+        <div class="hub-card-title">商談詳細</div>
+        <div class="hub-card-desc">個別商談の全情報。収益構造（構築費+月額サブスク）、活動タイムライン、関連AP・機器、見積提出</div>
+        <div class="hub-card-footer">
+<span class="hub-card-link">
+            開く
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a href="deal-form.html" class="hub-card" style="animation: fadeUp 0.5s ease 0.38s both;">
+        <div class="hub-card-top">
+          <div class="hub-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </div>
+          <span class="hub-card-no">B-4</span>
+        </div>
+        <div class="hub-card-title">商談 作成・編集</div>
+        <div class="hub-card-desc">商談の新規登録・編集フォーム。取引先オートコンプリート、計上額自動計算（構築費+月額×12）、機器追加</div>
+        <div class="hub-card-footer">
+<span class="hub-card-link">
+            開く
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Account & Contacts Section -->
+    <div class="hub-section-title">取引先・担当者管理</div>
+    <div class="hub-grid">
+      <a href="accounts.html" class="hub-card" style="animation: fadeUp 0.5s ease 0.42s both;">
+        <div class="hub-card-top">
+          <div class="hub-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+            </svg>
+          </div>
+          <span class="hub-card-no">C-1</span>
+        </div>
+        <div class="hub-card-title">取引先一覧</div>
+        <div class="hub-card-desc">全取引先のテーブル表示。業種（自治体/飲食チェーン/小売等）・ステータス別フィルタ、設置AP数・月額計上額を表示</div>
+        <div class="hub-card-footer">
+<span class="hub-card-link">
+            開く
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a href="account-detail.html" class="hub-card" style="animation: fadeUp 0.5s ease 0.44s both;">
+        <div class="hub-card-top">
+          <div class="hub-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </div>
+          <span class="hub-card-no">C-2</span>
+        </div>
+        <div class="hub-card-title">取引先詳細</div>
+        <div class="hub-card-desc">取引先の基本情報・商談一覧・担当者・設置AP。業種バッジ（自治体/飲食チェーン/ドラッグストア等）表示</div>
+        <div class="hub-card-footer">
+<span class="hub-card-link">
+            開く
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a href="contacts.html" class="hub-card" style="animation: fadeUp 0.5s ease 0.5s both;">
+        <div class="hub-card-top">
+          <div class="hub-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/>
+            </svg>
+          </div>
+          <span class="hub-card-no">D-1</span>
+        </div>
+        <div class="hub-card-title">担当者一覧</div>
+        <div class="hub-card-desc">営業担当者の一覧。営業本部・役職別フィルタ、担当商談数・月間計上額を表示</div>
+        <div class="hub-card-footer">
+<span class="hub-card-link">
+            開く
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </span>
+        </div>
+      </a>
+    </div>
+
+    <!-- AP Management Section -->
+    <div class="hub-section-title">AP管理</div>
+    <div class="hub-grid">
+      <a href="ap-management.html" class="hub-card" style="animation: fadeUp 0.5s ease 0.56s both;">
+        <div class="hub-card-top">
+          <div class="hub-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12.55a11 11 0 0114.08 0"/><path d="M1.42 9a16 16 0 0121.16 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><circle cx="12" cy="20" r="1"/>
+            </svg>
+          </div>
+          <span class="hub-card-no">E-1</span>
+        </div>
+        <div class="hub-card-title">AP管理</div>
+        <div class="hub-card-desc">アクセスポイントの在庫・稼働状況管理。ステータス（稼働中/メンテナンス中/障害/未設置）別フィルタ、取引先別表示</div>
+        <div class="hub-card-footer">
+<span class="hub-card-link">
+            開く
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Reports & Settings Section -->
+    <div class="hub-section-title">分析・システム</div>
+    <div class="hub-grid">
+      <a href="reports.html" class="hub-card" style="animation: fadeUp 0.5s ease 0.62s both;">
+        <div class="hub-card-top">
+          <div class="hub-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 20V10"/><path d="M12 20V4"/><path d="M18 20v-6"/>
+            </svg>
+          </div>
+          <span class="hub-card-no">F-1</span>
+        </div>
+        <div class="hub-card-title">レポート</div>
+        <div class="hub-card-desc">売上レポート・商談分析・活動レポート・AP稼働レポートの4カテゴリ。最近閲覧したレポート一覧</div>
+        <div class="hub-card-footer">
+<span class="hub-card-link">
+            開く
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a href="settings.html" class="hub-card" style="animation: fadeUp 0.5s ease 0.68s both;">
+        <div class="hub-card-top">
+          <div class="hub-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+            </svg>
+          </div>
+          <span class="hub-card-no">G-1</span>
+        </div>
+        <div class="hub-card-title">設定</div>
+        <div class="hub-card-desc">プロフィール・通知設定・営業本部管理・ユーザー管理。タブ切替でセクション別に表示</div>
+        <div class="hub-card-footer">
+<span class="hub-card-link">
+            開く
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Note -->
+    <div class="hub-note">
+      <p>
+        ※ これは開発イメージをすり合わせるためのデモ画面です。表示データはすべてダミーです。<br>
+        ※ まず営業部門向けの11画面を想定。画面構成・機能へのご要望があればお気軽にお知らせください。
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <footer class="hub-footer">
+      <span class="hub-footer-company">株式会社 Walkers</span>
+      <span class="hub-footer-meta">Mockup · 2026-06</span>
+    </footer>
+  </div>
+</body>
+</html>

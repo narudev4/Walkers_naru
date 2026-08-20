@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>【FUNMAXJAPAN様】業務効率化DX支援のご提案</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #2B323B;
+    --primary-dark: #1a1f25;
+    --accent: #E98212;
+    --accent-light: #f5a623;
+    --text: #2c2c2c;
+    --text-light: #666666;
+    --text-muted: #999999;
+    --white: #ffffff;
+    --bg-light: #f8f9fa;
+    --bg-subtle: #f0f2f5;
+    --border: #e2e5e9;
+    --body-bg: #e8eaed;
+    --shadow: rgba(0,0,0,0.08);
+    --shadow-strong: rgba(0,0,0,0.15);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --body-bg: #1a1a1a;
+      --shadow: rgba(0,0,0,0.3);
+      --shadow-strong: rgba(0,0,0,0.5);
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+    background: var(--body-bg);
+    color: var(--text);
+    line-height: 1.8;
+    font-size: 10.5pt;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 16px auto;
+    background: var(--white);
+    box-shadow: 0 2px 24px var(--shadow), 0 8px 48px var(--shadow-strong);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ===== COVER PAGE ===== */
+  .cover {
+    display: flex;
+    flex-direction: column;
+    height: 297mm;
+  }
+  .cover-top {
+    flex: 1;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    padding: 50mm 20mm 30mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
+  .cover-top::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  }
+  .cover-top::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 80px;
+    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.15));
+  }
+  .cover-logo {
+    font-size: 18pt;
+    font-weight: 300;
+    color: var(--accent);
+    letter-spacing: 0.3em;
+    margin-bottom: 20mm;
+    font-style: italic;
+  }
+  .cover-title {
+    font-size: 28pt;
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.3;
+    margin-bottom: 8mm;
+  }
+  .cover-subtitle {
+    font-size: 11pt;
+    font-weight: 300;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.08em;
+    padding-left: 3px;
+  }
+  .cover-bottom {
+    background: var(--white);
+    padding: 15mm 20mm;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .cover-meta {
+    text-align: right;
+    line-height: 2.2;
+  }
+  .cover-meta .client {
+    font-size: 13pt;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .cover-meta .company {
+    font-size: 11pt;
+    color: var(--text-light);
+  }
+  .cover-meta .date {
+    font-size: 10pt;
+    color: var(--text-muted);
+  }
+
+  /* ===== SECTION PAGES ===== */
+  .content-page {
+    padding: 18mm 20mm 22mm;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 10mm;
+    padding-bottom: 5mm;
+    border-bottom: 3px solid var(--accent);
+  }
+  .section-num {
+    width: 42px;
+    height: 42px;
+    background: var(--primary);
+    color: var(--white);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16pt;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 17pt;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.02em;
+  }
+
+  .subsection-title {
+    font-size: 12pt;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 8mm 0 4mm;
+    padding-left: 14px;
+    border-left: 4px solid var(--accent);
+    line-height: 1.4;
+  }
+
+  p {
+    margin-bottom: 3mm;
+    text-align: justify;
+  }
+
+  /* ===== KEY-VALUE BLOCK ===== */
+  .kv-block {
+    margin: 5mm 0;
+  }
+  .kv-row {
+    display: flex;
+    gap: 8px;
+    padding: 3mm 0;
+    border-bottom: 1px solid var(--border);
+    align-items: baseline;
+  }
+  .kv-row:last-child { border-bottom: none; }
+  .kv-label {
+    font-weight: 700;
+    color: var(--primary);
+    min-width: 110px;
+    flex-shrink: 0;
+    font-size: 10pt;
+  }
+  .kv-value {
+    flex: 1;
+    font-size: 10pt;
+  }
+
+  /* ===== FEATURE LIST (numbered) ===== */
+  .feature-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4mm;
+    margin: 5mm 0;
+  }
+  .feature-item {
+    display: flex;
+    gap: 10px;
+    padding: 4mm;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-light);
+    align-items: flex-start;
+  }
+  .feature-num {
+    width: 26px;
+    height: 26px;
+    background: var(--accent);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9pt;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .feature-text {
+    font-size: 9.5pt;
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  /* ===== HIGHLIGHT BOX ===== */
+  .highlight-box {
+    background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-subtle) 100%);
+    border-radius: 10px;
+    padding: 5mm 6mm;
+    margin: 5mm 0;
+  }
+  .highlight-box .label {
+    font-size: 9pt;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 2mm;
+  }
+  .highlight-box .value {
+    font-size: 10.5pt;
+    line-height: 1.7;
+  }
+
+  /* ===== TABLES ===== */
+  .table-wrap {
+    margin: 5mm 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9.5pt;
+  }
+  thead th {
+    background: var(--primary);
+    color: var(--white);
+    padding: 4mm 5mm;
+    text-align: left;
+    font-weight: 500;
+    font-size: 9pt;
+    letter-spacing: 0.03em;
+  }
+  tbody td {
+    padding: 4mm 5mm;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.7;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:nth-child(even) { background: var(--bg-light); }
+
+  /* ===== SOLUTION CARDS ===== */
+  .solution-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 4mm;
+    margin: 5mm 0;
+  }
+  .solution-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+  }
+  .solution-card-side {
+    width: 6px;
+    flex-shrink: 0;
+  }
+  .solution-card-side.c1 { background: var(--accent); }
+  .solution-card-side.c2 { background: #3498db; }
+  .solution-card-side.c3 { background: #2ecc71; }
+  .solution-card-side.c4 { background: #9b59b6; }
+  .solution-card-body {
+    padding: 4mm 5mm;
+    flex: 1;
+  }
+  .solution-card-title {
+    font-weight: 700;
+    font-size: 10.5pt;
+    color: var(--primary);
+    margin-bottom: 2mm;
+  }
+  .solution-card-desc {
+    font-size: 9pt;
+    color: var(--text-light);
+    line-height: 1.7;
+  }
+
+  /* ===== TIMELINE ===== */
+  .timeline {
+    margin: 6mm 0;
+    position: relative;
+    padding-left: 32px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 13px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--border);
+  }
+  .timeline-item {
+    position: relative;
+    padding: 0 0 6mm 24px;
+  }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-dot {
+    position: absolute;
+    left: -25px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: var(--white);
+  }
+  .timeline-item.active .timeline-dot {
+    background: var(--accent);
+  }
+  .timeline-phase {
+    font-weight: 700;
+    font-size: 10.5pt;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .timeline-badge {
+    font-size: 8pt;
+    font-weight: 500;
+    background: var(--accent);
+    color: var(--white);
+    padding: 1px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .timeline-desc {
+    font-size: 9pt;
+    color: var(--text-light);
+    margin-top: 1.5mm;
+    line-height: 1.7;
+  }
+
+  /* ===== CALLOUT BOX ===== */
+  .callout {
+    background: var(--bg-light);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 4mm 5mm;
+    margin: 5mm 0;
+  }
+  .callout-title {
+    font-weight: 700;
+    font-size: 10pt;
+    color: var(--primary);
+    margin-bottom: 2mm;
+  }
+  .callout-body {
+    font-size: 9.5pt;
+    line-height: 1.7;
+  }
+
+  /* ===== SUBSIDY CARDS ===== */
+  .subsidy-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4mm;
+    margin: 4mm 0;
+  }
+  .subsidy-card {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 4mm 5mm;
+    text-align: center;
+  }
+  .subsidy-card .label {
+    font-size: 8.5pt;
+    color: var(--text-muted);
+    margin-bottom: 1mm;
+  }
+  .subsidy-card .value {
+    font-size: 14pt;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .subsidy-card .value .accent {
+    color: var(--accent);
+  }
+
+  /* ===== STRATEGY LIST ===== */
+  .strategy-list {
+    margin: 4mm 0;
+  }
+  .strategy-item {
+    display: flex;
+    gap: 10px;
+    padding: 3mm 0;
+    border-bottom: 1px dotted var(--border);
+    align-items: flex-start;
+  }
+  .strategy-item:last-child { border-bottom: none; }
+  .strategy-check {
+    width: 20px;
+    height: 20px;
+    background: var(--accent);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10pt;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .strategy-content {
+    flex: 1;
+  }
+  .strategy-content strong {
+    display: block;
+    font-size: 10pt;
+    color: var(--primary);
+    margin-bottom: 1mm;
+  }
+  .strategy-content span {
+    font-size: 9pt;
+    color: var(--text-light);
+    line-height: 1.6;
+  }
+
+  /* ===== ESTIMATE TABLE ===== */
+  .estimate-table thead th:nth-child(2),
+  .estimate-table tbody td:nth-child(2) {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .running-cost {
+    margin-top: 6mm;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border-radius: 10px;
+    padding: 5mm 6mm;
+    color: var(--white);
+  }
+  .running-cost .rc-title {
+    font-size: 10pt;
+    font-weight: 700;
+    margin-bottom: 3mm;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .running-cost .rc-title::before {
+    content: '';
+    width: 20px;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+  .running-cost-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3mm;
+  }
+  .rc-item {
+    background: rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 3mm 4mm;
+  }
+  .rc-item .label {
+    font-size: 8pt;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 1mm;
+  }
+  .rc-item .value {
+    font-size: 10pt;
+    font-weight: 500;
+  }
+  .rc-item .tag {
+    display: inline-block;
+    font-size: 7pt;
+    padding: 0 6px;
+    border-radius: 3px;
+    margin-left: 4px;
+  }
+  .rc-item .tag.fixed { background: rgba(233,130,18,0.3); color: var(--accent-light); }
+  .rc-item .tag.variable { background: rgba(52,152,219,0.3); color: #5dade2; }
+
+  /* ===== COMPANY TABLE ===== */
+  .company-table td:first-child {
+    width: 110px;
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--bg-light);
+  }
+  .company-table a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .company-table a:hover { text-decoration: underline; }
+
+  /* ===== FOOTER ===== */
+  .page-footer {
+    position: absolute;
+    bottom: 8mm;
+    left: 20mm;
+    right: 20mm;
+    text-align: center;
+    font-size: 7.5pt;
+    color: var(--text-muted);
+    font-style: italic;
+    border-top: 1px solid var(--border);
+    padding-top: 3mm;
+  }
+
+  /* ===== NOTE TEXT ===== */
+  .note {
+    font-size: 9pt;
+    color: var(--text-muted);
+    margin-top: 3mm;
+  }
+
+  /* ===== PRINT ===== */
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  @media print {
+    body {
+      background: white;
+      padding: 0;
+    }
+    .page {
+      box-shadow: none;
+      margin: 0;
+      page-break-after: always;
+      border-radius: 0;
+    }
+    .page:last-child {
+      page-break-after: auto;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER ==================== -->
+<div class="page cover">
+  <div class="cover-top">
+    <div class="cover-logo">Walkers</div>
+    <div class="cover-title">業務効率化DX支援<br>のご提案</div>
+    <div class="cover-subtitle">業務フロー整理・設計から実装・定着支援まで一貫サポート</div>
+  </div>
+  <div class="cover-bottom">
+    <div class="cover-meta">
+      <div class="client">株式会社FUNMAXJAPAN 様</div>
+      <div class="company">株式会社Walkers</div>
+      <div class="date">2026年6月23日</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 1. 提案概要 ==================== -->
+<div class="page content-page">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div class="section-title">提案概要</div>
+  </div>
+
+  <div class="subsection-title">本提案の目的</div>
+  <p>初回MTGで伺った貴社の課題（コミュニケーションの分散、プロジェクト管理の属人化）に対し、業務フローの整理・設計から実装・定着支援まで一貫してサポートする業務効率化DX支援をご提案いたします。</p>
+
+  <div class="kv-block">
+    <div class="kv-row">
+      <div class="kv-label">ターゲット</div>
+      <div class="kv-value">株式会社FUNMAXJAPAN様（モバイルアクセサリーメーカー、従業員約15名）</div>
+    </div>
+  </div>
+
+  <div class="subsection-title">特徴</div>
+  <div class="feature-list">
+    <div class="feature-item">
+      <div class="feature-num">1</div>
+      <div class="feature-text">業務フロー可視化・運用ルール設計<br><span style="color:var(--text-muted);font-size:8.5pt">属人化を解消する仕組みを設計</span></div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-num">2</div>
+      <div class="feature-text">プロジェクト管理基盤の構築支援<br><span style="color:var(--text-muted);font-size:8.5pt">カンバン＋ガントチャートの両ニーズに対応</span></div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-num">3</div>
+      <div class="feature-text">AI活用による業務自動化<br><span style="color:var(--text-muted);font-size:8.5pt">会議議事録の自動生成、チャット要約等</span></div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-num">4</div>
+      <div class="feature-text">補助金申請支援<br><span style="color:var(--text-muted);font-size:8.5pt">デジタル化・AI導入補助金等の申請をサポート</span></div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin-top:5mm;">
+    <div class="highlight-box">
+      <div class="label">ローンチ目標</div>
+      <div class="value">要件定義開始後、約3〜4ヶ月で全Phase完了</div>
+    </div>
+    <div class="highlight-box">
+      <div class="label">期待効果</div>
+      <div class="value">コミュニケーション整流化、プロジェクト管理の可視化、AI活用による定型業務の自動化</div>
+    </div>
+  </div>
+  <div class="page-footer">Copyright &copy; 2026 Walkers. All Rights Reserved.</div>
+</div>
+
+<!-- ==================== 2. 現状整理 ==================== -->
+<div class="page content-page">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div class="section-title">現状整理</div>
+  </div>
+
+  <div class="subsection-title">貴社の現状と課題</div>
+  <p>初回MTGおよび貴社にてまとめていただいた「社内運用改善点」をもとに、現状と課題を整理いたしました。</p>
+
+  <div class="table-wrap" style="margin-top:6mm;">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:140px;">課題</th>
+          <th>詳細・現状</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:700;color:var(--primary);">コミュニケーション</td>
+          <td>DingTalk（無料版）を社内・中国工場・フォワーダーとの連絡に使用。スレッドが乱立し重要情報が埋もれる。情報伝達ルール未整備。Lark導入を7〜8回問い合わせたが返答なし。中国とのやり取りがありGoogle系への完全移行は困難</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--primary);">ワークフロー・輸入管理</td>
+          <td>ローカルExcel中心（一部Dropbox共有）。統一PMツールなく個人依存。海外工場・フォワーダーの情報集約も担当者ローカル管理（属人化）。カンバンとガントチャートの両方を希望（社内で意見が分かれている）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="page-footer">Copyright &copy; 2026 Walkers. All Rights Reserved.</div>
+</div>
+
+<!-- ==================== 3. 提案ソリューション ==================== -->
+<div class="page content-page">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div class="section-title">提案ソリューション</div>
+  </div>
+
+  <div class="subsection-title">支援コンセプト</div>
+  <p>貴社の2つの課題（コミュニケーション分散・PM属人化）に対し、①運用ルール策定 ②PM基盤構築 ③AI活用の3領域で支援します。要件定義で業務フローを詳細に可視化し、最適なツール選定から導入・定着までサポートいたします。</p>
+
+  <div class="subsection-title">支援内容</div>
+  <div class="solution-cards">
+    <div class="solution-card">
+      <div class="solution-card-side c1"></div>
+      <div class="solution-card-body">
+        <div class="solution-card-title">コミュニケーション運用ルール策定</div>
+        <div class="solution-card-desc">案件別・機能別チャンネル構成設計、情報伝達ガイドライン（チャット/ファイル/スレッドの使い分け）策定、ピン留め活用ルール整備。DingTalk無料版のチャット履歴180日保持に対応するバックアップ運用設計</div>
+      </div>
+    </div>
+    <div class="solution-card">
+      <div class="solution-card-side c2"></div>
+      <div class="solution-card-body">
+        <div class="solution-card-title">プロジェクト管理基盤構築</div>
+        <div class="solution-card-desc">業務フロー可視化・ボトルネック特定、カンバン/ガントチャート構成設計、ツール選定（中国からアクセス可能が前提条件。DingTalk多維表格等を候補に要件定義で決定）、既存Excelデータ移行支援、運用定着研修</div>
+      </div>
+    </div>
+    <div class="solution-card">
+      <div class="solution-card-side c3"></div>
+      <div class="solution-card-body">
+        <div class="solution-card-title">AI活用による業務自動化</div>
+        <div class="solution-card-desc">会議議事録の自動生成（録音→文字起こし→決定事項・TODO自動抽出）、チャット要約によるアクションアイテム抽出、日中バイリンガル翻訳支援。AI利用時のセキュリティは導入前に詳細説明・合意の上で進行</div>
+      </div>
+    </div>
+    <div class="solution-card">
+      <div class="solution-card-side c4"></div>
+      <div class="solution-card-body">
+        <div class="solution-card-title">補助金申請支援</div>
+        <div class="solution-card-desc">デジタル化・AI導入補助金の申請サポート。補助率1/2〜2/3（申請区分で変動）。SaaSライセンス費・導入関連費が対象。段階的申請にも対応</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer">Copyright &copy; 2026 Walkers. All Rights Reserved.</div>
+</div>
+
+<!-- ==================== 4. 導入スケジュール ==================== -->
+<div class="page content-page">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div class="section-title">導入スケジュール</div>
+  </div>
+
+  <p>Phase 1から順にスモールスタートし、各フェーズ完了時にレビュー・承認を経て次フェーズに進みます。</p>
+
+  <div class="timeline" style="margin-top:8mm;">
+    <div class="timeline-item active">
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">
+        要件定義
+        <span class="timeline-badge">約2〜3週間</span>
+      </div>
+      <div class="timeline-desc">業務フロー詳細ヒアリング、ツール現状確認、PM基盤ツール選定</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">
+        Phase 1: コミュニケーション整備
+        <span class="timeline-badge">約2〜3週間</span>
+      </div>
+      <div class="timeline-desc">運用ルール策定、チャンネル再設計、情報伝達ガイドライン整備、バックアップ運用構築</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">
+        Phase 2: PM基盤導入
+        <span class="timeline-badge">約1〜1.5ヶ月</span>
+      </div>
+      <div class="timeline-desc">PM基盤構築、輸入管理ワークフロー設計、既存Excel移行、運用定着支援</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">
+        Phase 3: AI活用
+        <span class="timeline-badge">約2〜3週間</span>
+      </div>
+      <div class="timeline-desc">議事録自動生成導入、チャット要約、日中バイリンガル翻訳支援</div>
+    </div>
+  </div>
+  <div class="page-footer">Copyright &copy; 2026 Walkers. All Rights Reserved.</div>
+</div>
+
+<!-- ==================== 5. 補助金活用 ==================== -->
+<div class="page content-page">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div class="section-title">補助金活用</div>
+  </div>
+
+  <div class="subsidy-grid">
+    <div class="subsidy-card">
+      <div class="label">活用予定</div>
+      <div class="value" style="font-size:11pt;">デジタル化・AI導入補助金</div>
+    </div>
+    <div class="subsidy-card">
+      <div class="label">補助率</div>
+      <div class="value"><span class="accent">1/2</span> 〜 <span class="accent">2/3</span></div>
+    </div>
+  </div>
+
+  <div class="subsection-title">活用イメージ</div>
+  <p>SaaSライセンス費用（ソフトウェア購入費）と導入設定・研修・運用支援費用（導入関連費）が補助対象。カスタム開発部分は費目の切り分けを明確にした上で申請。弊社にて補助金申請の支援が可能です。段階的申請にも対応いたします。</p>
+
+  <div class="subsection-title">戦略的アプローチ</div>
+  <div class="strategy-list">
+    <div class="strategy-item">
+      <div class="strategy-check">&#10003;</div>
+      <div class="strategy-content">
+        <strong>対象費目の明確化</strong>
+        <span>ソフトウェア購入費（事務局登録済みITツール）と導入関連費（設定・研修・保守）を明確に分離し、補助対象となる費目を最大化</span>
+      </div>
+    </div>
+    <div class="strategy-item">
+      <div class="strategy-check">&#10003;</div>
+      <div class="strategy-content">
+        <strong>段階的申請</strong>
+        <span>フェーズごとに申請を分け、各段階での補助金活用を最適化。交付決定後に着手する原則を遵守したスケジュール設計</span>
+      </div>
+    </div>
+    <div class="strategy-item">
+      <div class="strategy-check">&#10003;</div>
+      <div class="strategy-content">
+        <strong>申請サポート</strong>
+        <span>弊社にて申請書類の作成支援・事業計画書の策定をサポート。成功報酬は採択額の8〜15%</span>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer">Copyright &copy; 2026 Walkers. All Rights Reserved.</div>
+</div>
+
+<!-- ==================== 6. 概算見積もり ==================== -->
+<div class="page content-page">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div class="section-title">概算見積もり</div>
+  </div>
+
+  <p>以下は現段階での概算です。詳細な要件定義後に確定見積もりを提示いたします。</p>
+
+  <div class="table-wrap estimate-table" style="margin-top:6mm;">
+    <table>
+      <thead>
+        <tr>
+          <th>項目</th>
+          <th>概算金額</th>
+          <th>備考</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:700;color:var(--primary);">要件定義フェーズ<br><span style="font-size:8pt;color:var(--text-muted);font-weight:400;">（準委任契約）</span></td>
+          <td style="font-weight:700;font-size:11pt;">30万〜45万円</td>
+          <td>20〜30h &times; @15,000円/h</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--primary);">Phase 1〜3 導入支援・構築一式</td>
+          <td style="color:var(--text-muted);">要件定義完了後にご提示</td>
+          <td>スコープ確定後に本見積りを提示</td>
+        </tr>
+        <tr style="background:var(--bg-subtle);">
+          <td style="font-weight:700;color:var(--primary);">合計</td>
+          <td style="font-weight:700;">要件定義完了後に確定</td>
+          <td>（税別）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="running-cost">
+    <div class="rc-title">ランニングコスト（月額）</div>
+    <div class="running-cost-grid">
+      <div class="rc-item">
+        <div class="label">運用保守・定着支援</div>
+        <div class="value">3〜5万円/月 <span class="tag fixed">固定</span></div>
+      </div>
+      <div class="rc-item">
+        <div class="label">API利用料</div>
+        <div class="value">月数千円程度 <span class="tag variable">変動</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">Copyright &copy; 2026 Walkers. All Rights Reserved.</div>
+</div>
+
+<!-- ==================== 7. 会社概要 ==================== -->
+<div class="page content-page">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div class="section-title">会社概要</div>
+  </div>
+
+  <div class="table-wrap company-table" style="margin-top:6mm;">
+    <table>
+      <tbody>
+        <tr>
+          <td>会社名</td>
+          <td>株式会社Walkers</td>
+        </tr>
+        <tr>
+          <td>代表者</td>
+          <td>渡邊 敦司</td>
+        </tr>
+        <tr>
+          <td>設立</td>
+          <td>2021年8月</td>
+        </tr>
+        <tr>
+          <td>事業内容</td>
+          <td>システム開発事業 / 補助金申請支援事業 / DX支援事業 / マーケティング支援事業</td>
+        </tr>
+        <tr>
+          <td>所在地</td>
+          <td>〒112-0015 東京都文京区目白台2-9-4 1F</td>
+        </tr>
+        <tr>
+          <td>Webサイト</td>
+          <td><a href="https://walker-s.co.jp/" target="_blank">https://walker-s.co.jp/</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="position:absolute;bottom:20mm;left:20mm;right:20mm;text-align:center;">
+    <div style="font-size:8pt;color:var(--text-muted);font-style:italic;">Copyright &copy; 2026 Walkers. All Rights Reserved.</div>
+  </div>
+</div>
+
+</body>
+</html>

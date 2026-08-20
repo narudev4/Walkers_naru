@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>1LC 物件紹介（理想形 v2 / メール互換）</title>
+<!--
+  1LC マッチングメール 理想形 v2
+  設計指針タブ（スプレッドシート）準拠:
+   - 構成: ヒーロー1(画像あり) + サブ2(画像なし=色面+特大利回り)
+   - 技術: table + インラインCSS / 利回りはライブテキスト / 純白純黒回避 / color-scheme
+   - ※ヒーロー画像はデモ用に実物件画像(daijin.cc)を直リンク。本番は再ホスト+Airtable差し込み変数に置換。
+   - ※Outlook厳密対応(VMLボタン)は次段階。Gmail/Apple Mailで最適表示。
+-->
+</head>
+<body style="margin:0;padding:0;background-color:#e9e6e0;-webkit-text-size-adjust:100%;">
+<!-- preheader (受信箱プレビュー文) -->
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">【条件マッチ】武蔵関 徒歩7分・利回り6.93%の一棟RC ほか新着3件のご案内</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#e9e6e0;">
+<tr><td align="center" style="padding:24px 12px;">
+
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background-color:#fdfdfd;border-radius:8px;overflow:hidden;font-family:'Hiragino Kaku Gothic ProN','Yu Gothic',Meiryo,sans-serif;">
+
+  <!-- ===== ヘッダ ===== -->
+  <tr><td style="background-color:#2d2d2d;padding:16px 24px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+      <td style="color:#ffffff;font-size:20px;font-weight:bold;letter-spacing:1px;">1LC</td>
+      <td align="right" style="color:#b3ac9f;font-size:11px;">収益物件マッチング配信</td>
+    </tr></table>
+  </td></tr>
+
+  <!-- ===== 宛名 + パーソナライズ ===== -->
+  <tr><td style="padding:24px 24px 4px;">
+    <div style="font-size:15px;font-weight:bold;color:#2d2d2d;">山崎 武司 様</div>
+    <div style="font-size:13px;line-height:1.85;color:#3a3a3a;margin-top:12px;">
+      ご登録条件（<span style="background-color:#ffe2b8;font-weight:bold;color:#2d2d2d;">東京23区 ／ 利回り6%以上 ／ 2億円以内 ／ RC造</span>）に合致する<strong>新着物件</strong>が入りました。本日のおすすめを3件ご案内します。
+    </div>
+  </td></tr>
+
+  <!-- ===== ヒーロー物件（画像あり） ===== -->
+  <tr><td style="padding:18px 24px 0;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e7e1d6;border-radius:12px;overflow:hidden;">
+      <tr><td style="font-size:0;line-height:0;">
+        <img src="https://daijin.cc/realestate/gp/A/286/A2867835642_3.jpg" width="550" alt="関町北 一棟マンション 外観写真" style="display:block;width:100%;max-width:550px;height:auto;background-color:#39414c;color:#ffffff;font-size:12px;line-height:200px;text-align:center;">
+      </td></tr>
+      <tr><td style="padding:0;">
+        <div style="display:inline-block;background-color:#e8921c;color:#241500;font-size:11px;font-weight:bold;padding:6px 12px;">★ ご登録条件にマッチ</div>
+      </td></tr>
+      <tr><td style="padding:14px 18px 18px;">
+        <div style="font-size:11.5px;color:#857c6d;">西武新宿線「武蔵関」駅 徒歩7分 ／ 東京都練馬区関町北2丁目</div>
+        <div style="font-size:19px;font-weight:bold;color:#2d2d2d;margin-top:4px;">関町北 一棟マンション</div>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:14px;"><tr>
+          <td style="padding-right:28px;vertical-align:bottom;">
+            <div style="font-size:10px;color:#857c6d;font-weight:bold;letter-spacing:.3px;">表面利回り（想定）</div>
+            <div style="font-size:38px;line-height:1;color:#e8921c;font-weight:bold;">6.93<span style="font-size:18px;">%</span></div>
+          </td>
+          <td style="vertical-align:bottom;">
+            <div style="font-size:10px;color:#857c6d;font-weight:bold;letter-spacing:.3px;">販売価格</div>
+            <div style="font-size:26px;line-height:1.1;color:#2d2d2d;font-weight:bold;">16,500<span style="font-size:14px;">万円</span></div>
+          </td>
+        </tr></table>
+        <div style="margin-top:12px;">
+          <span style="display:inline-block;font-size:11px;color:#4a4438;background-color:#f6f2ea;border:1px solid #ece5d8;padding:4px 9px;border-radius:5px;margin:0 4px 4px 0;">RC造</span>
+          <span style="display:inline-block;font-size:11px;color:#4a4438;background-color:#f6f2ea;border:1px solid #ece5d8;padding:4px 9px;border-radius:5px;margin:0 4px 4px 0;">昭和58年6月築</span>
+          <span style="display:inline-block;font-size:11px;color:#4a4438;background-color:#f6f2ea;border:1px solid #ece5d8;padding:4px 9px;border-radius:5px;margin:0 4px 4px 0;">総戸数12戸</span>
+          <span style="display:inline-block;font-size:11px;color:#4a4438;background-color:#f6f2ea;border:1px solid #ece5d8;padding:4px 9px;border-radius:5px;margin:0 4px 4px 0;">想定家賃 約1,143万円/年</span>
+        </div>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;"><tr>
+          <td align="center" bgcolor="#e8921c" style="border-radius:10px;">
+            <a href="https://1lc.example/lp?bukken=A2867835642&u=yamazaki" style="display:block;padding:16px;font-size:16px;font-weight:bold;color:#241500;text-decoration:none;">物件の詳細を見る ▶</a>
+          </td>
+        </tr></table>
+      </td></tr>
+    </table>
+  </td></tr>
+
+  <!-- ===== サブ物件①（画像なし＝色面＋特大利回り） ===== -->
+  <tr><td style="padding:14px 24px 0;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e7e1d6;border-radius:12px;overflow:hidden;background-color:#faf7f1;"><tr>
+      <td width="150" style="width:150px;background-color:#2d2d2d;padding:18px 10px;text-align:center;vertical-align:middle;">
+        <div style="font-size:9px;color:#b3ac9f;font-weight:bold;">表面利回り（想定）</div>
+        <div style="font-size:30px;line-height:1;color:#e8921c;font-weight:bold;margin-top:2px;">8.20<span style="font-size:13px;">%</span></div>
+        <div style="font-size:26px;margin-top:10px;">&#127970;</div>
+        <div style="font-size:9px;color:#b3ac9f;margin-top:4px;">一棟アパート</div>
+      </td>
+      <td style="padding:14px 16px;vertical-align:top;">
+        <div style="font-size:11px;color:#857c6d;">JR京浜東北線「川口」駅 徒歩9分 ／ 埼玉県川口市</div>
+        <div style="font-size:15px;font-weight:bold;color:#2d2d2d;margin-top:2px;">川口 一棟アパート</div>
+        <div style="font-size:18px;font-weight:bold;color:#2d2d2d;margin-top:7px;">9,800<span style="font-size:12px;">万円</span></div>
+        <div style="margin-top:7px;">
+          <span style="display:inline-block;font-size:10.5px;color:#4a4438;background-color:#ffffff;border:1px solid #ece5d8;padding:3px 8px;border-radius:5px;margin:0 4px 4px 0;">木造</span>
+          <span style="display:inline-block;font-size:10.5px;color:#4a4438;background-color:#ffffff;border:1px solid #ece5d8;padding:3px 8px;border-radius:5px;margin:0 4px 4px 0;">平成10年築</span>
+          <span style="display:inline-block;font-size:10.5px;color:#4a4438;background-color:#ffffff;border:1px solid #ece5d8;padding:3px 8px;border-radius:5px;margin:0 4px 4px 0;">総戸数8戸</span>
+        </div>
+        <a href="https://1lc.example/lp?bukken=R0223205429&u=yamazaki" style="display:inline-block;margin-top:10px;font-size:12.5px;color:#c2740a;font-weight:bold;text-decoration:none;">詳細を見る ▶</a>
+      </td>
+    </tr></table>
+  </td></tr>
+
+  <!-- ===== サブ物件②（画像なし＝色面＋特大利回り） ===== -->
+  <tr><td style="padding:12px 24px 0;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e7e1d6;border-radius:12px;overflow:hidden;background-color:#faf7f1;"><tr>
+      <td width="150" style="width:150px;background-color:#2d2d2d;padding:18px 10px;text-align:center;vertical-align:middle;">
+        <div style="font-size:9px;color:#b3ac9f;font-weight:bold;">表面利回り（想定）</div>
+        <div style="font-size:30px;line-height:1;color:#e8921c;font-weight:bold;margin-top:2px;">7.45<span style="font-size:13px;">%</span></div>
+        <div style="font-size:26px;margin-top:10px;">&#127970;</div>
+        <div style="font-size:9px;color:#b3ac9f;margin-top:4px;">一棟マンション</div>
+      </td>
+      <td style="padding:14px 16px;vertical-align:top;">
+        <div style="font-size:11px;color:#857c6d;">東武東上線「ときわ台」駅 徒歩6分 ／ 東京都板橋区</div>
+        <div style="font-size:15px;font-weight:bold;color:#2d2d2d;margin-top:2px;">ときわ台 一棟マンション</div>
+        <div style="font-size:18px;font-weight:bold;color:#2d2d2d;margin-top:7px;">13,200<span style="font-size:12px;">万円</span></div>
+        <div style="margin-top:7px;">
+          <span style="display:inline-block;font-size:10.5px;color:#4a4438;background-color:#ffffff;border:1px solid #ece5d8;padding:3px 8px;border-radius:5px;margin:0 4px 4px 0;">RC造</span>
+          <span style="display:inline-block;font-size:10.5px;color:#4a4438;background-color:#ffffff;border:1px solid #ece5d8;padding:3px 8px;border-radius:5px;margin:0 4px 4px 0;">平成5年築</span>
+          <span style="display:inline-block;font-size:10.5px;color:#4a4438;background-color:#ffffff;border:1px solid #ece5d8;padding:3px 8px;border-radius:5px;margin:0 4px 4px 0;">総戸数10戸</span>
+        </div>
+        <a href="https://1lc.example/lp?bukken=F0259944729&u=yamazaki" style="display:inline-block;margin-top:10px;font-size:12.5px;color:#c2740a;font-weight:bold;text-decoration:none;">詳細を見る ▶</a>
+      </td>
+    </tr></table>
+  </td></tr>
+
+  <!-- ===== 末尾CTA ===== -->
+  <tr><td style="padding:20px 24px 6px;text-align:center;">
+    <a href="https://1lc.example/list?u=yamazaki" style="font-size:13px;color:#c2740a;font-weight:bold;text-decoration:none;">あなたの条件に合う物件をすべて見る ▶</a>
+  </td></tr>
+
+  <!-- ===== PS ===== -->
+  <tr><td style="padding:10px 24px 0;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#faf7f1;border-left:3px solid #e8921c;"><tr>
+      <td style="padding:12px 15px;font-size:12px;line-height:1.7;color:#4a4438;">
+        <strong>良い物件は動きが早く、初動が勝負です。</strong><br>
+        まずは利回り・収支のシミュレーションだけでもご確認ください。気になる点は面談で詳しくご説明します。
+      </td>
+    </tr></table>
+  </td></tr>
+
+  <!-- ===== フッタ ===== -->
+  <tr><td style="padding:22px 24px 0;font-size:12.5px;line-height:1.8;color:#3a3a3a;">
+    ご連絡をお待ちしております。引き続きどうぞよろしくお願いいたします。
+  </td></tr>
+  <tr><td style="margin-top:18px;background-color:#2d2d2d;color:#9c9489;padding:20px 24px 26px;font-size:10.5px;line-height:1.8;">
+    <div style="color:#ffffff;font-weight:bold;font-size:13px;margin-bottom:7px;">1LC株式会社</div>
+    info@1lc.com ／ 0120-016-867<br>
+    〒892-0823 鹿児島県鹿児島市住吉町4番1号　／　定休日：水曜日<br>
+    <a href="https://1lc.example/pref?u=yamazaki" style="color:#b3ac9f;">希望条件を変更する</a>　・　<a href="https://1lc.example/unsub?u=yamazaki" style="color:#b3ac9f;">配信を停止する</a><br>
+    <span style="color:#6f6a5f;">&copy; 2026 1LC Inc. All rights reserved.</span>
+  </td></tr>
+
+</table>
+
+<!-- 制作メモ（メール送信時は削除） -->
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;margin-top:14px;">
+<tr><td style="font-size:10.5px;color:#8a8275;background-color:#fffdf8;border:1px dashed #d8c9ad;border-radius:8px;padding:12px 15px;line-height:1.7;">
+  <strong style="color:#cf7d0c;">制作メモ（本番では削除）</strong>：①ヒーロー＝画像あり物件・サブ2＝画像なし物件の「数字主役カード」。②ヒーロー画像はデモ用に実物件画像を直リンク中→本番は再ホスト＋Airtable差し込み変数に置換。③利回りは全てライブテキスト（画像化しない）。④物件データはダミー組み合わせ（本番はAirtableから差し込み）。
+</td></tr>
+</table>
+
+</td></tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ptj-poc",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": ["-c", "source ~/.nvm/nvm.sh && nvm use 22 && cd /Users/naru/Walkers_naru/03_projects/パーソナルトレーナージャパン/app && npx next dev --turbopack"],
+      "port": 3000,
+      "autoPort": true
+    }
+  ]
+}

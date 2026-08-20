@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>デジタル化・AI導入補助金を活用したClaude導入のご提案</title>
+<style>
+  :root {
+    --navy: #1B2F55;
+    --navy-dark: #152444;
+    --navy-mid: #3A5480;
+    --navy-light: #5B739B;
+    --gold: #C9A45C;
+    --cream: #F5F1E6;
+    --text: #333333;
+    --text-gray: #888888;
+    --border: #D8D8D8;
+    --border-light: #E5E5E5;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", sans-serif;
+    color: var(--text);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  @page { size: A4; margin: 0; }
+  .page {
+    width: 210mm;
+    height: 296.8mm;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+    background: #fff;
+  }
+  .page:last-child { page-break-after: auto; }
+  .page-inner { padding: 16mm 18mm 22mm; }
+
+  /* ===== Cover ===== */
+  .cover {
+    background: var(--navy-dark);
+    color: #fff;
+  }
+  .cover::before {
+    content: "";
+    position: absolute;
+    width: 150mm; height: 150mm;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.025);
+    top: -50mm; right: -40mm;
+  }
+  .cover::after {
+    content: "";
+    position: absolute;
+    width: 120mm; height: 120mm;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.025);
+    bottom: -30mm; left: -40mm;
+  }
+  .cover-inner {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    padding: 20mm 20mm 18mm;
+    display: flex;
+    flex-direction: column;
+  }
+  .cover-brand {
+    font-size: 10.5pt;
+    letter-spacing: 0.35em;
+    color: #E8E8E8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cover-brand::before {
+    content: "";
+    display: inline-block;
+    width: 22px; height: 2px;
+    background: var(--gold);
+  }
+  .cover-main { margin-top: 62mm; }
+  .cover-label {
+    display: inline-block;
+    border: 1px solid rgba(255,255,255,0.5);
+    padding: 5px 14px;
+    font-size: 8.5pt;
+    letter-spacing: 0.25em;
+    color: #E8E8E8;
+  }
+  .cover-title {
+    margin-top: 9mm;
+    font-size: 27pt;
+    font-weight: 700;
+    line-height: 1.45;
+    color: #fff;
+  }
+  .cover-rule {
+    width: 34px; height: 3px;
+    background: var(--gold);
+    margin: 9mm 0 8mm;
+  }
+  .cover-lead {
+    font-size: 10.5pt;
+    line-height: 2.0;
+    color: #E3E7EE;
+  }
+  .cover-lead .gold { color: var(--gold); font-weight: 700; }
+  .cover-footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .cover-to {
+    border-top: 1px solid rgba(255,255,255,0.35);
+    padding-top: 5mm;
+    min-width: 62mm;
+  }
+  .cover-to .to-label { font-size: 8pt; color: #B8C0CE; letter-spacing: 0.15em; }
+  .cover-to .to-name { font-size: 13pt; font-weight: 700; margin-top: 3.5mm; }
+  .cover-from {
+    border-top: 1px solid rgba(255,255,255,0.35);
+    padding-top: 5mm;
+    text-align: right;
+    min-width: 72mm;
+  }
+  .cover-from .from-name { font-size: 11.5pt; font-weight: 700; }
+  .cover-from .from-detail { font-size: 8.5pt; color: #CBD2DD; line-height: 1.9; margin-top: 1.5mm; }
+
+  /* ===== Section header ===== */
+  .sec-head {
+    display: flex;
+    align-items: center;
+    border-bottom: 3px solid var(--navy);
+    padding-bottom: 3.2mm;
+    margin-bottom: 7mm;
+  }
+  .sec-num {
+    background: var(--navy);
+    color: #fff;
+    font-size: 9pt;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 3px 9px;
+    margin-right: 4mm;
+  }
+  .sec-title {
+    font-size: 14.5pt;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .sec-en {
+    margin-left: auto;
+    font-size: 8pt;
+    letter-spacing: 0.3em;
+    color: #9A9A9A;
+  }
+
+  /* ===== Common blocks ===== */
+  .para { font-size: 9.8pt; line-height: 1.95; margin-bottom: 5.5mm; }
+  .callout {
+    background: var(--cream);
+    border-left: 4px solid var(--gold);
+    padding: 4.5mm 6mm;
+    margin-bottom: 6mm;
+  }
+  .callout .co-title { font-size: 10pt; font-weight: 700; color: var(--navy); margin-bottom: 2.5mm; }
+  .callout .co-body { font-size: 9.3pt; line-height: 1.9; }
+  .callout .co-body li { list-style: none; margin-bottom: 1.2mm; padding-left: 1em; text-indent: -1em; }
+
+  .sub-head {
+    border-left: 4px solid var(--gold);
+    padding-left: 3.5mm;
+    font-size: 11pt;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 7mm 0 4mm;
+  }
+  .sub-head:first-of-type { margin-top: 0; }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5mm;
+    margin-bottom: 6mm;
+  }
+  .card {
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--navy);
+    padding: 4.5mm 5mm;
+  }
+  .card .card-title { font-size: 10.5pt; font-weight: 700; color: var(--navy); margin-bottom: 2.5mm; }
+  .card .card-body { font-size: 9.2pt; line-height: 1.85; }
+  .card .card-body li { list-style: none; margin-bottom: 1.5mm; padding-left: 1em; text-indent: -1em; }
+
+  table.tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9.2pt;
+    margin-bottom: 5mm;
+  }
+  table.tbl th {
+    background: var(--navy);
+    color: #fff;
+    font-weight: 700;
+    padding: 3mm 4mm;
+    text-align: center;
+    border: 1px solid var(--navy);
+    font-size: 9.3pt;
+  }
+  table.tbl td {
+    border: 1px solid var(--border);
+    padding: 3.2mm 4mm;
+    line-height: 1.75;
+    vertical-align: top;
+  }
+  table.tbl td.center { text-align: center; }
+  table.tbl td.right { text-align: right; }
+  table.tbl tr.total td {
+    background: var(--cream);
+    font-weight: 700;
+  }
+  table.tbl td.lbl { font-weight: 700; color: var(--navy); white-space: nowrap; }
+
+  /* step blocks */
+  .step {
+    border: 1px solid var(--border);
+    margin-bottom: 4.5mm;
+  }
+  .step-head {
+    background: #EFEFEF;
+    padding: 2.8mm 5mm;
+    font-size: 10.3pt;
+    font-weight: 700;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+  }
+  .step-head .step-no {
+    background: var(--navy);
+    color: #fff;
+    font-size: 8.5pt;
+    padding: 1px 8px;
+    margin-right: 3.5mm;
+  }
+  .step-body {
+    padding: 3.2mm 5mm;
+    font-size: 9.3pt;
+    line-height: 1.85;
+  }
+
+  /* estimate banner */
+  .banner {
+    background: var(--navy);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6mm 8mm;
+    margin: 2mm 0 7mm;
+  }
+  .banner .bn-label { font-size: 10.5pt; }
+  .banner .bn-value { text-align: right; }
+  .banner .bn-num { font-size: 21pt; font-weight: 700; }
+  .banner .bn-unit { font-size: 10.5pt; font-weight: 700; }
+  .banner .bn-sub { font-size: 8.3pt; color: #C8D0DD; margin-top: 1.5mm; }
+
+  .note { font-size: 8.3pt; color: #777; line-height: 1.7; margin-bottom: 5mm; }
+
+  /* company page */
+  .company-card {
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--navy);
+    padding: 7mm 8mm;
+    margin-bottom: 8mm;
+  }
+  .company-card .cc-name { font-size: 14pt; font-weight: 700; color: var(--navy); margin-bottom: 5mm; }
+  .company-card table { border-collapse: collapse; font-size: 9.5pt; }
+  .company-card td { padding: 1.8mm 0; line-height: 1.8; vertical-align: top; }
+  .company-card td.k { color: var(--text-gray); width: 26mm; }
+  .brand-bar {
+    display: flex;
+    align-items: center;
+    gap: 6mm;
+    margin-top: 14mm;
+  }
+  .brand-bar .bb-logo {
+    background: var(--navy);
+    color: #fff;
+    font-size: 9pt;
+    letter-spacing: 0.25em;
+    padding: 3mm 6mm;
+    white-space: nowrap;
+  }
+  .brand-bar .bb-tag {
+    flex: 1;
+    text-align: center;
+    font-size: 8.5pt;
+    color: #999;
+    letter-spacing: 0.2em;
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+    padding: 2mm 0;
+  }
+  .brand-bar .bb-url { font-size: 8.5pt; color: #666; white-space: nowrap; }
+  .copyright { text-align: center; font-size: 8pt; color: #AAA; margin-top: 10mm; font-style: italic; }
+
+  /* footer */
+  .pfoot {
+    position: absolute;
+    left: 18mm; right: 18mm; bottom: 9mm;
+    border-top: 1px solid var(--border-light);
+    padding-top: 2.5mm;
+    display: flex;
+    justify-content: space-between;
+    font-size: 7.8pt;
+    color: #999;
+    letter-spacing: 0.08em;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<div class="page cover">
+  <div class="cover-inner">
+    <div class="cover-brand">WALKERS INC.</div>
+    <div class="cover-main">
+      <div class="cover-label">SUBSIDY PROPOSAL ／ 2026.08.10</div>
+      <div class="cover-title">デジタル化・AI導入補助金を<br>活用したClaude導入のご提案</div>
+      <div class="cover-rule"></div>
+      <div class="cover-lead">
+        開発業務へのClaudeのご導入を、<br>
+        <span class="gold">補助率2分の1</span>の補助金でご支援します。
+      </div>
+    </div>
+    <div class="cover-footer">
+      <div class="cover-to">
+        <div class="to-label">ご提案先</div>
+        <div class="to-name">株式会社ASTENO様</div>
+      </div>
+      <div class="cover-from">
+        <div class="from-name">株式会社Walkers</div>
+        <div class="from-detail">
+          代表取締役 渡邊 敦司<br>
+          〒112-0015 東京都文京区目白台2-9-4 1F<br>
+          walker-s.co.jp
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 01 提案概要 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <span class="sec-title">提案概要</span>
+      <span class="sec-en">OVERVIEW</span>
+    </div>
+
+    <p class="para">弊社では、御社の開発業務の効率化に向けたClaudeのご導入について、デジタル化・AI導入補助金2026 通常枠のご申請をご提案いたします。初回のお打ち合わせでは、コンサルティングや研修をご希望というよりも、補助金を活用できるのであればClaudeを導入したい、というご意向をお伺いしました。本提案は、そのご意向に沿って、補助金の対象をClaudeの利用料に絞った構成としています。</p>
+
+    <div class="callout">
+      <div class="co-title">ご提案の要点</div>
+      <div class="co-body">
+        <li>・Claude（Max 20x）を3アカウント、2年分ご導入いただきます。補助対象経費は2,318,256円です。</li>
+        <li>・通常枠の補助率2分の1により、受給見込額は約1,159,000円です。</li>
+        <li>・弊社は本補助金のIT導入支援事業者として登録済みのため、申請手続きを代行いたします。</li>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">ご提案の対象</div>
+        <div class="card-body">
+          <li>・Claude（Max 20x）の利用料</li>
+          <li>・3アカウント × 2年分</li>
+          <li>・開発業務の効率化を目的としたご導入です。</li>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">弊社の登録状況</div>
+        <div class="card-body">
+          <li>・IT導入支援事業者として登録済みです。</li>
+          <li>・ITツール番号 DL07-0030610</li>
+          <li>・補助金ポータルサイトよりご確認いただけます。</li>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-head">申請の目標</div>
+    <p class="para">2026年8月25日締切の回でのご申請を目指します。交付決定は10月7日、補助金のご入金は2027年春頃の見込みです。</p>
+
+    <div class="pfoot">
+      <span>株式会社Walkers</span>
+      <span>デジタル化・AI導入補助金を活用したClaude導入のご提案</span>
+      <span>1</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 02 補助金の概要 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <span class="sec-title">補助金の概要</span>
+      <span class="sec-en">SUBSIDY</span>
+    </div>
+
+    <p class="para">本件でご申請するのは、デジタル化・AI導入補助金2026の通常枠です。中小企業のデジタル化を支援する制度で、ソフトウェアの購入費用やクラウドサービスの利用料が補助の対象となります。Claudeのような月額制のサービスは、最大2年分までが対象です。</p>
+
+    <table class="tbl">
+      <tr><th style="width:38mm;">項目</th><th>内容</th></tr>
+      <tr><td class="lbl">補助率</td><td>2分の1以内</td></tr>
+      <tr><td class="lbl">補助額</td><td>5万円以上150万円未満（1つ以上の業務プロセスに対応したITツールを導入する場合）</td></tr>
+      <tr><td class="lbl">補助対象経費</td><td>ソフトウェア購入費、クラウド利用費（最大2年分）、導入関連費</td></tr>
+      <tr><td class="lbl">本件の該当区分</td><td>クラウド利用費。Claudeの利用料2年分が対象となります。</td></tr>
+      <tr><td class="lbl">申請の締切</td><td>2026年8月25日</td></tr>
+    </table>
+
+    <div class="sub-head">申請枠について</div>
+
+    <div class="callout">
+      <div class="co-title">通常枠でのご申請となる理由</div>
+      <div class="co-body">本件で導入するClaude（ITツール番号 DL07-0030610）はインボイス対応の登録がないため、補助率3分の2のインボイス枠は対象外となります。したがって、補助率2分の1の通常枠でのご申請となります。</div>
+    </div>
+
+    <p class="para">初回のお打ち合わせでは補助率3分の2の枠についてもご説明いたしましたが、その後の精査により、本件は上記のとおり通常枠でのご申請となることを確認いたしました。</p>
+
+    <div class="sub-head">業務プロセスの要件について</div>
+    <p class="para">通常枠では、導入するITツールが1つ以上の業務プロセスに対応している必要があります。弊社が登録しているClaudeは、顧客対応・販売支援、決済・債権債務・資金回収、供給・在庫・物流、会計・財務・経営、総務・人事・給与ほかの5つの業務プロセスに対応しているため、この要件を満たしています。</p>
+
+    <div class="pfoot">
+      <span>株式会社Walkers</span>
+      <span>デジタル化・AI導入補助金を活用したClaude導入のご提案</span>
+      <span>2</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 03 ご申請プラン ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <span class="sec-title">ご申請プラン</span>
+      <span class="sec-en">PLAN</span>
+    </div>
+
+    <div class="sub-head">補助対象経費</div>
+    <table class="tbl">
+      <tr><th>項目</th><th style="width:30mm;">単価</th><th style="width:30mm;">数量</th><th style="width:34mm;">金額</th></tr>
+      <tr>
+        <td>Claude<br>（Max 20x ／ Claude Code AI 業務構築プラットフォーム）</td>
+        <td class="right">386,376円/年</td>
+        <td class="center">3アカウント<br>× 2年</td>
+        <td class="right">2,318,256円</td>
+      </tr>
+      <tr class="total">
+        <td colspan="3">補助対象経費 合計</td>
+        <td class="right">2,318,256円</td>
+      </tr>
+    </table>
+
+    <div class="banner">
+      <div class="bn-label">受給見込額</div>
+      <div class="bn-value">
+        <span class="bn-num">1,159,000</span><span class="bn-unit">円（補助率2分の1）</span>
+        <div class="bn-sub">補助対象経費2,318,256円に対する補助額です。</div>
+      </div>
+    </div>
+
+    <p class="note">※ アカウント数は初回のお打ち合わせでお伺いした3アカウントを前提としています。アカウント数が変わる場合は、補助対象経費と受給見込額も変わります。<br>※ 補助額の1円未満は切り捨てとなります。</p>
+
+    <div class="sub-head">実質のご負担</div>
+    <table class="tbl">
+      <tr><th>項目</th><th style="width:44mm;">金額</th></tr>
+      <tr><td>Claudeの利用料（3アカウント × 2年分）</td><td class="right">2,318,256円</td></tr>
+      <tr><td>補助金の受給額</td><td class="right">− 1,159,000円</td></tr>
+      <tr class="total"><td>実質のご負担</td><td class="right">1,159,256円</td></tr>
+    </table>
+
+    <p class="para">補助金をご利用にならない場合と比べ、約116万円のご負担が軽くなります。</p>
+
+    <div class="pfoot">
+      <span>株式会社Walkers</span>
+      <span>デジタル化・AI導入補助金を活用したClaude導入のご提案</span>
+      <span>3</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 04 ご準備いただくもの ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <span class="sec-title">ご準備いただくもの</span>
+      <span class="sec-en">REQUIREMENTS</span>
+    </div>
+
+    <p class="para">ご申請にあたって御社にご用意いただく書類です。8月7日のメールでもご案内いたしましたが、あらためて記載いたします。GビズIDプライムとSECURITY ACTIONは取得までに日数を要するため、先に着手いただきたい項目です。</p>
+
+    <table class="tbl">
+      <tr><th style="width:44mm;">項目</th><th>内容</th></tr>
+      <tr>
+        <td class="lbl">GビズIDプライム</td>
+        <td>補助金の申請に必須のアカウントです。取得までに日数がかかるため、お早めのご着手をお願いいたします。取得の費用はかかりません。</td>
+      </tr>
+      <tr>
+        <td class="lbl">SECURITY ACTION</td>
+        <td>情報処理推進機構（IPA）が実施する制度です。★一つ星以上の宣言が申請の要件となっています。</td>
+      </tr>
+      <tr>
+        <td class="lbl">履歴事項全部証明書</td>
+        <td>発行から3ヶ月以内のものをご用意ください。</td>
+      </tr>
+      <tr>
+        <td class="lbl">法人納税証明書</td>
+        <td>その1またはその2の、直前期分をご用意ください。税務署で発行されたものが必要です。</td>
+      </tr>
+      <tr>
+        <td class="lbl">直前期の決算書</td>
+        <td>貸借対照表と損益計算書をご用意ください。第1期の申告がお済みであることは、初回のお打ち合わせで確認しております。</td>
+      </tr>
+    </table>
+
+    <div class="callout">
+      <div class="co-title">お盆期間を挟みます</div>
+      <div class="co-body">8月25日の締切までにお盆期間を挟むため、GビズIDプライムとSECURITY ACTIONについては早めのご着手をお願いいたします。手続きの方法でご不明な点がございましたら、弊社にてご案内いたします。</div>
+    </div>
+
+    <div class="sub-head">弊社にて対応する事項</div>
+    <p class="para">事業計画の策定、交付申請の書類作成と提出、採択後の実績報告および効果報告は、弊社にて対応いたします。御社にお願いするのは、上記の書類のご準備と、申請内容のご確認です。</p>
+
+    <div class="pfoot">
+      <span>株式会社Walkers</span>
+      <span>デジタル化・AI導入補助金を活用したClaude導入のご提案</span>
+      <span>4</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 05 申請から入金までの流れ ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <span class="sec-title">申請から入金までの流れ</span>
+      <span class="sec-en">SCHEDULE</span>
+    </div>
+
+    <div class="step">
+      <div class="step-head"><span class="step-no">STEP 1</span>ご契約と事前準備（〜8月中旬）</div>
+      <div class="step-body">弊社とのご契約を締結いたします。あわせて、GビズIDプライムの取得とSECURITY ACTIONの宣言を進めていただきます。</div>
+    </div>
+    <div class="step">
+      <div class="step-head"><span class="step-no">STEP 2</span>交付申請（〜8月25日）</div>
+      <div class="step-body">弊社が事業計画と申請書類を作成いたします。内容を御社にご確認いただいたうえで提出いたします。</div>
+    </div>
+    <div class="step">
+      <div class="step-head"><span class="step-no">STEP 3</span>交付決定（10月7日）</div>
+      <div class="step-body">採択の可否が通知されます。</div>
+    </div>
+    <div class="step">
+      <div class="step-head"><span class="step-no">STEP 4</span>Claudeのご契約（10月7日以降）</div>
+      <div class="step-body">交付決定の後に、Claudeのご契約とお支払いの手続きを行っていただきます。</div>
+    </div>
+    <div class="step">
+      <div class="step-head"><span class="step-no">STEP 5</span>実績報告</div>
+      <div class="step-body">ご導入の完了とお支払いの事実を事務局へ報告いたします。弊社にて対応いたします。</div>
+    </div>
+    <div class="step">
+      <div class="step-head"><span class="step-no">STEP 6</span>補助金のご入金（2027年春頃）</div>
+      <div class="step-body">実績報告の確認を経て、御社に補助金がご入金となります。</div>
+    </div>
+
+    <div class="callout">
+      <div class="co-title">交付決定より前のご契約は補助の対象外です</div>
+      <div class="co-body">2026年10月7日の交付決定より前にClaudeをご契約・お支払いになった場合、その費用は補助の対象外となります。ご契約とお支払いの時期は、交付決定の後にご調整いただきますようお願いいたします。</div>
+    </div>
+
+    <div class="pfoot">
+      <span>株式会社Walkers</span>
+      <span>デジタル化・AI導入補助金を活用したClaude導入のご提案</span>
+      <span>5</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 06 費用 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="sec-head">
+      <span class="sec-num">06</span>
+      <span class="sec-title">費用</span>
+      <span class="sec-en">FEE</span>
+    </div>
+
+    <p class="para">弊社の申請支援費用です。事業計画の策定から交付申請、採択後の実績報告・効果報告まで一貫して対応いたします。</p>
+
+    <table class="tbl">
+      <tr><th>項目</th><th style="width:34mm;">金額</th><th style="width:52mm;">お支払いの時期</th></tr>
+      <tr>
+        <td class="lbl">着手金</td>
+        <td class="right">50,000円</td>
+        <td>ご契約時にお支払いいただきます。</td>
+      </tr>
+      <tr>
+        <td class="lbl">成功報酬</td>
+        <td class="right">300,000円</td>
+        <td>交付決定の後にお支払いいただきます。不採択の場合は発生いたしません。</td>
+      </tr>
+      <tr class="total">
+        <td>合計</td>
+        <td class="right">350,000円</td>
+        <td>いずれも税別です。</td>
+      </tr>
+    </table>
+
+    <div class="banner">
+      <div class="bn-label">費用 合計</div>
+      <div class="bn-value">
+        <span class="bn-num">350,000</span><span class="bn-unit">円（税別）</span>
+        <div class="bn-sub">着手金50,000円と成功報酬300,000円の合計です。</div>
+      </div>
+    </div>
+
+    <div class="sub-head">支援の範囲</div>
+    <table class="tbl">
+      <tr><th style="width:44mm;">フェーズ</th><th>内容</th></tr>
+      <tr><td class="lbl">事業計画の策定</td><td>補助金の要件に沿った事業計画を弊社にて作成いたします。</td></tr>
+      <tr><td class="lbl">交付申請</td><td>申請書類の作成と提出を代行いたします。</td></tr>
+      <tr><td class="lbl">実績報告</td><td>採択後、ご導入の完了とお支払いの事実を報告いたします。</td></tr>
+      <tr><td class="lbl">効果報告</td><td>交付決定後、事務局に対して定められた期間の報告を行います。</td></tr>
+    </table>
+
+    <div class="pfoot">
+      <span>株式会社Walkers</span>
+      <span>デジタル化・AI導入補助金を活用したClaude導入のご提案</span>
+      <span>6</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 07 会社概要 ============ -->
+<div class="page">
+  <div class="page-inner">
+    <div class="sec-head">
+      <span class="sec-num">07</span>
+      <span class="sec-title">会社概要</span>
+      <span class="sec-en">COMPANY</span>
+    </div>
+
+    <div class="company-card">
+      <div class="cc-name">株式会社Walkers</div>
+      <table>
+        <tr><td class="k">代表者</td><td>代表取締役 渡邊 敦司</td></tr>
+        <tr><td class="k">設立</td><td>2021年8月</td></tr>
+        <tr><td class="k">事業内容</td><td>システム開発事業 ／ 補助金申請支援事業 ／ DX支援事業 ／ マーケティング支援事業</td></tr>
+        <tr><td class="k">所在地</td><td>〒112-0015 東京都文京区目白台2-9-4 1F</td></tr>
+        <tr><td class="k">Web</td><td>https://walker-s.co.jp/</td></tr>
+      </table>
+    </div>
+
+    <div class="brand-bar">
+      <span class="bb-logo">WALKERS INC.</span>
+      <span class="bb-tag">テクノロジーと自由、人類の幸福の共存</span>
+      <span class="bb-url">walker-s.co.jp</span>
+    </div>
+
+    <div class="copyright">Copyright © 2026 Walkers. All Rights Reserved.</div>
+
+    <div class="pfoot">
+      <span>株式会社Walkers</span>
+      <span>デジタル化・AI導入補助金を活用したClaude導入のご提案</span>
+      <span>7</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

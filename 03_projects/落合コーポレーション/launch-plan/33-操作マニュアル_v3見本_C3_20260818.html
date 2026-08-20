@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<title>操作マニュアル v3 見本（C-3 出荷する）</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif; color:#1a202c; }
+  body { line-break: strict; }
+  @page { size:A4; margin:0; }
+  .page { width:210mm; height:296mm; page-break-after:always; position:relative; padding:16mm 16mm 20mm; overflow:hidden; }
+  .page:last-child { page-break-after:auto; }
+
+  .foot { position:absolute; bottom:8mm; left:16mm; right:16mm; display:flex; justify-content:space-between; font-size:8.5pt; color:#8a94a6; border-top:1px solid #e2e8f0; padding-top:2mm; }
+
+  /* 数字丸: 数字は欧文フォント・line-height 1 で光学中央に */
+  .num, ol.ops li::before {
+    font-family:'Helvetica Neue', Arial, sans-serif !important;
+    line-height:1 !important;
+    font-feature-settings:'tnum';
+  }
+
+  .band { background:#24365c; color:#fff; border-radius:6px; padding:14px 20px; display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+  .band .num { background:#e53e3e; color:#fff; width:34px; height:34px; flex:0 0 34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15pt; font-weight:700; padding-bottom:2px; }
+  .band h2 { font-size:16.5pt; font-weight:700; letter-spacing:.02em; flex:1; text-wrap:balance; }
+  .band .who { background:#f6ad3c; color:#3b2b00; font-size:9.5pt; font-weight:700; padding:4px 12px; border-radius:999px; white-space:nowrap; }
+  .band .who.w { background:#dbe4f3; color:#24365c; }
+
+  .lead { background:#eff6ff; border-left:5px solid #3b82f6; border-radius:4px; padding:12px 16px; font-size:11.5pt; line-height:1.9; margin-bottom:14px; text-wrap:pretty; }
+  .lead b { color:#1e40af; }
+
+  .shots { display:flex; flex-direction:column; align-items:center; gap:7px; margin:10px 0 2px; }
+  .shot { text-align:center; width:100%; max-width:162mm; }
+  .shot img { width:auto; max-width:100%; max-height:80mm; border:1px solid #cbd5e1; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .shot .cap { font-size:9pt; color:#64748b; margin-top:3px; }
+
+  ol.ops { margin:10px 0 6px 4px; list-style:none; counter-reset:op; }
+  ol.ops li { counter-increment:op; position:relative; padding:8px 0 8px 38px; font-size:11.5pt; line-height:1.8; border-bottom:1px dashed #e2e8f0; text-wrap:pretty; }
+  ol.ops li:last-child { border-bottom:none; }
+  ol.ops li::before { content:counter(op); position:absolute; left:0; top:9px; width:24px; height:24px; border-radius:50%; background:#24365c; color:#fff; font-size:11pt; font-weight:700; display:flex; align-items:center; justify-content:center; padding-top:1.25px; }
+  ol.ops b { color:#b91c1c; }
+
+  .note { background:#fff9e6; border:1.5px solid #f4c430; border-radius:8px; padding:11px 16px; font-size:10.5pt; line-height:1.8; margin:10px 0; text-wrap:pretty; }
+  .note .t { font-weight:700; color:#8a6d00; }
+  .ok { background:#f0fdf4; border:1.5px solid #22c55e; border-radius:8px; padding:11px 16px; font-size:10.5pt; line-height:1.8; margin:10px 0; text-wrap:pretty; }
+  .ok .t { font-weight:700; color:#15803d; display:block; margin-bottom:4px; font-size:11.5pt; }
+  .tbd { background:#fdeaea; color:#b91c1c; font-weight:700; font-size:9.5pt; padding:2px 8px; border-radius:4px; white-space:nowrap; }
+  .kw { white-space:nowrap; }
+
+  /* 表紙 */
+  .cover { display:flex; flex-direction:column; align-items:center; text-align:center; padding-top:32mm; }
+  .cover h1 { color:#24365c; font-size:25pt; line-height:1.5; font-weight:800; text-wrap:balance; }
+  .cover .sub { color:#475569; font-size:13pt; margin-top:8mm; }
+  .cover .scope { margin-top:13mm; width:154mm; text-align:left; background:#fff9e6; border:2px solid #f4c430; border-radius:10px; padding:16px 22px; }
+  .cover .scope .t { font-weight:800; color:#8a6d00; font-size:12.5pt; margin-bottom:6px; }
+  .cover .scope p { font-size:11.5pt; line-height:2.0; text-wrap:pretty; }
+  .cover .meta { margin-top:14mm; color:#64748b; font-size:10.5pt; line-height:2.0; }
+  .flow { margin-top:11mm; width:164mm; display:flex; gap:6mm; }
+  .fcard { flex:1; border:1.5px solid #cbd5e1; border-radius:10px; padding:13px 8px; text-align:center; }
+  .fcard .fn { color:#e53e3e; font-weight:800; font-size:10pt; font-family:'Helvetica Neue',Arial,sans-serif; }
+  .fcard .ft { font-weight:700; color:#24365c; font-size:11.5pt; margin:4px 0; line-height:1.6; text-wrap:balance; }
+  .fcard .fp { color:#64748b; font-size:9.5pt; }
+
+  /* 目次 */
+  .toc h1 { color:#24365c; font-size:19pt; font-weight:800; border-bottom:3px solid #24365c; padding-bottom:8px; margin-bottom:10mm; }
+  .tgroup { margin-bottom:8mm; }
+  .tgroup .gh { display:flex; align-items:center; gap:8px; font-size:12.5pt; font-weight:800; color:#24365c; margin-bottom:3mm; }
+  .tgroup .dot { width:12px; height:12px; border-radius:3px; }
+  .trow { display:flex; align-items:baseline; font-size:11pt; line-height:2.1; padding-left:20px; }
+  .trow .tt { white-space:nowrap; }
+  .trow .dots { flex:1; border-bottom:1.5px dotted #cbd5e1; margin:0 8px; transform:translateY(-4px); }
+  .trow .tp { color:#334155; font-family:'Helvetica Neue',Arial,sans-serif; font-weight:600; }
+  .trow .tp.soon { color:#b6bfcc; font-weight:400; font-size:9.5pt; }
+</style>
+</head>
+<body>
+<!-- ===== P1 表紙 ===== -->
+<section class="page">
+<div class="cover">
+<h1>落合コーポレーション様<br/>ECサイト 出荷のマニュアル</h1>
+<div class="sub">ご注文を発送して「発送済み」にするまでの手順</div>
+<div class="scope">
+<div class="t">⚠ このマニュアルの対象</div>
+<p>毎日の<b>出荷作業</b>の手順です。ご注文の確認 → 荷造り → 送り状 → <b class="kw">「発送済み」にする</b>、の順に進みます。<br/>所要時間はご注文 1 件あたり<b>約 3 分</b>です（荷造りを除く）。</p>
+</div>
+<div class="flow">
+<div class="fcard"><div class="fn">STEP 1</div><div class="ft">注文の確認と荷造り</div><div class="fp">P.3</div></div>
+<div class="fcard"><div class="fn">STEP 2</div><div class="ft">送り状を発行する</div><div class="fp">P.4</div></div>
+<div class="fcard"><div class="fn">STEP 3</div><div class="ft">「発送済み」にする</div><div class="fp">P.5</div></div>
+</div>
+<div class="meta">最終更新: 2026年8月18日<br/>作成: 株式会社Walkers</div>
+</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span>1 / 5</span></div>
+</section>
+<!-- ===== P2 目次 ===== -->
+<section class="page toc">
+<h1>目次</h1>
+<div class="tgroup">
+<div class="gh"><span class="dot" style="background:#64748b"></span>はじめに</div>
+<div class="trow"><span class="tt">管理画面へのログイン・画面の地図</span><span class="dots"></span><span class="tp soon">完成版に収録</span></div>
+</div>
+<div class="tgroup">
+<div class="gh"><span class="dot" style="background:#16a34a"></span>商品を売る準備</div>
+<div class="trow"><span class="tt">新しい商品を売り始める</span><span class="dots"></span><span class="tp soon">完成版に収録</span></div>
+<div class="trow"><span class="tt">価格を変える／売るのをやめる／在庫を直す</span><span class="dots"></span><span class="tp soon">完成版に収録</span></div>
+</div>
+<div class="tgroup">
+<div class="gh"><span class="dot" style="background:#7c3aed"></span>業者様を迎える</div>
+<div class="trow"><span class="tt">業者様アカウントの作成とご案内</span><span class="dots"></span><span class="tp soon">完成版に収録</span></div>
+<div class="trow"><span class="tt">掛け率・割引率の表を直す</span><span class="dots"></span><span class="tp soon">完成版に収録</span></div>
+</div>
+<div class="tgroup">
+<div class="gh"><span class="dot" style="background:#2563eb"></span>注文から発送まで（この見本の範囲）</div>
+<div class="trow"><span class="tt">STEP 1　ご注文の内容を確認して荷造りする</span><span class="dots"></span><span class="tp">P.3</span></div>
+<div class="trow"><span class="tt">STEP 2　送り状（佐川急便）を発行する</span><span class="dots"></span><span class="tp">P.4</span></div>
+<div class="trow"><span class="tt">STEP 3　管理画面で「発送済み」にする</span><span class="dots"></span><span class="tp">P.5</span></div>
+</div>
+<div class="tgroup">
+<div class="gh"><span class="dot" style="background:#dc2626"></span>請求と入金</div>
+<div class="trow"><span class="tt">かけ払いの請求書を確認して送る（毎月20日・末日）</span><span class="dots"></span><span class="tp soon">完成版に収録</span></div>
+<div class="trow"><span class="tt">入金の確認と督促</span><span class="dots"></span><span class="tp soon">完成版に収録</span></div>
+</div>
+<div class="tgroup">
+<div class="gh"><span class="dot" style="background:#0d9488"></span>お知らせと問い合わせ・巻末付録</div>
+<div class="trow"><span class="tt">お知らせの投稿／問い合わせ対応／誰がやるか早見表</span><span class="dots"></span><span class="tp soon">完成版に収録</span></div>
+</div>
+<div class="note" style="margin-top:10mm"><span class="t">この冊子について。</span> 本書は「業務の流れ」の順に並んでいます。困ったときは目次から該当ページを開いてください。<span class="tbd">確定後に記入</span> のタグが付いた箇所は、ご回答待ちの事項です。確定次第、更新版をお渡しします。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span>2 / 5</span></div>
+</section>
+<!-- ===== P3 STEP1 ===== -->
+<section class="page" id="sec-c3">
+<div class="band"><div class="num">1</div><h2>ご注文の内容を確認して荷造りする</h2><div class="who">落合様の操作</div></div>
+<div class="lead">「注文管理」から出荷するご注文を開き、<b>商品名・数量・お届け先</b>を確認します。<br/>都度払いのご注文（<b class="kw">payment:prepaid</b>のタグ付き）だけは、<b class="kw">入金の確認が先</b>です。</div>
+<div class="shots">
+<div class="shot"><img alt="" src="33-manual-assets/print/17_orders-list.jpg" style="max-height:88mm"/><div class="cap">「注文」の一覧。ここから出荷するご注文を開きます。</div></div>
+<div class="shot"><img alt="" src="33-manual-assets/print/18_order-detail-b2b.jpg" style="max-height:88mm"/><div class="cap">ご注文の詳細。商品・数量・お届け先を確認します。</div></div>
+</div>
+<div class="note"><span class="t">⚠ 都度払いのご注文だけは順番が違います。</span> 入金 → 出荷の順です。入金がまだのご注文は荷造りを止めてください。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span>3 / 5</span></div>
+</section>
+<!-- ===== P4 STEP2 ===== -->
+<section class="page">
+<div class="band"><div class="num">2</div><h2>送り状（佐川急便）を発行する</h2><div class="who">落合様の操作</div></div>
+<div class="lead">送り状を発行して荷物に貼ります。<br/>新システムでの発行方法は <span class="tbd">確定後に記入</span> です。決まるまでは<b class="kw">現在の方法</b>で続けてください。</div>
+<div class="note"><span class="t">📦 Walkersからのお願い。</span> 発行方法を新システムにつなぐため、次の4点をお知らせください。<br/>①送り状発行システムの名前　②お客様コード　③運賃表　④月間のおよその出荷件数。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span>4 / 5</span></div>
+</section>
+<!-- ===== P5 STEP3 ===== -->
+<section class="page">
+<div class="band"><div class="num">3</div><h2>管理画面で「発送済み」にする</h2><div class="who">落合様の操作</div></div>
+<div class="lead"><b>かけ払いの請求書は「発送済みになったご注文」だけを集めて作られます。</b><br/>「発送済み」にし忘れたご注文は<b class="kw">請求書に載りません</b>。発送したら必ず行ってください。</div>
+<ol class="ops">
+<li>「注文管理」から、発送したご注文をクリックします。</li>
+<li>「未発送」の枠にある<b class="kw">「発送済みとしてマークする」</b>をクリックします。</li>
+<li>送り状番号の入力欄が出たら入力します（なくても進めます）。</li>
+<li>もう一度ボタンを押して確定します。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="33-manual-assets/print/47_order-fulfill-button.png" style="max-height:44mm"/><div class="cap">ご注文詳細の「未発送」の枠。右下の「発送済みとしてマークする」を押します。</div></div>
+</div>
+<div class="ok"><span class="t">✅ できたか確認</span>ご注文の表示が「<b>発送済み</b>」に変わっていれば完了です。業者様には発送のお知らせメールが自動で届きます。</div>
+<div class="note"><span class="t">⚠ 締め日（20日・末日）に発送した分は、その日のうちに。</span> 「発送済み」にした日が請求の集計日になります。日をまたぐと翌月の請求に回ります。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span>5 / 5</span></div>
+</section>
+</body>
+</html>

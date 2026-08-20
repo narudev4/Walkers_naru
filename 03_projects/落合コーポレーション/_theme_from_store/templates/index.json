@@ -1,0 +1,215 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "collection-list": {
+      "type": "collection-list",
+      "blocks": {
+        "collection-0": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": ""
+          }
+        },
+        "collection-1": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": ""
+          }
+        },
+        "collection-2": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": ""
+          }
+        },
+        "collection-3": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": ""
+          }
+        }
+      },
+      "block_order": [
+        "collection-0",
+        "collection-1",
+        "collection-2",
+        "collection-3"
+      ],
+      "settings": {
+        "title": "SHOP BY CATEGORY",
+        "heading_size": "h1",
+        "image_ratio": "square",
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "show_view_all": false,
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 52,
+        "padding_bottom": 52
+      }
+    },
+    "ochiai-hero": {
+      "type": "ochiai-hero",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "eyebrow": "シャトル製造メーカー直販",
+        "headline_top": "Feel the",
+        "headline_accent": "Heartbeat.",
+        "lead": "シャトルとプレーヤーの鼓動が重なる、試合前のあの高揚感。自社製造のシャトルから、その一瞬を届けます。",
+        "button_label_1": "商品一覧を見る",
+        "button_link_1": "shopify://collections/all",
+        "button_label_2": "カテゴリーから探す",
+        "button_link_2": "shopify://collections",
+        "notes": "自社製造のシャトル | バドミントン／テニス"
+      }
+    },
+    "factory": {
+      "type": "multicolumn",
+      "blocks": {
+        "c1": {
+          "type": "column",
+          "settings": {
+            "title": "01  羽根を選別する。",
+            "text": "<p>1球ずつ羽根を見て組み合わせ、飛びのばらつきを抑えます。</p>"
+          }
+        },
+        "c2": {
+          "type": "column",
+          "settings": {
+            "title": "02  スピードを選べる。",
+            "text": "<p>気温や体育館の環境に合わせて、番号（スピード）を選べます。</p>"
+          }
+        },
+        "c3": {
+          "type": "column",
+          "settings": {
+            "title": "03  同じ品質で続ける。",
+            "text": "<p>練習球から試合球まで、同じ基準で継続して供給します。</p>"
+          }
+        }
+      },
+      "block_order": [
+        "c1",
+        "c2",
+        "c3"
+      ],
+      "settings": {
+        "title": "MADE IN OUR FACTORY",
+        "heading_size": "h1",
+        "image_width": "third",
+        "image_ratio": "adapt",
+        "columns_desktop": 3,
+        "column_alignment": "left",
+        "background_style": "none",
+        "color_scheme": "scheme-1",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 64,
+        "padding_bottom": 64,
+        "button_label": "",
+        "button_link": ""
+      }
+    },
+    "recommended": {
+      "type": "featured-collection",
+      "settings": {
+        "collection": "all",
+        "products_to_show": 8,
+        "title": "RECOMMENDED",
+        "heading_size": "h1",
+        "description": "<p>今おすすめの商品です。横にスクロールしてご覧いただけます。</p>",
+        "show_description": true,
+        "description_style": "subtitle",
+        "columns_desktop": 4,
+        "enable_desktop_slider": true,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "outline",
+        "color_scheme": "scheme-1",
+        "image_ratio": "square",
+        "padding_top": 52,
+        "padding_bottom": 52
+      }
+    },
+    "news": {
+      "type": "featured-blog",
+      "settings": {
+        "blog": "news",
+        "post_limit": 4,
+        "heading": "NEWS",
+        "heading_size": "h1",
+        "columns_desktop": 3,
+        "show_view_all": true,
+        "show_image": false,
+        "show_date": true,
+        "show_author": false,
+        "color_scheme": "scheme-1",
+        "padding_top": 52,
+        "padding_bottom": 52
+      }
+    },
+    "cta": {
+      "type": "rich-text",
+      "blocks": {
+        "caption": {
+          "type": "caption",
+          "settings": {
+            "caption": "ONLINE STORE",
+            "text_style": "caption-with-letter-spacing"
+          }
+        },
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "SHOP THE SHUTTLES",
+            "heading_size": "h1"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>試合球から練習球まで、オンラインでお求めいただけます。</p>"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "button_label": "商品一覧を見る",
+            "button_link": "shopify://collections/all",
+            "button_style_secondary": false
+          }
+        }
+      },
+      "block_order": [
+        "caption",
+        "heading",
+        "text",
+        "button"
+      ],
+      "settings": {
+        "desktop_content_position": "left",
+        "content_alignment": "left",
+        "color_scheme": "scheme-4",
+        "full_width": true,
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    }
+  },
+  "order": [
+    "ochiai-hero",
+    "factory",
+    "recommended",
+    "news",
+    "collection-list",
+    "cta"
+  ]
+}

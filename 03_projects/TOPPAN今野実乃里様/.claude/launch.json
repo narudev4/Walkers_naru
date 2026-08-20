@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "toppan-coupon",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": ["-c", "cd /Users/naru/Walkers_naru/output/deploy/toppan-coupon && npm run dev"],
+      "port": 3000,
+      "autoPort": true
+    }
+  ]
+}

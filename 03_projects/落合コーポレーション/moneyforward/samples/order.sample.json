@@ -1,0 +1,38 @@
+{
+  "_comment": "Shopify 注文を正規化した入力サンプル（B2B・③都度払い相当）。Shopify→MF 変換ロジック(mapOrder.js)の入力。wholesale_unit_price は掛け率適用後の卸単価（Track B / discountEngine.js の出力を入力として受領する前提。ここでは計算しない）。",
+  "id": "gid://shopify/Order/5500000000042",
+  "name": "#1042",
+  "ordered_at": "2026-06-08T18:30:00+09:00",
+  "fulfilled_at": "2026-06-08T20:00:00+09:00",
+  "payment_term": "immediate",
+  "mf_partner_id": null,
+  "customer": {
+    "company": "株式会社サンプルスポーツ",
+    "person_name": "山田 太郎",
+    "person_dept": "仕入部",
+    "email": "torihikisaki@example.com",
+    "zip": "231-0023",
+    "prefecture": "神奈川県",
+    "address1": "横浜市中区山下町1-1",
+    "address2": "サンプルビル5F",
+    "tel": "045-000-0000"
+  },
+  "line_items": [
+    {
+      "title": "ヨネックス バドミントンラケット ナノフレア800",
+      "sku": "YNX-NF800",
+      "quantity": 3,
+      "wholesale_unit_price": 14000,
+      "tax_rate": "ten_percent",
+      "unit": "本"
+    },
+    {
+      "title": "ヨネックス シャトルコック エアロセンサ500",
+      "sku": "YNX-AS500",
+      "quantity": 10,
+      "wholesale_unit_price": 2400,
+      "tax_rate": "ten_percent",
+      "unit": "ダース"
+    }
+  ]
+}

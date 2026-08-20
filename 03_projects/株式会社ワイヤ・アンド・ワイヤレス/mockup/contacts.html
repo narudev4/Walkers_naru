@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>担当者 - Wi2 Sales</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    .contact-name-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .contact-name {
+      font-weight: 500;
+      color: var(--text);
+    }
+    .text-right {
+      text-align: right;
+    }
+    th.text-right {
+      text-align: right;
+    }
+    .filters-summary {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-left: auto;
+      white-space: nowrap;
+    }
+    .filters-summary strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .contact-email {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .contact-email:hover {
+      text-decoration: underline;
+    }
+    .contact-phone {
+      font-size: 13px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+    tbody tr {
+      cursor: pointer;
+      transition: background 150ms ease;
+    }
+    tbody tr:hover td {
+      background: rgba(0,85,184,0.04);
+    }
+    .filters select {
+      cursor: pointer;
+    }
+    .row-hidden {
+      display: none !important;
+    }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--sidebar-bg);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 300ms ease, transform 300ms ease;
+      z-index: 1000;
+      pointer-events: none;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h1>Wi2 Sales</h1>
+      <span>営業管理システム</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">メニュー</div>
+        <a href="dashboard.html" class="sidebar-link">
+          <svg class="icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="5.5" height="5.5" rx="1"/><rect x="10.5" y="2" width="5.5" height="5.5" rx="1"/><rect x="2" y="10.5" width="5.5" height="5.5" rx="1"/><rect x="10.5" y="10.5" width="5.5" height="5.5" rx="1"/></svg>
+          ダッシュボード
+        </a>
+        <a href="deals-list.html" class="sidebar-link">
+          <svg class="icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h12v12H3z"/><path d="M3 7h12"/><path d="M7 3v12"/></svg>
+          商談管理
+        </a>
+        <a href="accounts.html" class="sidebar-link">
+          <svg class="icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 15s1.5-2 4-2 4 2 4 2"/><circle cx="6" cy="7" r="2.5"/><path d="M12.5 7.5a2 2 0 1 1 0-4"/><path d="M14 13c1.5 0 2.5-1 2.5-1"/></svg>
+          取引先
+        </a>
+        <a href="contacts.html" class="sidebar-link active">
+          <svg class="icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="3"/><path d="M3 16s1.5-4 6-4 6 4 6 4"/></svg>
+          担当者
+        </a>
+        <a href="ap-management.html" class="sidebar-link">
+          <svg class="icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 9a3.5 3.5 0 0 1 7 0"/><path d="M3 9a6 6 0 0 1 12 0"/><circle cx="9" cy="9" r="1"/><path d="M9 10v5"/></svg>
+          AP管理
+        </a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">分析</div>
+        <a href="reports.html" class="sidebar-link">
+          <svg class="icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14V8"/><path d="M9 14V4"/><path d="M14 14v-4"/></svg>
+          レポート
+        </a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">システム</div>
+        <a href="settings.html" class="sidebar-link">
+          <svg class="icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="2.5"/><path d="M9 1.5v2M9 14.5v2M1.5 9h2M14.5 9h2M3.4 3.4l1.4 1.4M13.2 13.2l1.4 1.4M3.4 14.6l1.4-1.4M13.2 4.8l1.4-1.4"/></svg>
+          設定
+        </a>
+      </div>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">田</div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name">田中太郎</div>
+        <div class="sidebar-user-dept">第一営業本部</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Header -->
+    <div class="header">
+      <h2 class="header-title">担当者</h2>
+      <div class="header-actions">
+        <button class="btn btn-primary">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg>
+          担当者登録
+        </button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">全担当者</div>
+          <div class="kpi-value">24<span style="font-size:14px; font-weight:400; color:var(--text-secondary); margin-left:2px;">名</span></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">第一営業本部</div>
+          <div class="kpi-value">10<span style="font-size:14px; font-weight:400; color:var(--text-secondary); margin-left:2px;">名</span></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">第二営業本部</div>
+          <div class="kpi-value">8<span style="font-size:14px; font-weight:400; color:var(--text-secondary); margin-left:2px;">名</span></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">第三営業本部</div>
+          <div class="kpi-value">6<span style="font-size:14px; font-weight:400; color:var(--text-secondary); margin-left:2px;">名</span></div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <div class="search-input">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M11 11l3 3"/></svg>
+          <input type="text" class="input" id="searchInput" placeholder="氏名・メールで検索...">
+        </div>
+        <select id="deptSelect">
+          <option value="">営業本部: すべて</option>
+          <option value="第一営業本部">第一営業本部</option>
+          <option value="第二営業本部">第二営業本部</option>
+          <option value="第三営業本部">第三営業本部</option>
+        </select>
+        <select id="roleSelect">
+          <option value="">役職: すべて</option>
+          <option value="本部長">本部長</option>
+          <option value="部長">部長</option>
+          <option value="課長">課長</option>
+          <option value="主任">主任</option>
+          <option value="担当">担当</option>
+        </select>
+        <div class="filters-summary" id="filtersSummary">
+          表示: <strong>10名</strong> / 全24名
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="card">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>氏名</th>
+                <th>営業本部</th>
+                <th>役職</th>
+                <th class="text-right">担当商談数</th>
+                <th class="text-right">月間計上額</th>
+                <th>メール</th>
+                <th>電話</th>
+              </tr>
+            </thead>
+            <tbody id="contactsBody">
+              <tr data-dept="第一営業本部" data-role="部長">
+                <td>
+                  <div class="contact-name-cell">
+                    <div class="avatar avatar-sm" style="background: #0055B8;">田</div>
+                    <span class="contact-name">田中太郎</span>
+                  </div>
+                </td>
+                <td>第一営業本部</td>
+                <td><span class="badge badge-info">部長</span></td>
+                <td class="text-right font-semibold">8件</td>
+                <td class="text-right font-semibold">&yen;12,500,000</td>
+                <td><a href="mailto:tanaka@wi2.co.jp" class="contact-email" onclick="event.stopPropagation();">tanaka@wi2.co.jp</a></td>
+                <td class="contact-phone">03-XXXX-1001</td>
+              </tr>
+              <tr data-dept="第二営業本部" data-role="課長">
+                <td>
+                  <div class="contact-name-cell">
+                    <div class="avatar avatar-sm" style="background: #059669;">佐</div>
+                    <span class="contact-name">佐藤花子</span>
+                  </div>
+                </td>
+                <td>第二営業本部</td>
+                <td><span class="badge badge-success">課長</span></td>
+                <td class="text-right font-semibold">6件</td>
+                <td class="text-right font-semibold">&yen;9,800,000</td>
+                <td><a href="mailto:sato@wi2.co.jp" class="contact-email" onclick="event.stopPropagation();">sato@wi2.co.jp</a></td>
+                <td class="contact-phone">03-XXXX-1002</td>
+              </tr>
+              <tr data-dept="第一営業本部" data-role="主任">
+                <td>
+                  <div class="contact-name-cell">
+                    <div class="avatar avatar-sm" style="background: #D97706;">鈴</div>
+                    <span class="contact-name">鈴木一郎</span>
+                  </div>
+                </td>
+                <td>第一営業本部</td>
+                <td><span class="badge badge-warning">主任</span></td>
+                <td class="text-right font-semibold">5件</td>
+                <td class="text-right font-semibold">&yen;8,200,000</td>
+                <td><a href="mailto:suzuki@wi2.co.jp" class="contact-email" onclick="event.stopPropagation();">suzuki@wi2.co.jp</a></td>
+                <td class="contact-phone">03-XXXX-1003</td>
+              </tr>
+              <tr data-dept="第三営業本部" data-role="担当">
+                <td>
+                  <div class="contact-name-cell">
+                    <div class="avatar avatar-sm" style="background: #DC2626;">山</div>
+                    <span class="contact-name">山田健太</span>
+                  </div>
+                </td>
+                <td>第三営業本部</td>
+                <td><span class="badge badge-danger">担当</span></td>
+                <td class="text-right font-semibold">4件</td>
+                <td class="text-right font-semibold">&yen;5,400,000</td>
+                <td><a href="mailto:yamada@wi2.co.jp" class="contact-email" onclick="event.stopPropagation();">yamada@wi2.co.jp</a></td>
+                <td class="contact-phone">03-XXXX-1004</td>
+              </tr>
+              <tr data-dept="第二営業本部" data-role="主任">
+                <td>
+                  <div class="contact-name-cell">
+                    <div class="avatar avatar-sm" style="background: #8B5CF6;">高</div>
+                    <span class="contact-name">高橋美咲</span>
+                  </div>
+                </td>
+                <td>第二営業本部</td>
+                <td><span class="badge badge-warning">主任</span></td>
+                <td class="text-right font-semibold">7件</td>
+                <td class="text-right font-semibold">&yen;11,300,000</td>
+                <td><a href="mailto:takahashi@wi2.co.jp" class="contact-email" onclick="event.stopPropagation();">takahashi@wi2.co.jp</a></td>
+                <td class="contact-phone">03-XXXX-1005</td>
+              </tr>
+              <tr data-dept="第一営業本部" data-role="課長">
+                <td>
+                  <div class="contact-name-cell">
+                    <div class="avatar avatar-sm" style="background: #0055B8;">伊</div>
+                    <span class="contact-name">伊藤雅之</span>
+                  </div>
+                </td>
+                <td>第一営業本部</td>
+                <td><span class="badge badge-success">課長</span></td>
+                <td class="text-right font-semibold">5件</td>
+                <td class="text-right font-semibold">&yen;7,600,000</td>
+                <td><a href="mailto:ito@wi2.co.jp" class="contact-email" onclick="event.stopPropagation();">ito@wi2.co.jp</a></td>
+                <td class="contact-phone">03-XXXX-1006</td>
+              </tr>
+              <tr data-dept="第三営業本部" data-role="担当">
+                <td>
+                  <div class="contact-name-cell">
+                    <div class="avatar avatar-sm" style="background: #059669;">渡</div>
+                    <span class="contact-name">渡辺由美</span>
+                  </div>
+                </td>
+                <td>第三営業本部</td>
+                <td><span class="badge badge-danger">担当</span></td>
+                <td class="text-right font-semibold">3件</td>
+                <td class="text-right font-semibold">&yen;3,200,000</td>
+                <td><a href="mailto:watanabe@wi2.co.jp" class="contact-email" onclick="event.stopPropagation();">watanabe@wi2.co.jp</a></td>
+                <td class="contact-phone">03-XXXX-1007</td>
+              </tr>
+              <tr data-dept="第二営業本部" data-role="部長">
+                <td>
+                  <div class="contact-name-cell">
+                    <div class="avatar avatar-sm" style="background: #D97706;">中</div>
+                    <span class="contact-name">中村拓也</span>
+                  </div>
+                </td>
+                <td>第二営業本部</td>
+                <td><span class="badge badge-info">部長</span></td>
+                <td class="text-right font-semibold">6件</td>
+                <td class="text-right font-semibold">&yen;10,100,000</td>
+                <td><a href="mailto:nakamura@wi2.co.jp" class="contact-email" onclick="event.stopPropagation();">nakamura@wi2.co.jp</a></td>
+                <td class="contact-phone">03-XXXX-1008</td>
+              </tr>
+              <tr data-dept="第一営業本部" data-role="担当">
+                <td>
+                  <div class="contact-name-cell">
+                    <div class="avatar avatar-sm" style="background: #DC2626;">小</div>
+                    <span class="contact-name">小林恵子</span>
+                  </div>
+                </td>
+                <td>第一営業本部</td>
+                <td><span class="badge badge-danger">担当</span></td>
+                <td class="text-right font-semibold">4件</td>
+                <td class="text-right font-semibold">&yen;4,800,000</td>
+                <td><a href="mailto:kobayashi@wi2.co.jp" class="contact-email" onclick="event.stopPropagation();">kobayashi@wi2.co.jp</a></td>
+                <td class="contact-phone">03-XXXX-1009</td>
+              </tr>
+              <tr data-dept="第三営業本部" data-role="課長">
+                <td>
+                  <div class="contact-name-cell">
+                    <div class="avatar avatar-sm" style="background: #8B5CF6;">加</div>
+                    <span class="contact-name">加藤直樹</span>
+                  </div>
+                </td>
+                <td>第三営業本部</td>
+                <td><span class="badge badge-success">課長</span></td>
+                <td class="text-right font-semibold">5件</td>
+                <td class="text-right font-semibold">&yen;6,700,000</td>
+                <td><a href="mailto:kato@wi2.co.jp" class="contact-email" onclick="event.stopPropagation();">kato@wi2.co.jp</a></td>
+                <td class="contact-phone">03-XXXX-1010</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">担当者詳細は次期フェーズで実装予定</div>
+
+<script>
+(function() {
+  var rows = Array.prototype.slice.call(document.querySelectorAll('#contactsBody tr'));
+  var searchInput = document.getElementById('searchInput');
+  var deptSelect = document.getElementById('deptSelect');
+  var roleSelect = document.getElementById('roleSelect');
+  var filtersSummary = document.getElementById('filtersSummary');
+  var toast = document.getElementById('toast');
+  var toastTimer = null;
+
+  function showToast() {
+    if (toastTimer) clearTimeout(toastTimer);
+    toast.classList.add('show');
+    toastTimer = setTimeout(function() {
+      toast.classList.remove('show');
+    }, 2500);
+  }
+
+  function filterRows() {
+    var query = searchInput.value.trim().toLowerCase();
+    var dept = deptSelect.value;
+    var role = roleSelect.value;
+    var visibleCount = 0;
+
+    rows.forEach(function(row) {
+      var name = row.querySelector('.contact-name').textContent.toLowerCase();
+      var email = row.querySelector('.contact-email').textContent.toLowerCase();
+      var rowDept = row.getAttribute('data-dept');
+      var rowRole = row.getAttribute('data-role');
+
+      var matchSearch = !query || name.indexOf(query) !== -1 || email.indexOf(query) !== -1;
+      var matchDept = !dept || rowDept === dept;
+      var matchRole = !role || rowRole === role;
+
+      if (matchSearch && matchDept && matchRole) {
+        row.classList.remove('row-hidden');
+        visibleCount++;
+      } else {
+        row.classList.add('row-hidden');
+      }
+    });
+
+    filtersSummary.innerHTML = '表示: <strong>' + visibleCount + '名</strong> / 全24名';
+  }
+
+  searchInput.addEventListener('input', filterRows);
+  deptSelect.addEventListener('change', filterRows);
+  roleSelect.addEventListener('change', filterRows);
+
+  rows.forEach(function(row) {
+    row.addEventListener('click', function(e) {
+      if (e.target.closest('a')) return;
+      showToast();
+    });
+  });
+})();
+</script>
+
+<script src="responsive.js"></script>
+</body>
+</html>

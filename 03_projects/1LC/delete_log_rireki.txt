@@ -1,0 +1,13 @@
+対象: TABLE=tblMieyctX1o6LI7X VIEW=viwMmHjysYqs0ZkAb (★物件紹介履歴)  2026-06-16 09:31:23
+  取得中… 5000 件
+  取得中… 10000 件
+  取得中… 15000 件
+  取得中… 20000 件
+  取得中… 25000 件
+  取得中… 30000 件
+  取得中… 35000 件
+  取得中… 40000 件
+  取得中… 44049 件
+削除対象: 44049 件
+--yes 指定: 確認スキップで削除します。
+APIエラー 503: {"error":{"type":"RETRIABLE_ERROR","message":"Server encountered an error while processing your request, and it is safe to retry the request"}}

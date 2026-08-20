@@ -1,0 +1,161 @@
+{%- comment -%}
+  法人取引ログイン案内バナー
+  =====================================================================
+  卸取引対象外の顧客（ログイン済みだが customer_type != 'corporate'）、
+  または法人取引に関心がある未ログイン顧客へ向けた案内。
+
+  公開ナビゲーションには表示しない。以下のいずれかで設置:
+    - 特定のランディングページ（pages/b2b-info 等）
+    - account ページ内
+    - URL を直接共有（営業担当から既存取引先候補へ案内）
+
+  表示条件:
+    - ログイン法人顧客（customer_type == 'corporate'）には表示しない
+      （既に卸価格が見えているため）
+    - B2C 側の公開ナビには設置しないこと（「法人取引」の存在を表に出さない）
+
+  組み込み方法:
+    任意のテンプレート / セクション内で:
+
+      {% render 'b2b-login-banner' %}
+
+    例: templates/page.b2b-info.liquid 等の専用ページに埋め込む
+{%- endcomment -%}
+
+{%- comment -%}
+  法人ログイン済み顧客には表示不要（既に卸価格が見えている）
+{%- endcomment -%}
+{%- unless customer and customer.metafields.b2b.customer_type.value == 'corporate' -%}
+
+  <div class="b2b-login-banner" style="
+    max-width: 640px;
+    margin: 2rem auto;
+    padding: 1.5rem 1.75rem;
+    border: 2px solid #1a3a6b;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f4f7fc 0%, #e8edf6 100%);
+    text-align: center;
+    box-sizing: border-box;
+  ">
+    <div style="
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1a3a6b;
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+    ">
+      法人のお客様向け 卸取引のご案内
+    </div>
+
+    <p style="
+      font-size: 0.88rem;
+      color: #444;
+      line-height: 1.7;
+      margin: 0 0 1rem 0;
+    ">
+      落合コーポレーションでは、法人・事業者のお客様を対象に卸価格でのお取引をご案内しております。<br>
+      法人取引アカウントをお持ちの方は、下記よりログインしてください。
+    </p>
+
+    {%- if customer -%}
+      {%- comment -%}
+        ログイン済みだが法人アカウントではない場合
+      {%- endcomment -%}
+      <p style="
+        font-size: 0.82rem;
+        color: #666;
+        line-height: 1.6;
+        margin: 0 0 1rem 0;
+      ">
+        現在のアカウントは法人取引対象として登録されていません。<br>
+        法人取引をご希望の場合は、担当営業までお問い合わせください。
+      </p>
+      <a
+        href="/pages/contact"
+        style="
+          display: inline-block;
+          padding: 0.7rem 2rem;
+          background: #1a3a6b;
+          color: #fff;
+          font-size: 0.9rem;
+          font-weight: 700;
+          text-decoration: none;
+          border-radius: 6px;
+          transition: background 0.2s;
+        "
+        onmouseover="this.style.background='#15305a'"
+        onmouseout="this.style.background='#1a3a6b'"
+      >
+        お問い合わせ
+      </a>
+    {%- else -%}
+      {%- comment -%}
+        未ログイン：ログインリンクを表示
+      {%- endcomment -%}
+      <div style="
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+        align-items: center;
+      ">
+        <a
+          href="/account/login"
+          style="
+            display: inline-block;
+            padding: 0.7rem 2rem;
+            background: #1a3a6b;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.2s;
+          "
+          onmouseover="this.style.background='#15305a'"
+          onmouseout="this.style.background='#1a3a6b'"
+        >
+          法人アカウントでログイン
+        </a>
+        <a
+          href="/pages/contact"
+          style="
+            display: inline-block;
+            padding: 0.7rem 2rem;
+            background: transparent;
+            color: #1a3a6b;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-decoration: none;
+            border: 2px solid #1a3a6b;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+          "
+          onmouseover="this.style.background='#1a3a6b';this.style.color='#fff'"
+          onmouseout="this.style.background='transparent';this.style.color='#1a3a6b'"
+        >
+          新規法人取引のお問い合わせ
+        </a>
+      </div>
+    {%- endif -%}
+
+    <p style="
+      font-size: 0.72rem;
+      color: #888;
+      margin: 1rem 0 0 0;
+      line-height: 1.5;
+    ">
+      ※ 法人取引には事前審査がございます。詳しくは担当営業にご確認ください。
+    </p>
+  </div>
+
+  {%- comment -%} レスポンシブ: モバイルでパディングを調整 {%- endcomment -%}
+  <style>
+    @media screen and (max-width: 749px) {
+      .b2b-login-banner {
+        margin: 1.25rem 1rem !important;
+        padding: 1.25rem 1rem !important;
+      }
+    }
+  </style>
+{%- endunless -%}

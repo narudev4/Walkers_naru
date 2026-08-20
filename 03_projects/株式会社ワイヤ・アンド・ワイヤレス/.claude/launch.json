@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "wi2-mockup",
+      "runtimeExecutable": "/usr/bin/python3",
+      "runtimeArgs": ["-m", "http.server", "8095", "-d", "/tmp/wi2-mockup"],
+      "port": 8095
+    }
+  ]
+}

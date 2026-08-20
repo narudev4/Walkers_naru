@@ -1,0 +1,17 @@
+{
+  "name": "ochiai-mf-automation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "落合コーポ — A-2: MFクラウド請求書のメール送信操作を Playwright で自動化（MF API に送信エンドポイントが無いための代替）。",
+  "scripts": {
+    "login": "node login-setup.js",
+    "send": "node send-invoice.js"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

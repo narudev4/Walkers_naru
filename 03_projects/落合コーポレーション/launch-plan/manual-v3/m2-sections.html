@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<title>操作マニュアル v3（m2: 4〜6章＋付録）</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif; color:#1a202c; }
+  body { line-break: strict; }
+  @page { size:A4; margin:0; }
+  .page { width:210mm; height:296mm; page-break-after:always; position:relative; padding:16mm 16mm 20mm; overflow:hidden; }
+  .page:last-child { page-break-after:auto; }
+
+  .foot { position:absolute; bottom:8mm; left:16mm; right:16mm; display:flex; justify-content:space-between; font-size:8.5pt; color:#8a94a6; border-top:1px solid #e2e8f0; padding-top:2mm; }
+
+  /* 数字丸: 数字は欧文フォント・line-height 1 で光学中央に */
+  .num, ol.ops li::before {
+    font-family:'Helvetica Neue', Arial, sans-serif !important;
+    line-height:1 !important;
+    font-feature-settings:'tnum';
+  }
+
+  .band { background:#24365c; color:#fff; border-radius:6px; padding:14px 20px; display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+  .band .num { background:#e53e3e; color:#fff; width:34px; height:34px; flex:0 0 34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15pt; font-weight:700; padding-bottom:2px; }
+  .band h2 { font-size:16.5pt; font-weight:700; letter-spacing:.02em; flex:1; text-wrap:balance; }
+  .band .who { background:#f6ad3c; color:#3b2b00; font-size:9.5pt; font-weight:700; padding:4px 12px; border-radius:999px; white-space:nowrap; }
+  .band .who.w { background:#dbe4f3; color:#24365c; }
+
+  .lead { background:#eff6ff; border-left:5px solid #3b82f6; border-radius:4px; padding:12px 16px; font-size:11.5pt; line-height:1.9; margin-bottom:14px; text-wrap:pretty; }
+  .lead b { color:#1e40af; }
+
+  .shots { display:flex; flex-direction:column; align-items:center; gap:7px; margin:10px 0 2px; }
+  .shot { text-align:center; width:100%; max-width:162mm; }
+  .shot img { width:auto; max-width:100%; max-height:80mm; border:1px solid #cbd5e1; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .shot .cap { font-size:9pt; color:#64748b; margin-top:3px; }
+
+  ol.ops { margin:10px 0 6px 4px; list-style:none; counter-reset:op; }
+  ol.ops li { counter-increment:op; position:relative; padding:8px 0 8px 38px; font-size:11.5pt; line-height:1.8; border-bottom:1px dashed #e2e8f0; text-wrap:pretty; }
+  ol.ops li:last-child { border-bottom:none; }
+  ol.ops li::before { content:counter(op); position:absolute; left:0; top:9px; width:24px; height:24px; border-radius:50%; background:#24365c; color:#fff; font-size:11pt; font-weight:700; display:flex; align-items:center; justify-content:center; padding-top:1.25px; }
+  ol.ops b { color:#b91c1c; }
+
+  .note { background:#fff9e6; border:1.5px solid #f4c430; border-radius:8px; padding:11px 16px; font-size:10.5pt; line-height:1.8; margin:10px 0; text-wrap:pretty; }
+  .note .t { font-weight:700; color:#8a6d00; }
+  .ok { background:#f0fdf4; border:1.5px solid #22c55e; border-radius:8px; padding:11px 16px; font-size:10.5pt; line-height:1.8; margin:10px 0; text-wrap:pretty; }
+  .ok .t { font-weight:700; color:#15803d; display:block; margin-bottom:4px; font-size:11.5pt; }
+  .tbd { background:#fdeaea; color:#b91c1c; font-weight:700; font-size:9.5pt; padding:2px 8px; border-radius:4px; white-space:nowrap; }
+  .kw { white-space:nowrap; }
+
+  /* 表紙 */
+  .cover { display:flex; flex-direction:column; align-items:center; text-align:center; padding-top:32mm; }
+  .cover h1 { color:#24365c; font-size:25pt; line-height:1.5; font-weight:800; text-wrap:balance; }
+  .cover .sub { color:#475569; font-size:13pt; margin-top:8mm; }
+  .cover .scope { margin-top:13mm; width:154mm; text-align:left; background:#fff9e6; border:2px solid #f4c430; border-radius:10px; padding:16px 22px; }
+  .cover .scope .t { font-weight:800; color:#8a6d00; font-size:12.5pt; margin-bottom:6px; }
+  .cover .scope p { font-size:11.5pt; line-height:2.0; text-wrap:pretty; }
+  .cover .meta { margin-top:14mm; color:#64748b; font-size:10.5pt; line-height:2.0; }
+  .flow { margin-top:11mm; width:164mm; display:flex; gap:6mm; }
+  .fcard { flex:1; border:1.5px solid #cbd5e1; border-radius:10px; padding:13px 8px; text-align:center; }
+  .fcard .fn { color:#e53e3e; font-weight:800; font-size:10pt; font-family:'Helvetica Neue',Arial,sans-serif; }
+  .fcard .ft { font-weight:700; color:#24365c; font-size:11.5pt; margin:4px 0; line-height:1.6; text-wrap:balance; }
+  .fcard .fp { color:#64748b; font-size:9.5pt; }
+
+  /* 目次 */
+  .toc h1 { color:#24365c; font-size:19pt; font-weight:800; border-bottom:3px solid #24365c; padding-bottom:8px; margin-bottom:10mm; }
+  .tgroup { margin-bottom:8mm; }
+  .tgroup .gh { display:flex; align-items:center; gap:8px; font-size:12.5pt; font-weight:800; color:#24365c; margin-bottom:3mm; }
+  .tgroup .dot { width:12px; height:12px; border-radius:3px; }
+  .trow { display:flex; align-items:baseline; font-size:11pt; line-height:2.1; padding-left:20px; }
+  .trow .tt { white-space:nowrap; }
+  .trow .dots { flex:1; border-bottom:1.5px dotted #cbd5e1; margin:0 8px; transform:translateY(-4px); }
+  .trow .tp { color:#334155; font-family:'Helvetica Neue',Arial,sans-serif; font-weight:600; }
+  .trow .tp.soon { color:#b6bfcc; font-weight:400; font-size:9.5pt; }
+</style>
+</head>
+<body>
+<!-- ===================================================== -->
+<!-- C 章（C-3 は見本側で完成済みのため、本ファイルには含めない） -->
+<!-- ===================================================== -->
+<!-- ===== C 章とびら ===== -->
+<section class="page toc">
+<div class="band" style="background:#2563eb"><h2 style="font-size:22pt; padding:6px 0;">4章　注文から発送まで</h2></div>
+<div class="lead">ご注文の確認から出荷・キャンセル、電話・FAXのご注文の入力まで、<b>毎日の仕事</b>をまとめた章です。<br/>基本の流れは「ご注文を確認する → 出荷する → <span class="kw">「発送済み」にする</span>」です。</div>
+<div class="tgroup" style="margin-top:8mm">
+<div class="gh"><span class="dot" style="background:#2563eb"></span>この章の内容</div>
+<div class="trow"><span class="tt">ご注文が入る（一覧の見方・業者様のご注文の見分け方）</span><span class="dots"></span><span class="tp"></span></div>
+<div class="trow"><span class="tt">都度払いの入金を待って出荷する</span><span class="dots"></span><span class="tp"></span></div>
+<div class="trow"><span class="tt">出荷する（送り状の発行・「発送済み」にする）</span><span class="dots"></span><span class="tp"></span></div>
+<div class="trow"><span class="tt">ご注文を変更・キャンセルする</span><span class="dots"></span><span class="tp"></span></div>
+<div class="trow"><span class="tt">電話・FAXのご注文を受ける（移行期）</span><span class="dots"></span><span class="tp"></span></div>
+</div>
+<div class="note" style="margin-top:6mm"><span class="t">⚠ 支払区分で出荷の順番が変わります。</span> 都度払いのご注文は「<b>入金 → 出荷</b>」の順です。<br/>かけ払いのご注文は、すぐ出荷して「発送済み」にし、締め日にまとめてご請求します。<br/>一般のお客様向け（B2C）のご注文は、決済が完了していればそのまま出荷します。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== C-1 STEP1 ===== -->
+<section class="page" id="sec-c1">
+<div class="band"><div class="num">1</div><h2>ご注文の一覧を見る</h2><div class="who">落合様の操作</div></div>
+<div class="lead">ご注文が入ると、社内宛に通知メールが自動で届きます。<br/>「注文管理」を開くと、ご注文が<b>新しい順</b>に並んでいます。</div>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/17_orders-list.jpg" style="max-height:105mm"/><div class="cap">「注文」の一覧。注文番号・お客様・合計・決済状況・タグが並びます。</div></div>
+</div>
+<ol class="ops">
+<li>「注文」の列で注文番号（例: #1027）を確認します。お問い合わせのやりとりはこの番号で行います。</li>
+<li>「決済状況」の列を見ます。業者様向け（B2B）のご注文は「決済保留中」と表示されます。</li>
+<li>「フルフィルメント状況」の列で発送の状態（未発送／発送済み）を確認します。</li>
+</ol>
+<div class="note"><span class="t">📮 通知メールの宛先。</span> ご注文の通知メールをどのアドレスで受け取るかは <span class="tbd">確定後に記入</span> です。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== C-1 STEP2 ===== -->
+<section class="page">
+<div class="band"><div class="num">2</div><h2>業者様のご注文と支払区分を見分ける</h2><div class="who">落合様の操作</div></div>
+<div class="lead">業者様のご注文かどうか・どの支払区分かは、ご注文の<b>「タグ」</b>で見分けます。<br/><b class="kw">payment:prepaid</b>（都度払い）が付いていたら、<b>入金の確認が先</b>です（次のページ）。</div>
+<ol class="ops">
+<li>業者様向けサイトからのご注文には<b class="kw">b2b-draft-order</b>のタグが付きます。</li>
+<li>支払区分を登録済みの業者様のご注文には、<b class="kw">payment:prepaid</b>／<b class="kw">payment:20th</b>／<b class="kw">payment:eom</b>のタグも自動で付きます。</li>
+<li>タグが見当たらないご注文は、ご注文画面の「お客様」の欄の業者様名をクリックし、業者様側のタグ（payment:◯◯）で確認します。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/18_order-detail-b2b.jpg" style="max-height:62mm"/><div class="cap">業者様のご注文の詳細。決済状況は「決済保留中」、価格は上代に取り消し線が入ります。</div></div>
+<div class="shot"><img alt="" src="../33-manual-assets/print/39_order-tags-b2b.png" style="max-height:55mm"/><div class="cap">右下の「タグ」の枠。b2b-draft-orderが業者様のご注文の目印です。</div></div>
+</div>
+<div class="note"><span class="t">⚠ 上代のままの金額でご注文が入っていたら。</span> 区分が付いていない業者様です。<br/>Walkersにご連絡ください。区分を付けたうえで、ご注文の直し方をご案内します。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== C-2 STEP1 ===== -->
+<section class="page" id="sec-c2">
+<div class="band"><div class="num">1</div><h2>都度払いの入金を確認して出荷に回す</h2><div class="who">落合様の操作</div></div>
+<div class="lead">都度払い（<b class="kw">payment:prepaid</b>）のご注文だけは「<b>入金 → 出荷</b>」の順です。<br/>入金の確認が済むまで、荷造り・発送は止めてください。</div>
+<ol class="ops">
+<li>銀行口座の入金明細を確認します（マネーフォワードの請求書一覧で確認いただいても構いません）。</li>
+<li>入金額とお客様名を、ご注文の<b>注文番号・金額</b>と突き合わせます。</li>
+<li>一致したら、そのご注文を出荷担当の方に回します。</li>
+<li>出荷したら、出荷の手順（P.<span class="pref" data-ref="sec-c3"></span>）で「発送済み」にします。</li>
+</ol>
+<div class="note"><span class="t">⚠ 入金額がご注文の金額と合わないとき。</span><br/>ご自身で調整せず、出荷を止めてWalkersにご連絡ください。</div>
+<div class="note"><span class="t">👤 ご担当者。</span> 入金確認のご担当者は <span class="tbd">確定後に記入</span> です。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== C-4 STEP1 ===== -->
+<section class="page" id="sec-c4">
+<div class="band"><div class="num">1</div><h2>ご注文をキャンセルする</h2><div class="who">落合様の操作</div></div>
+<div class="lead">業者様・お客様からキャンセルの依頼があったときの手順です。<br/><b>キャンセルは取り消せません</b>。内容をよく確認してから確定してください。</div>
+<ol class="ops">
+<li>「注文管理」から、対象のご注文をクリックします。</li>
+<li>画面右上の「その他の操作」をクリックします。</li>
+<li>「注文をキャンセルする」をクリックします。</li>
+<li>表示される確認画面の内容をチェックします（次のページ）。</li>
+<li>「1件の注文をキャンセルする」をクリックして確定します。取りやめる場合は「注文を維持」を押します。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/20_order-more-actions-menu.jpg" style="max-height:70mm"/><div class="cap">注文詳細の右上「その他の操作」。「注文をキャンセルする」があります。</div></div>
+</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== C-4 STEP2 ===== -->
+<section class="page">
+<div class="band"><div class="num">2</div><h2>確認画面のチェックと、キャンセル後の請求</h2><div class="who">落合様の操作</div></div>
+<div class="lead">確定する前に、確認画面の項目を1つずつチェックします。<br/>キャンセル後の<b>請求への影響</b>は、下の注意をご確認ください。</div>
+<ol class="ops">
+<li>「キャンセルの理由」を選び、必要ならスタッフメモを残します。</li>
+<li><b>「在庫を補充する」にチェックが入っているか</b>を必ず確認します。外すとEC用の在庫が減ったままになります。</li>
+<li>「お客様に通知を送信する」は状況に応じて選びます（先にお電話でご連絡済みなら、送らない選択もあります）。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/21_order-cancel-dialog.jpg" style="max-height:78mm"/><div class="cap">キャンセルの確認画面。「在庫を補充する」のチェックを必ず確認します。</div></div>
+</div>
+<div class="note"><span class="t">⚠ かけ払いのご注文は、「発送済み」にしていなければ締めの請求書には載りません。</span><br/>都度払いでご入金済みのご注文を取り消したときの返金は、社内でご対応ください。<br/>数量だけ変えたいなど、ご注文の変更の手順と受付期限は <span class="tbd">確定後に記入</span> です。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== C-5 STEP1 下書き注文を作る ===== -->
+<section class="page" id="sec-c5">
+<div class="band"><div class="num">1</div><h2>下書き注文を作る</h2><div class="who">落合様の操作</div></div>
+<div class="lead">サイトを使わない業者様のご注文と、10個未満の例外のご注文は、「下書き注文」から手で入力します。<br/>2027年1月のサイト注文への完全移行まで、この方法でShopifyに記録します。</div>
+<ol class="ops">
+<li>「注文管理」の下の「下書き」を開き、右上の<b class="kw">「注文を作成」</b>をクリックします。</li>
+<li>「商品」の枠の「商品を追加」から商品を検索し、チェックを付けて「追加」をクリックします。</li>
+<li>数量を入力します。</li>
+<li>「お客様」の枠で、ご注文いただいた業者様を検索して選びます。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/38_draftorders-list.jpg" style="max-height:56mm"/><div class="cap">「下書き」の一覧。右上の「注文を作成」から入力を始めます。</div></div>
+<div class="shot"><img alt="" src="../33-manual-assets/print/35_draftorder-product-picker.png" style="max-height:76mm"/><div class="cap">「商品を選択」の画面。チェックを付けて「追加」します。</div></div>
+</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== C-5 STEP2 御社価格に直して確定する ===== -->
+<section class="page">
+<div class="band"><div class="num">2</div><h2>御社価格に直して確定する</h2><div class="who">落合様の操作</div></div>
+<div class="lead">下書きの金額は上代のまま入るため、確定する前に<b>御社価格へ直します</b>。</div>
+<ol class="ops">
+<li>商品行の青い金額（価格）をクリックします。</li>
+<li>出てきた枠の「単価」の右にある鉛筆マークをクリックします。</li>
+<li>御社価格（税抜）を入力して「完了」をクリックします。</li>
+<li>「後で支払いを回収する」を選び、「注文を作成」をクリックします。通常のご注文と同じ一覧に並び、請求のしくみにもそのまま乗ります。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/36_draftorder-price-popover.png" style="max-height:62mm"/><div class="cap">価格をクリックすると出る枠。「単価」の鉛筆マークから直します。</div></div>
+<div class="shot"><img alt="" src="../33-manual-assets/print/37_draftorder-price-edit.png" style="max-height:62mm"/><div class="cap">単価の入力欄。御社価格（税抜）を入力して「完了」を押します。</div></div>
+</div>
+<div class="note"><span class="t">⚠ 業者様価格は自動では入りません。</span><br/>サイト経由のご注文と違い、金額を手で直す必要があります。<br/>入力後、金額をもう一度ご確認ください。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===================================================== -->
+<!-- D 章 -->
+<!-- ===================================================== -->
+<!-- ===== D 章とびら ===== -->
+<section class="page toc">
+<div class="band" style="background:#dc2626"><h2 style="font-size:22pt; padding:6px 0;">5章　請求と入金</h2></div>
+<div class="lead">この章でいちばん大切なことは2つです。<br/><b>かけ払いの請求書は、スタッフの方が確認してから送る</b>こと。<br/><b>入金を確認したら、マネーフォワードで「入金済み」にする</b>ことです。</div>
+<div class="tgroup" style="margin-top:8mm">
+<div class="gh"><span class="dot" style="background:#dc2626"></span>この章の内容</div>
+<div class="trow"><span class="tt">都度払いの請求（自動で作られます）</span><span class="dots"></span><span class="tp"></span></div>
+<div class="trow"><span class="tt">かけ払いの締め請求（毎月20日・末日）</span><span class="dots"></span><span class="tp"></span></div>
+<div class="trow"><span class="tt">入金を確認する（週1回が目安）</span><span class="dots"></span><span class="tp"></span></div>
+<div class="trow"><span class="tt">未入金を督促する</span><span class="dots"></span><span class="tp"></span></div>
+<div class="trow"><span class="tt">返品・返金を処理する</span><span class="dots"></span><span class="tp"></span></div>
+</div>
+<div class="note" style="margin-top:6mm"><span class="t">✉ ご注文ごとのメールは、すべてShopifyから1通だけ届きます。</span> マネーフォワードから業者様に届くのは、かけ払いの締め日の請求書だけです。（マネーフォワードの画面は当日の説明会で実演します）。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== D-1 STEP1 ===== -->
+<section class="page" id="sec-d1">
+<div class="band"><div class="num">1</div><h2>都度払いの請求は自動で作られます</h2><div class="who w">Walkers対応</div></div>
+<div class="lead">都度払いのご注文の請求は、システムが自動で用意します。<br/><b>落合様の操作はありません</b>。しくみだけ知っておいてください。</div>
+<ol class="ops">
+<li>ご注文と同時に、マネーフォワードに請求書の下書きが自動で作られます（マネーフォワードからは送りません）。</li>
+<li>業者様には、Shopifyのご注文確認メールに<b>お振込先とお支払い金額</b>が載って届きます。これがご請求の代わりです。</li>
+</ol>
+<div class="note"><span class="t">🏦 お振込先。</span> マネーフォワードに登録されている2口座（横浜銀行・三井住友銀行）です。ご注文確認メールに載せる口座は、8/20の説明会でご確認いただきます。</div>
+<div class="note"><span class="t">💬 業者様から「請求書が欲しい」と言われたら。</span><br/>ご注文確認メールをご案内ください。<br/>正式な請求書が必要なときは、マネーフォワードに同じ内容の下書きが自動で作られていますので、締めの請求書と同じ手順（P.<span class="pref" data-ref="sec-d2send"></span>「下書きを確認して送付する」）で送付できます。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== D-2 STEP1 ===== -->
+<section class="page" id="sec-d2">
+<div class="band"><div class="num">1</div><h2>請求書の下書きが自動で作られます</h2><div class="who w">Walkers対応</div></div>
+<div class="lead"><b>かけ払いの請求書は、スタッフの方が確認してから送ります。</b><br/>自動で業者様に送られることはありません。</div>
+<ol class="ops">
+<li><b>20日締め</b>の業者様: 前月21日〜当月20日の発送分が、20日の夜（23:59）に1つの下書きにまとまります。</li>
+<li><b>末締め</b>の業者様: 当月1日〜末日の発送分が、末日の夜にまとまります。</li>
+<li>翌営業日に内容を確認して送付します（20日締めは23日まで、末締めは翌月3日までが目安です）。</li>
+<li>お支払いの期日は、20日締めが翌月20日、末締めが翌月末日です。</li>
+</ol>
+<div class="note"><span class="t">⚠ 集計は「発送日」基準です。</span> 「発送済み」にし忘れたご注文は請求書に載りません。締め日を過ぎてから「発送済み」にした分は、次回の請求に回ります。</div>
+<div class="note"><span class="t">🏢 請求書は業者様ごとに1枚です。</span> 明細は「発送日 #注文番号 商品名」の形で並びますので、Shopifyの注文番号で突き合わせられます。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== D-2 STEP2 ===== -->
+<section class="page" id="sec-d2send">
+<div class="band"><div class="num">2</div><h2>下書きを確認して送付する</h2><div class="who">落合様の操作</div></div>
+<div class="lead">締め日の翌営業日に、「下書き」の請求書を1件ずつ開いて確認します。<br/>誤りがあれば<b>送付せず</b>、Walkersにご連絡ください。</div>
+<ol class="ops">
+<li>マネーフォワードにログインし、「請求書」の一覧を開きます。</li>
+<li>ステータスが「下書き」の請求書を探します（締め日の23:59に自動で作られています）。</li>
+<li>宛名（取引先）が正しいことを確認します。</li>
+<li>明細がその締め期間に発送したご注文だけであること、合計に見覚えのない金額がないことを確認します。</li>
+<li>問題がなければ、マネーフォワードの送付機能で業者様へ送付します。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/41_mf-draft-list.png" style="max-height:56mm"/><div class="cap">請求書一覧。ステータス「下書き」で絞り込むと、締めの下書きが並びます。送付は右上の「郵送」「メール」からです。</div></div>
+</div>
+<div class="note"><span class="t">⚠ 締め日を過ぎたのに下書きが出てこないとき。</span><br/>下書きは締め日の当日23:59に作られますので、翌朝以降にご確認ください。<br/>その期間に「発送済み」にしたご注文が1件も無い業者様の分は作られません。<br/>それでも出てこない場合はWalkersにご連絡ください。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== D-3 STEP1 ===== -->
+<section class="page" id="sec-d3">
+<div class="band"><div class="num">1</div><h2>マネーフォワードで「入金済み」にする</h2><div class="who">落合様の操作</div></div>
+<div class="lead"><b>入金を確認したら、マネーフォワードで「入金済み」にします。</b><br/>入金の記録はマネーフォワードの請求書が正で、Shopify側の操作は不要です。</div>
+<ol class="ops">
+<li>銀行口座の入金明細を確認します。</li>
+<li>マネーフォワードで「請求書」の一覧を開きます。</li>
+<li>絞り込みで「未入金」を選び、未入金の請求書だけを表示します。</li>
+<li>入金があった請求書を開き、右上の入金ステータスを<b>「入金済」</b>に変更します。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/43_mf-payment-status.png" style="max-height:42mm"/><div class="cap">請求書の右上の入金ステータス。「未入金」をクリックして「入金済」を選びます。</div></div>
+</div>
+<div class="note"><span class="t">⚠ 金額が合わないとき（一部だけの入金・振込手数料分の差額など）。</span><br/>ご自身で調整せず、未入金のまま残してWalkersにご連絡ください。<br/>システムでは自動処理しません。</div>
+<div class="note"><span class="t">🔁 週1回が目安です。</span> 確認する曜日は <span class="tbd">確定後に記入</span> です。<br/>Shopify側の「支払い済み」への更新はWalkersが行います。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== D-4 STEP1 ===== -->
+<section class="page" id="sec-d4">
+<div class="band"><div class="num">1</div><h2>未入金を見つけて連絡する</h2><div class="who">落合様の操作</div></div>
+<div class="lead">お支払いの期日から7日を過ぎても入金がないときが目安です。<br/>督促する曜日と手段（お電話・請求書の再送など）は <span class="tbd">確定後に記入</span> です。</div>
+<ol class="ops">
+<li>マネーフォワードで「請求書」の一覧を開きます。</li>
+<li>絞り込みで「未入金」を選びます。</li>
+<li>支払期日を過ぎている請求書を探します。</li>
+<li>期日から7日を過ぎているものは、業者様にお電話または請求書の再送でご連絡します。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/42_mf-unpaid-list.png" style="max-height:58mm"/><div class="cap">請求書一覧。「未入金」で絞り込んだ状態です。支払期日は右側のプレビューで確認できます。</div></div>
+</div>
+<div class="note"><span class="t">⚠ 入金があったのに「未入金」のままのとき。</span><br/>「入金済」への更新（前のページ）が漏れています。<br/>更新してから督促の要否を判断してください。</div>
+<div class="note"><span class="t">💬 業者様が「振り込んだ」とおっしゃるのに明細に無いとき。</span><br/>振込名義・金額を伺って銀行明細を再確認します。<br/>それでも見つからない場合はWalkersにご連絡ください。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== D-5 STEP1 ===== -->
+<section class="page" id="sec-d5">
+<div class="band"><div class="num">1</div><h2>返品を記録する</h2><div class="who">落合様の操作</div></div>
+<div class="lead">返品・返金の扱い（次回の請求から差し引く案）は <span class="tbd">確定後に記入</span> です。<br/>9/1からの試験運用では、発生したら手作業で対応します。</div>
+<ol class="ops">
+<li>「注文管理」から、対象のご注文をクリックします。</li>
+<li>「返品」をクリックし、返品する商品と数量を選びます。</li>
+<li>「返品を作成」をクリックします。返品された商品が届いたら、在庫を戻すかを選びます。</li>
+</ol>
+<div class="note"><span class="t">⚠ 締め日をまたぐ返品にご注意ください。</span><br/>・締め日の前に処理が済んだ返品は、自動で請求から外れます。<br/>・締め日の後の返品の扱い（次回のご請求から差し引くなど）は、8/20にご相談のうえ確定します。<br/>・締め日の当日の返品は、当日中に記録を済ませてください。</div>
+<div class="note"><span class="t">🖥（返品の画面は当日の説明会で実演します）。</span> 決算をまたぐ返品は税理士の先生のご判断が必要です。Walkersにご連絡ください。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===================================================== -->
+<!-- E 章 -->
+<!-- ===================================================== -->
+<!-- ===== E 章とびら ===== -->
+<section class="page toc">
+<div class="band" style="background:#0d9488"><h2 style="font-size:22pt; padding:6px 0;">6章　お知らせと問い合わせ</h2></div>
+<div class="lead">お知らせを出す仕事と、ご連絡を受ける仕事をまとめた<b class="kw">随時の章</b>です。<br/>お知らせは、休業・値上げなどのご案内を<b>見せたい相手にだけ</b>出せます。</div>
+<div class="tgroup" style="margin-top:8mm">
+<div class="gh"><span class="dot" style="background:#0d9488"></span>この章の内容</div>
+<div class="trow"><span class="tt">お知らせを出す</span><span class="dots"></span><span class="tp"></span></div>
+<div class="trow"><span class="tt">問い合わせ・不良品・誤出荷を受ける</span><span class="dots"></span><span class="tp"></span></div>
+</div>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/25_storefront-b2b-top.jpg" style="max-height:105mm"/><div class="cap">業者様向けサイトのトップページ。「お知らせ」の枠に日付・タイトル・本文が表示されます。</div></div>
+</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== E-1 STEP1 ===== -->
+<section class="page" id="sec-e1">
+<div class="band"><div class="num">1</div><h2>お知らせを追加する</h2><div class="who">落合様の操作</div></div>
+<div class="lead">休業・値上げ・振込手数料のご案内などをサイトに掲載します。<br/>どなたでも操作できます。担当者と更新の頻度は <span class="tbd">確定後に記入</span> です。</div>
+<ol class="ops">
+<li>左メニューの「コンテンツ」→「メタオブジェクト」→「お知らせ」の順にクリックします。</li>
+<li>右上の「エントリーを追加」をクリックします。</li>
+<li>タイトル（必須）・本文・対象・対象タグ・掲載開始日・掲載終了日を入力します（使い分けは次のページ）。</li>
+<li>右側の「ステータス」を確認します。<b>「Draft（下書き）」のままだとサイトに表示されません</b>。「Active」に変えます。</li>
+<li>画面右上に表示される「保存」をクリックします。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/23_announcement-edit.jpg" style="max-height:105mm"/><div class="cap">お知らせの編集画面。6項目と、右側の「ステータス」を入力します。</div></div>
+</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== E-1 STEP2 ===== -->
+<section class="page">
+<div class="band"><div class="num">2</div><h2>出し分けと掲載期間を決める</h2><div class="who">落合様の操作</div></div>
+<div class="lead">お知らせは「対象 → 対象タグ → 掲載期間」の3段で絞り込まれます。<br/>たとえば対象を<b class="kw">b2b</b>、対象タグを<b class="kw">payment:20th</b>にすると、20日締めの業者様だけに出ます。</div>
+<ol class="ops">
+<li>「対象」に<b class="kw">all</b>（全員）／<b class="kw">b2b</b>（業者様向け）／<b class="kw">b2c</b>（一般のお客様向け）のどれかを半角で入力します。</li>
+<li>特定の業者様だけに出したいときは、その業者様たちのお客様詳細の「タグ」に共通の目印タグ（例: <b class="kw">group:fair2026</b>）を付け、お知らせの「対象タグ」に同じ値を入力します。支払区分のタグ（<b class="kw">payment:20th</b>など）もそのまま使えます。空欄なら「対象」の全員に出ます。</li>
+<li>「掲載開始日」は必ず入れます（お知らせの横に表示される日付になります）。「掲載終了日」を過ぎると自動で消えます。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/22_announcement-list.jpg" style="max-height:88mm"/><div class="cap">「お知らせ」の一覧。右上の「エントリーを追加」から新しく作れます。</div></div>
+</div>
+<div class="note"><span class="t">⚠ 保存したのにサイトに出ないとき。</span> ステータスが「Draft（下書き）」のままか、掲載開始日が未来の日付になっていないかをご確認ください。<br/>一度に表示されるのは5件までです。古いお知らせは掲載終了日を入れて下げてください。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== E-2 STEP1 ===== -->
+<section class="page" id="sec-e2">
+<div class="band"><div class="num">1</div><h2>問い合わせを受け付けて対応を決める</h2><div class="who">落合様の操作</div></div>
+<div class="lead">サイトの使い方・商品・不良品・誤出荷などのご連絡を受けたときの流れです。<br/>受付の窓口・写真をいただくか・交換や返金の判断者は <span class="tbd">確定後に記入</span> です。</div>
+<ol class="ops">
+<li>ご連絡の内容を、注文番号・商品名・数量・状況（不良・誤出荷・使い方など）で控えます。</li>
+<li>注文番号を「注文管理」の一覧で検索し、ご注文の内容とお届け先を確認します。</li>
+<li>不良品・誤出荷は、交換・返金のどちらにするかを社内で判断します。返金・返品の手順はP.<span class="pref" data-ref="sec-d5"></span>へ進みます。</li>
+<li>サイト・管理画面の不具合と思われる場合は、Walkersにご連絡ください。</li>
+</ol>
+<div class="note"><span class="t">📮 Walkersにご連絡いただきたいこと。</span> サイト・管理画面の不具合と思われるとき／請求書の金額が明らかに違うとき（送付前に）／入金額と請求額が一致しないとき／「設定」メニューの変更が必要なとき。ご連絡はいつものLINEグループで大丈夫です。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===================================================== -->
+<!-- 付録 -->
+<!-- ===================================================== -->
+<!-- ===== 付録 A ===== -->
+<section class="page">
+<div class="band"><div class="num">A</div><h2>付録A　業者様へのご案内文例</h2><div class="who">落合様の操作</div></div>
+<div class="lead">アカウント作成と Walkers 側の設定が終わったあとに、営業担当の方からお送りいただく文例です。<br/><b>サイトのパスワード保護が解除されるまでは送らないでください。</b></div>
+<!-- 文例ボックス: 既存クラスに文例向けの見た目が無いため、.note と同じ寸法の無色ボックスをインラインで指定（新クラスは作らない） -->
+<div style="border:1.5px solid #cbd5e1; border-radius:8px; padding:11px 16px; font-size:10pt; line-height:1.75; margin:10px 0; white-space:pre-wrap;">◯◯様
+
+いつもお世話になっております。落合コーポレーションです。
+このたび業者様向けの発注サイトを開設し、◯◯様のアカウントを発行いたしましたのでご案内いたします。
+
+■サイト
+（本番の URL）
+
+■ログイン方法
+パスワードは不要です。
+1. 上記のページを開き、ログインへお進みください。
+2. ご登録のメールアドレスを入力してください。
+3. そのアドレス宛に6桁の確認コードが届きますので、画面に入力してください。
+
+■ご発注の流れ
+商品をカートに入れ、内容をご確認のうえご注文ください。ご注文後、確認メールをお送りいたします。
+
+次回以降スムーズにご利用いただけますので、上記サイトのブックマーク登録をお願いいたします。
+ご不明な点は担当営業までお気軽にお問い合わせください。</div>
+<div class="note"><span class="t">✍ お使いになる前に。</span> ◯◯（宛名・担当者・連絡先）を差し替えてください。サイトの URL は、本番ストアへの移管後に Walkers からお知らせします。メールでご案内する場合も、サイトの URL・パスワード不要であること・ログイン手順・お問い合わせ先の 4 点を必ず含めてください。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== 付録 B ===== -->
+<section class="page">
+<div class="band"><div class="num">B</div><h2>付録B　確定待ちの事項（一覧）</h2></div>
+<div class="lead">本文で <span class="tbd">確定後に記入</span> と示した事項の一覧です。<br/>多くは 8/20 の説明会でご一緒に決め、確定次第 Walkers から更新版をお渡しします。</div>
+<!-- 一覧表: 見本に表のクラスが無いため、配色（紺 #24365c／罫線 #e2e8f0）を合わせてインラインで指定（新クラスは作らない） -->
+<table style="width:100%; border-collapse:collapse; font-size:9.5pt; line-height:1.6; margin-top:2mm;">
+<thead>
+<tr style="background:#24365c; color:#fff;">
+<th style="padding:5px 10px; text-align:left; white-space:nowrap; border-radius:4px 0 0 0;">分野</th>
+<th style="padding:5px 10px; text-align:left;">決める事項</th>
+<th style="padding:5px 10px; text-align:left; white-space:nowrap; border-radius:0 4px 0 0;">決める方</th>
+</tr>
+</thead>
+<tbody>
+<tr><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">在庫</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0;">EC 用在庫の最初に入れる数の目安と、「残りわずか」に切り替わる数。</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">落合様</td></tr>
+<tr><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">価格</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0;">上代の一覧と、10/1 の値上げ後の価格。</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">落合様</td></tr>
+<tr><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">在庫</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0;">在庫切れのときの案内文と、問い合わせ先の出し方。</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">落合様</td></tr>
+<tr><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">在庫</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0;">在庫を超える数のご注文が入ったときの扱い。</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">落合様</td></tr>
+<tr><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">業者様</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0;">業者様の情報変更（住所・担当者・メール）の受付方法。</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">落合様</td></tr>
+<tr><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">業者様</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0;">取引をやめる業者様の扱い（停止か削除か）。</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">落合様＋Walkers 案</td></tr>
+<tr><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">注文</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0;">ご注文の通知メールの宛先アドレス。</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">落合様</td></tr>
+<tr><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">注文</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0;">都度払いの入金確認のご担当者。</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">落合様</td></tr>
+<tr><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">出荷</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0;">送り状の発行方法（発行システム名・お客様コード・運賃表・月間出荷件数の 4 点）。</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">落合様</td></tr>
+<tr><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">出荷</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0;">発送通知メールへの明細の載せ方。</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">落合様</td></tr>
+<tr><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">出荷</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0;">1 つのご注文を 2 回に分けて出荷する（分納）ときの扱い。</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">落合様</td></tr>
+<tr><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">注文</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0;">ご注文の変更・キャンセルの手順と受付期限。</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">落合様＋Walkers 案</td></tr>
+<tr><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">入金</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0;">入金確認の曜日、督促の手段、まとめ入金・振込名義違いの突き合わせルール。</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">落合様</td></tr>
+<tr><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">返品</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0;">返品・返金の扱い（相殺を原則とする案）。締め後の返品の直し方、都度払いの返金方法。</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">落合様＋税理士の先生</td></tr>
+<tr><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">お知らせ</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0;">お知らせの担当者と更新の頻度。</td><td style="padding:5px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;">落合様</td></tr>
+<tr><td style="padding:5px 10px; white-space:nowrap;">問い合わせ</td><td style="padding:5px 10px;">問い合わせの窓口、写真をいただくかどうか、交換・返金の判断者。</td><td style="padding:5px 10px; white-space:nowrap;">落合様</td></tr>
+</tbody>
+</table>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== 付録 C ===== -->
+<section class="page">
+<div class="band"><div class="num">C</div><h2>付録C　この操作は誰がやるか（早見表）</h2></div>
+<div class="lead">○ の付いた操作は落合コーポレーション様、右の列は Walkers が行う作業です。<br/>Walkers が行う作業は、ご連絡だけお願いします。</div>
+<table style="width:100%; border-collapse:collapse; font-size:9pt; line-height:1.5; margin-top:2mm;">
+<thead>
+<tr style="background:#24365c; color:#fff;">
+<th style="padding:4px 10px; text-align:left; border-radius:4px 0 0 0;">操作</th>
+<th style="padding:4px 8px; text-align:center; white-space:nowrap;">落合様</th>
+<th style="padding:4px 10px; text-align:left; border-radius:0 4px 0 0;">Walkers</th>
+</tr>
+</thead>
+<tbody>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">商品の登録・商品区分の割り当て・EC 用在庫の入力。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">初回登録の分担のご相談。</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">上代の変更。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">一括変更のご相談。</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">商品の公開・非公開。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">—</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">在庫数の変更。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">—</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">業者様アカウントの作成・顧客区分・タグ付け・ご案内。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">顧客タイプ・会社名・支払区分の設定。</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">業者様の情報（住所・担当者・メール）の変更。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">—</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">割引率の表の編集・顧客区分の変更・カスタムの率の入力。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">支払区分の変更・相談対応。</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">取引をやめる業者様のご連絡。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">無効化の操作。</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">ご注文の確認。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">裏側の自動処理の保守。</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">都度払いの入金確認と出荷判断。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">—</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">送り状の発行・出荷・「発送済み」にする。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">—</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">ご注文のキャンセル（ご連絡もお願いします）。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">マネーフォワード側の処理。</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">電話・FAX のご注文の手入力（注文番号のご連絡もお願いします）。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">請求書との連動の確認。</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">都度払いの請求。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">—（自動）</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">下書きの整理。</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">かけ払い請求書の確認・送付。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">不具合対応。</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">入金の確認・マネーフォワードで「入金済み」に更新。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">Shopify 側の「支払い済み」の更新。</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">未入金の督促。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">—</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">返品の記録・業者様へのご連絡。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">締め後の請求書の直し。</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">お知らせの投稿。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">お知らせの枠の設定。</td></tr>
+<tr><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">問い合わせの受付と対応の判断。</td><td style="padding:4px 8px; border-bottom:1px solid #e2e8f0; text-align:center;">○</td><td style="padding:4px 10px; border-bottom:1px solid #e2e8f0;">サイト・管理画面の不具合の調査。</td></tr>
+<tr><td style="padding:4px 10px;">ストア設定・システムの変更。</td><td style="padding:4px 8px; text-align:center;">—</td><td style="padding:4px 10px;">○（Walkers が行います）。</td></tr>
+</tbody>
+</table>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!--
+  ===== m2 担当者メモ（司令塔向け・判断に迷った点） =====
+  1. とびらは <section class="page toc"> とし、見本の .band（帯）にインラインで章の色を指定した（C=#2563eb・D=#dc2626・E=#0d9488）。丸の中は章の英字。
+  2. 付録 A は「1 ページ」の制約から LINE 用文例のみ全文掲載。メール用（v2 付録 A-2）は載せず、
+     note に「メールの場合も 4 点を必ず含める」と書いた。メール文例が必要なら 1 ページ追加が要る。
+  3. 付録 B・C の表と付録 A の文例ボックスは、見本 CSS に該当クラスが無いためインライン style で
+     見本の配色（紺 #24365c・罫線 #e2e8f0）に合わせた。新しいクラスは定義していない。
+  4. D-1 の振込先口座は、口座番号を配布物に載せてよいか未確定（v2 未解決 #9）のため、
+     銀行名のみ（横浜銀行・三井住友銀行）とし番号は載せていない。
+  5. C-1 の「検索欄で tag:payment:20th と絞り込める」小技と、E-1 の「対象タグはログイン前提」
+     「掲載終了日は当日 23:59 まで表示」の細部は、1 ページ 1 まとまりの分量制約から割愛した。
+  6. 節どうしの参照は、ページ番号が未採番のため「この章の『出荷する』」「D 章の『返品・返金を処理する』」
+     のように節名で書いた。結合時にページ番号参照へ差し替えるならここが対象。
+
+  ===== hq への完了報告（SendMessage で ochiai-hq に届かなかったため、ここに記載。2026-08-18） =====
+  - ページ数: 21（C 章 7 = とびら＋C-1×2＋C-2＋C-4×2＋C-5／D 章 7 = とびら＋D-1〜D-5（D-2 のみ 2p）／
+    E 章 4 = とびら＋E-1×2＋E-2／付録 3 = A・B・C 各 1p）。C-3 は見本側のため未収録、C 章とびらの節一覧には掲載済み。
+  - 自己 QA（PDF 全ページ目視 2 周）で直した点:
+    ①D-2 の band タイトル 2 件が「下 / 書き」等の不自然な位置で折返し → 短縮して 1 行化
+    ②E-2 の band タイトル 2 行折返し → 短縮 ③E 章とびら lead の「随時の章」行またぎ → kw 化
+    ④付録 B 最終行の分野列「問い合わせ」折返し → nowrap 追加
+    ⑤C-1 STEP2 の画像 19 は payment タグが写っていないテスト注文のため、キャプションを実態に合わせ修正。
+  - フッター右は全ページ <span class="pnum"></span> のまま空欄（結合時に採番）。
+-->
+</body>
+</html>

@@ -1,0 +1,173 @@
+{%- comment -%}
+  B2B カート用チェックアウトボタン
+  ====================================================================
+  法人顧客がカートページで「法人価格で注文する」をクリック →
+  Vercel Function で Draft Order 作成 → invoice URL にリダイレクト。
+
+  カートフッターの buttons ブロック内で render:
+    {% render 'b2b-cart-checkout' %}
+
+  通常の Checkout ボタンの代わりに表示する。
+{%- endcomment -%}
+
+{%- if customer and customer.metafields.b2b.customer_type == 'corporate' -%}
+  <div id="b2b-checkout-section" style="
+    margin-bottom: 1rem;
+    padding: 1.25rem;
+    border: 2px solid #1a3a6b;
+    border-radius: 10px;
+    background: #f4f7fc;
+  ">
+    <div style="
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    ">
+      <span style="
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #1a3a6b;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      ">法人注文</span>
+      <span style="
+        font-size: 0.65rem;
+        background: #1a3a6b;
+        color: #fff;
+        padding: 0.15rem 0.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+      ">{{ customer.metafields.b2b.discount_group.value | default: '-' }}</span>
+    </div>
+
+    <p style="
+      font-size: 0.8rem;
+      color: #555;
+      margin: 0 0 1rem 0;
+      line-height: 1.6;
+    ">
+      卸価格が適用された請求書を作成し、そのまま決済画面へ進みます。
+    </p>
+
+    <button
+      type="button"
+      id="b2b-checkout-btn"
+      {% if cart == empty %}disabled{% endif %}
+      style="
+        display: block;
+        width: 100%;
+        padding: 0.95rem 1rem;
+        background: #1a3a6b;
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 700;
+        text-align: center;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.2s, opacity 0.2s;
+        box-sizing: border-box;
+      "
+      onmouseover="this.style.background='#15305a'"
+      onmouseout="this.style.background='#1a3a6b'"
+    >
+      法人価格で注文する
+    </button>
+
+    <div id="b2b-checkout-status" style="
+      display: none;
+      margin-top: 0.75rem;
+      padding: 0.6rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      text-align: center;
+    "></div>
+
+    <p style="
+      font-size: 0.7rem;
+      color: #999;
+      margin: 0.75rem 0 0 0;
+      text-align: center;
+      line-height: 1.5;
+    ">
+      ※ 通常のチェックアウトでは卸価格は適用されません
+    </p>
+  </div>
+
+  <script>
+    (function() {
+      var API_URL = 'https://ochiai-corp-webhook.vercel.app/api/create-draft-order';
+      var CUSTOMER_ID = {{ customer.id }};
+
+      var btn = document.getElementById('b2b-checkout-btn');
+      var statusEl = document.getElementById('b2b-checkout-status');
+
+      function showStatus(msg, type) {
+        statusEl.style.display = 'block';
+        statusEl.textContent = msg;
+        if (type === 'error') {
+          statusEl.style.background = '#fef2f2';
+          statusEl.style.color = '#d32f2f';
+        } else if (type === 'success') {
+          statusEl.style.background = '#f0fdf4';
+          statusEl.style.color = '#15803d';
+        } else {
+          statusEl.style.background = '#f0f4ff';
+          statusEl.style.color = '#1a3a6b';
+        }
+      }
+
+      btn.addEventListener('click', async function() {
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+        btn.textContent = '注文を作成中…';
+        showStatus('カート情報を取得しています…', 'info');
+
+        try {
+          var cartRes = await fetch('/cart.js');
+          var cart = await cartRes.json();
+
+          if (!cart.items || cart.items.length === 0) {
+            throw new Error('カートが空です');
+          }
+
+          showStatus('卸価格を計算して Draft Order を作成中…', 'info');
+
+          var items = cart.items.map(function(item) {
+            return { variantId: item.variant_id, quantity: item.quantity };
+          });
+
+          var res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ customerId: CUSTOMER_ID, items: items }),
+          });
+
+          var data = await res.json();
+
+          if (!res.ok || !data.ok) {
+            throw new Error(data.error || data.message || '注文の作成に失敗しました');
+          }
+
+          showStatus(
+            data.draftOrderName + ' を作成しました。請求書ページへ移動します…',
+            'success'
+          );
+          btn.textContent = 'リダイレクト中…';
+
+          setTimeout(function() {
+            window.location.href = data.invoiceUrl;
+          }, 800);
+
+        } catch (e) {
+          showStatus('エラー: ' + e.message, 'error');
+          btn.disabled = false;
+          btn.style.opacity = '1';
+          btn.textContent = '法人価格で注文する';
+        }
+      });
+    })();
+  </script>
+{%- endif -%}

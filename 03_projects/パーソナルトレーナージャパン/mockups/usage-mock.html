@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>腰の動作チェック ― 使い方イメージ</title>
+<style>
+  :root {
+    --blue-50:#eff6ff; --blue-100:#dbeafe; --blue-200:#bfdbfe;
+    --blue-500:#3b82f6; --blue-600:#2563eb; --blue-700:#1d4ed8; --blue-900:#1e3a8a;
+    --slate-50:#f8fafc; --slate-100:#f1f5f9; --slate-200:#e2e8f0; --slate-300:#cbd5e1;
+    --slate-400:#94a3b8; --slate-500:#64748b; --slate-600:#475569; --slate-700:#334155;
+    --slate-800:#1e293b; --slate-900:#0f172a;
+    --white:#ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 17px; }
+  body {
+    font-family: "Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",ui-sans-serif,system-ui,-apple-system,sans-serif;
+    font-feature-settings: "palt";
+    -webkit-font-smoothing: antialiased;
+    background: var(--slate-100);
+    color: var(--slate-900);
+    line-height: 1.6;
+  }
+  .wrap { max-width: 430px; margin: 0 auto; padding: 24px 18px 36px; }
+
+  /* ヘッダー */
+  .head { text-align: center; margin-bottom: 22px; }
+  .head .eyebrow { font-size: 13px; color: var(--blue-700); font-weight: 700; letter-spacing: .02em; margin-bottom: 6px; }
+  .head h1 { font-size: 21px; font-weight: 800; color: var(--slate-900); margin-bottom: 10px; }
+  .head .lead { font-size: 13.5px; color: var(--slate-600); line-height: 1.7; }
+  .head .lead b { color: var(--blue-700); }
+
+  /* ステップ */
+  .step { margin-bottom: 4px; }
+  .step-head { display: flex; align-items: center; gap: 10px; margin: 18px 0 10px; }
+  .step-num { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 999px; background: var(--blue-600); color: #fff; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(37,99,235,.3); }
+  .step-title { font-size: 16px; font-weight: 800; color: var(--slate-800); }
+
+  /* スマホ画面の枠 */
+  .screen { border-radius: 22px; overflow: hidden; border: 1px solid var(--slate-200); box-shadow: 0 8px 24px rgba(15,23,42,.08); background: #fff; }
+  .screen-body { padding: 22px 18px; min-height: 132px; display: flex; flex-direction: column; }
+  .scr-slate { background: var(--slate-50); }
+  .scr-grad1 { background: linear-gradient(to bottom, var(--blue-50), #fff); }
+
+  /* 進捗バー（アプリ再現） */
+  .progress-row { display:flex; align-items:center; gap:8px; margin-bottom: 14px; }
+  .progress-track { flex:1; height:7px; border-radius:999px; background: var(--slate-200); overflow:hidden; }
+  .progress-fill { height:100%; border-radius:999px; background: var(--blue-600); }
+  .progress-label { font-size: 11.5px; color: var(--slate-500); font-weight:700; white-space:nowrap; }
+
+  /* カード */
+  .card { background:#fff; border:1px solid var(--slate-200); border-radius:16px; padding: 18px; }
+  .pill { display:inline-block; font-size:11.5px; font-weight:700; color: var(--blue-700); background: var(--blue-50); border:1px solid var(--blue-100); border-radius:999px; padding: 3px 10px; margin-bottom: 10px; }
+  .q-big { font-size: 19px; font-weight: 800; color: var(--slate-900); line-height: 1.55; }
+  .q-sub { font-size: 13px; color: var(--slate-500); margin-top: 6px; }
+
+  /* はい/いいえ */
+  .answers { display:flex; flex-direction: column; gap: 9px; margin-top: 14px; }
+  .ans { display:flex; align-items:center; gap:10px; font-size:16px; font-weight:700; border-radius:12px; padding: 13px 16px; border:1.5px solid var(--slate-300); color: var(--slate-700); background:#fff; }
+  .ans .dot { width:18px; height:18px; border-radius:999px; border:2px solid var(--slate-300); flex:0 0 auto; }
+  .ans.sel { border-color: var(--blue-600); background: var(--blue-600); color:#fff; box-shadow: 0 3px 10px rgba(37,99,235,.3); }
+  .ans.sel .dot { border-color:#fff; background:#fff; position:relative; }
+  .ans.sel .dot::after { content:""; position:absolute; inset:4px; border-radius:999px; background: var(--blue-600); }
+  .ans .tag { margin-left:auto; font-size:11px; font-weight:700; opacity:.9; }
+
+  /* 結果カード */
+  .result { background: linear-gradient(135deg, var(--blue-50), #fff 55%, var(--blue-50)); border:1px solid var(--blue-200); border-radius:16px; padding: 18px; }
+  .result-head { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .result-ic { width:38px; height:38px; border-radius:999px; background: var(--blue-600); display:flex; align-items:center; justify-content:center; flex:0 0 auto; }
+  .result-ic svg { width:20px; height:20px; }
+  .result-title { font-size: 16px; font-weight:800; color: var(--blue-900); }
+  .cause { font-size: 18px; font-weight:800; color: var(--slate-800); line-height:1.5; }
+  .result-note { margin-top:14px; padding-top:12px; border-top:1px solid var(--blue-200); font-size:12.5px; color: var(--slate-600); display:flex; gap:7px; align-items:flex-start; }
+  .result-note svg { width:15px; height:15px; flex:0 0 auto; margin-top:2px; }
+
+  /* シート列マッピングのタグ */
+  .maps { display:flex; align-items:center; gap:8px; margin-top: 11px; font-size:12.5px; color: var(--slate-600); background:#fff; border:1px dashed var(--slate-300); border-radius:10px; padding: 8px 12px; }
+  .maps .ic { font-size:14px; }
+  .maps b { color: var(--slate-800); }
+
+  /* 矢印 */
+  .arrow { text-align:center; color: var(--slate-400); font-size:18px; line-height:1; margin: 8px 0 2px; }
+
+  /* フッター */
+  .foot { margin-top: 24px; background: var(--white); border:1px solid var(--slate-200); border-radius:14px; padding:16px; }
+  .foot h3 { font-size:14px; font-weight:800; color: var(--slate-800); margin-bottom:8px; }
+  .foot p { font-size:12.5px; color: var(--slate-600); line-height:1.75; }
+  .foot .em { color: var(--blue-700); font-weight:700; }
+  .brand { text-align:center; margin-top:18px; font-size:11px; color: var(--slate-400); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+
+    <div class="head">
+      <div class="eyebrow">現役寿命の延伸を、AIと一緒に。</div>
+      <h1>腰の動作チェック ― 使い方イメージ</h1>
+      <p class="lead">スプレッドシートの<b>3つの列</b>が、そのまま<br>ユーザーのスマホ画面の<b>3ステップ</b>になります。</p>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step">
+      <div class="step-head">
+        <div class="step-num">1</div>
+        <div class="step-title">動作をやってみる</div>
+      </div>
+      <div class="screen">
+        <div class="screen-body scr-slate">
+          <div class="progress-row">
+            <div class="progress-track"><div class="progress-fill" style="width:20%"></div></div>
+            <div class="progress-label">1 / 5</div>
+          </div>
+          <div class="card">
+            <span class="pill">やってみる動作</span>
+            <div class="q-big">立位で前屈してください</div>
+            <div class="q-sub">指先で床を触るイメージで、ゆっくり前に倒します</div>
+          </div>
+        </div>
+      </div>
+      <div class="maps"><span class="ic">📋</span><span>シートの <b>「動作内容」</b> 列がここに表示されます</span></div>
+    </div>
+
+    <div class="arrow">▼</div>
+
+    <!-- STEP 2 -->
+    <div class="step">
+      <div class="step-head">
+        <div class="step-num">2</div>
+        <div class="step-title">感じたことに「はい / いいえ」で答える</div>
+      </div>
+      <div class="screen">
+        <div class="screen-body scr-slate">
+          <div class="progress-row">
+            <div class="progress-track"><div class="progress-fill" style="width:20%"></div></div>
+            <div class="progress-label">1 / 5</div>
+          </div>
+          <div class="card">
+            <span class="pill">感じたことを選ぶ</span>
+            <div class="q-big">太もも裏が突っ張りましたか？</div>
+            <div class="answers">
+              <div class="ans sel"><span class="dot"></span>はい<span class="tag">▶ 選択中</span></div>
+              <div class="ans"><span class="dot"></span>いいえ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="maps"><span class="ic">📋</span><span>シートの <b>「質問内容」</b> 列がここに表示されます</span></div>
+    </div>
+
+    <div class="arrow">▼</div>
+
+    <!-- STEP 3 -->
+    <div class="step">
+      <div class="step-head">
+        <div class="step-num">3</div>
+        <div class="step-title">考えられる原因の候補がわかる</div>
+      </div>
+      <div class="screen">
+        <div class="screen-body" style="background:#fff;">
+          <div class="result">
+            <div class="result-head">
+              <div class="result-ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>
+              </div>
+              <div class="result-title">考えられる原因（候補）</div>
+            </div>
+            <div class="cause">ハムストリングス（太もも裏の筋肉）が硬い可能性</div>
+            <div class="result-note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
+              <span>「あてはまるものがない」が続いた場合は、専門家の無料カウンセリングをご案内します</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="maps"><span class="ic">📋</span><span>シートの <b>「推測」</b> 列がここに表示されます</span></div>
+    </div>
+
+    <div class="foot">
+      <h3>つまり、シートづくり＝アプリの中身づくりです</h3>
+      <p>枝光さまに記入いただく <span class="em">「動作・質問・推測」</span> が、そのままユーザーが触れる画面になります。シートが充実するほど、AIがご案内できる範囲が広がります。</p>
+    </div>
+
+    <div class="brand">パーソナルトレーナージャパン × Walkers ／ PoC イメージ</div>
+
+  </div>
+</body>
+</html>

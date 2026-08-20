@@ -1,0 +1,143 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "CloudFormationStack",
+      "Effect": "Allow",
+      "Action": [
+        "cloudformation:CreateStack",
+        "cloudformation:UpdateStack",
+        "cloudformation:DeleteStack",
+        "cloudformation:DescribeStacks",
+        "cloudformation:DescribeStackEvents",
+        "cloudformation:DescribeStackResources",
+        "cloudformation:GetTemplateSummary",
+        "cloudformation:ValidateTemplate",
+        "cloudformation:CreateChangeSet",
+        "cloudformation:DescribeChangeSet",
+        "cloudformation:ExecuteChangeSet",
+        "cloudformation:DeleteChangeSet",
+        "cloudformation:ListStacks"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "AmplifyHosting",
+      "Effect": "Allow",
+      "Action": [
+        "amplify:CreateApp",
+        "amplify:UpdateApp",
+        "amplify:DeleteApp",
+        "amplify:GetApp",
+        "amplify:ListApps",
+        "amplify:CreateBranch",
+        "amplify:UpdateBranch",
+        "amplify:DeleteBranch",
+        "amplify:GetBranch",
+        "amplify:ListBranches",
+        "amplify:StartJob",
+        "amplify:StopJob",
+        "amplify:GetJob",
+        "amplify:ListJobs",
+        "amplify:CreateDomainAssociation",
+        "amplify:UpdateDomainAssociation",
+        "amplify:DeleteDomainAssociation",
+        "amplify:GetDomainAssociation",
+        "amplify:ListDomainAssociations",
+        "amplify:TagResource",
+        "amplify:UntagResource",
+        "amplify:ListTagsForResource"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "AmplifyRoles",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateRole",
+        "iam:DeleteRole",
+        "iam:GetRole",
+        "iam:PassRole",
+        "iam:PutRolePolicy",
+        "iam:DeleteRolePolicy",
+        "iam:GetRolePolicy",
+        "iam:TagRole",
+        "iam:UntagRole",
+        "iam:ListRolePolicies",
+        "iam:ListAttachedRolePolicies"
+      ],
+      "Resource": [
+        "arn:aws:iam::857932879110:role/*-amplify-service-role",
+        "arn:aws:iam::857932879110:role/*-amplify-compute-role"
+      ]
+    },
+    {
+      "Sid": "MeasurementTables",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:CreateTable",
+        "dynamodb:DeleteTable",
+        "dynamodb:DescribeTable",
+        "dynamodb:UpdateTable",
+        "dynamodb:TagResource",
+        "dynamodb:UntagResource",
+        "dynamodb:ListTagsOfResource",
+        "dynamodb:DescribeContinuousBackups",
+        "dynamodb:UpdateContinuousBackups",
+        "dynamodb:DescribeTimeToLive",
+        "dynamodb:UpdateTimeToLive"
+      ],
+      "Resource": "arn:aws:dynamodb:ap-northeast-1:857932879110:table/1lc-property-*"
+    },
+    {
+      "Sid": "DynamoDBAccountLevelReads",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:ListTables",
+        "dynamodb:DescribeLimits"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "BuildLogs",
+      "Effect": "Allow",
+      "Action": [
+        "logs:DescribeLogGroups",
+        "logs:DescribeLogStreams",
+        "logs:GetLogEvents",
+        "logs:FilterLogEvents"
+      ],
+      "Resource": "arn:aws:logs:ap-northeast-1:857932879110:log-group:/aws/amplify/*"
+    },
+    {
+      "Sid": "ManageOwnAccessKeys",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateAccessKey",
+        "iam:DeleteAccessKey",
+        "iam:ListAccessKeys",
+        "iam:UpdateAccessKey",
+        "iam:GetUser",
+        "iam:ListMFADevices",
+        "iam:ChangePassword"
+      ],
+      "Resource": "arn:aws:iam::857932879110:user/${aws:username}"
+    },
+    {
+      "Sid": "TokyoRegionOnly",
+      "Effect": "Deny",
+      "NotAction": [
+        "iam:*",
+        "cloudformation:ValidateTemplate",
+        "sts:*",
+        "support:*"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:RequestedRegion": "ap-northeast-1"
+        }
+      }
+    }
+  ]
+}

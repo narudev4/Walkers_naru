@@ -1,0 +1,16 @@
+{
+  "name": "ochiai-invoice-webhook",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "落合コーポ — Shopify orders/create Webhook → MF請求書 自動作成（③都度払いは自動送信ステップへ）。依存ゼロ（node:http）。",
+  "scripts": {
+    "start": "node --env-file=../shopify/.env --env-file=../moneyforward/.env --env-file=.env server.js",
+    "watch": "node --env-file=../shopify/.env --env-file=../moneyforward/.env --env-file=.env watch.js",
+    "settle": "node --env-file=../shopify/.env --env-file=../moneyforward/.env --env-file=.env settle-batch.js",
+    "test:post": "node --env-file=../shopify/.env --env-file=.env sign-and-post.js"
+  },
+  "engines": {
+    "node": ">=20.7.0"
+  }
+}

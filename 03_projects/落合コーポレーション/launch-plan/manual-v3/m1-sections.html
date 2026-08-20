@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<title>操作マニュアル v3（m1: 1〜3章）</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif; color:#1a202c; }
+  body { line-break: strict; }
+  @page { size:A4; margin:0; }
+  .page { width:210mm; height:296mm; page-break-after:always; position:relative; padding:16mm 16mm 20mm; overflow:hidden; }
+  .page:last-child { page-break-after:auto; }
+
+  .foot { position:absolute; bottom:8mm; left:16mm; right:16mm; display:flex; justify-content:space-between; font-size:8.5pt; color:#8a94a6; border-top:1px solid #e2e8f0; padding-top:2mm; }
+
+  /* 数字丸: 数字は欧文フォント・line-height 1 で光学中央に */
+  .num, ol.ops li::before {
+    font-family:'Helvetica Neue', Arial, sans-serif !important;
+    line-height:1 !important;
+    font-feature-settings:'tnum';
+  }
+
+  .band { background:#24365c; color:#fff; border-radius:6px; padding:14px 20px; display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+  .band .num { background:#e53e3e; color:#fff; width:34px; height:34px; flex:0 0 34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15pt; font-weight:700; padding-bottom:2px; }
+  .band h2 { font-size:16.5pt; font-weight:700; letter-spacing:.02em; flex:1; text-wrap:balance; }
+  .band .who { background:#f6ad3c; color:#3b2b00; font-size:9.5pt; font-weight:700; padding:4px 12px; border-radius:999px; white-space:nowrap; }
+  .band .who.w { background:#dbe4f3; color:#24365c; }
+
+  .lead { background:#eff6ff; border-left:5px solid #3b82f6; border-radius:4px; padding:12px 16px; font-size:11.5pt; line-height:1.9; margin-bottom:14px; text-wrap:pretty; }
+  .lead b { color:#1e40af; }
+
+  .shots { display:flex; flex-direction:column; align-items:center; gap:7px; margin:10px 0 2px; }
+  .shot { text-align:center; width:100%; max-width:162mm; }
+  .shot img { width:auto; max-width:100%; max-height:80mm; border:1px solid #cbd5e1; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .shot .cap { font-size:9pt; color:#64748b; margin-top:3px; }
+
+  ol.ops { margin:10px 0 6px 4px; list-style:none; counter-reset:op; }
+  ol.ops li { counter-increment:op; position:relative; padding:8px 0 8px 38px; font-size:11.5pt; line-height:1.8; border-bottom:1px dashed #e2e8f0; text-wrap:pretty; }
+  ol.ops li:last-child { border-bottom:none; }
+  ol.ops li::before { content:counter(op); position:absolute; left:0; top:9px; width:24px; height:24px; border-radius:50%; background:#24365c; color:#fff; font-size:11pt; font-weight:700; display:flex; align-items:center; justify-content:center; padding-top:1.25px; }
+  ol.ops b { color:#b91c1c; }
+
+  .note { background:#fff9e6; border:1.5px solid #f4c430; border-radius:8px; padding:11px 16px; font-size:10.5pt; line-height:1.8; margin:10px 0; text-wrap:pretty; }
+  .note .t { font-weight:700; color:#8a6d00; }
+  .ok { background:#f0fdf4; border:1.5px solid #22c55e; border-radius:8px; padding:11px 16px; font-size:10.5pt; line-height:1.8; margin:10px 0; text-wrap:pretty; }
+  .ok .t { font-weight:700; color:#15803d; display:block; margin-bottom:4px; font-size:11.5pt; }
+  .tbd { background:#fdeaea; color:#b91c1c; font-weight:700; font-size:9.5pt; padding:2px 8px; border-radius:4px; white-space:nowrap; }
+  .kw { white-space:nowrap; }
+
+  /* 表紙 */
+  .cover { display:flex; flex-direction:column; align-items:center; text-align:center; padding-top:32mm; }
+  .cover h1 { color:#24365c; font-size:25pt; line-height:1.5; font-weight:800; text-wrap:balance; }
+  .cover .sub { color:#475569; font-size:13pt; margin-top:8mm; }
+  .cover .scope { margin-top:13mm; width:154mm; text-align:left; background:#fff9e6; border:2px solid #f4c430; border-radius:10px; padding:16px 22px; }
+  .cover .scope .t { font-weight:800; color:#8a6d00; font-size:12.5pt; margin-bottom:6px; }
+  .cover .scope p { font-size:11.5pt; line-height:2.0; text-wrap:pretty; }
+  .cover .meta { margin-top:14mm; color:#64748b; font-size:10.5pt; line-height:2.0; }
+  .flow { margin-top:11mm; width:164mm; display:flex; gap:6mm; }
+  .fcard { flex:1; border:1.5px solid #cbd5e1; border-radius:10px; padding:13px 8px; text-align:center; }
+  .fcard .fn { color:#e53e3e; font-weight:800; font-size:10pt; font-family:'Helvetica Neue',Arial,sans-serif; }
+  .fcard .ft { font-weight:700; color:#24365c; font-size:11.5pt; margin:4px 0; line-height:1.6; text-wrap:balance; }
+  .fcard .fp { color:#64748b; font-size:9.5pt; }
+
+  /* 目次 */
+  .toc h1 { color:#24365c; font-size:19pt; font-weight:800; border-bottom:3px solid #24365c; padding-bottom:8px; margin-bottom:10mm; }
+  .tgroup { margin-bottom:8mm; }
+  .tgroup .gh { display:flex; align-items:center; gap:8px; font-size:12.5pt; font-weight:800; color:#24365c; margin-bottom:3mm; }
+  .tgroup .dot { width:12px; height:12px; border-radius:3px; }
+  .trow { display:flex; align-items:baseline; font-size:11pt; line-height:2.1; padding-left:20px; }
+  .trow .tt { white-space:nowrap; }
+  .trow .dots { flex:1; border-bottom:1.5px dotted #cbd5e1; margin:0 8px; transform:translateY(-4px); }
+  .trow .tp { color:#334155; font-family:'Helvetica Neue',Arial,sans-serif; font-weight:600; }
+  .trow .tp.soon { color:#b6bfcc; font-weight:400; font-size:9.5pt; }
+</style>
+</head>
+<body>
+<!-- ============================================================
+     m1 担当分: 0 章（4p）・A 章（8p）・B 章（9p）＝ 21 ページ。
+     表紙・目次・採番は司令塔が結合時に行う（.pnum は空のまま）。
+     ============================================================ -->
+<!-- ===== 0章 とびら ===== -->
+<section class="page">
+<div class="band" style="background:#64748b"><h2 style="font-size:22pt; padding:6px 0;">1章　はじめに</h2></div>
+<div class="lead">この章では、管理画面へのログインの仕方と、各メニューの役割を覚えます。<br/>初めて管理画面を触る方は、必ずこの章からお読みください。</div>
+<div class="tgroup" style="margin-top:10mm">
+<div class="gh"><span class="dot" style="background:#64748b"></span>この章の内容</div>
+<div class="trow"><span class="tt">STEP 1　管理画面にログインする</span><span class="dots"></span><span class="tp"></span></div>
+<div class="trow"><span class="tt">STEP 2　画面一覧</span><span class="dots"></span><span class="tp"></span></div>
+<div class="trow"><span class="tt">STEP 3　操作するときの3つのお願い</span><span class="dots"></span><span class="tp"></span></div>
+</div>
+<div class="note" style="margin-top:10mm"><span class="t">本書で扱う範囲。</span> 落合コーポレーション様が日常的に操作する範囲だけを扱います。<br/>設定の変更・不具合の調査はWalkers側の作業です。<br/>該当する箇所には<b>Walkers対応</b>の目印を付け、「Walkersにご連絡ください」で止めています。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== 0章 STEP1 ログイン ===== -->
+<section class="page" id="sec-login">
+<div class="band"><div class="num">1</div><h2>管理画面にログインする</h2><div class="who">落合様の操作</div></div>
+<div class="lead">商品・注文・お客様の登録や確認は、スタッフだけが入れる<b>「管理画面」</b>で行います。<br/>まずはログインの手順を覚えましょう。</div>
+<ol class="ops">
+<li>パソコンでブラウザ（Google Chromeなど）を開きます。</li>
+<li>アドレス欄に<b class="kw">admin.shopify.com</b>と入力し、Enterキーを押します。</li>
+<li>ご登録のメールアドレスとパスワードを入力し、ログインします。</li>
+<li>ストアの一覧が出たら、対象のストアを選びます。</li>
+<li>左側にメニューが並んだ画面が出れば、ログイン完了です。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/01_admin-home.jpg" style="max-height:85mm"/><div class="cap">ログイン完了後の画面。左側にメニューが並びます。</div></div>
+</div>
+<div class="note"><span class="t">スタッフ用アカウントについて。</span> どのメールアドレスで何名分お作りするかは、本番ストアへの移管完了後にWalkersが発行します。ご希望のメールアドレスと人数をお知らせください。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== 0章 STEP2 画面の地図 ===== -->
+<section class="page" id="sec-map">
+<div class="band"><div class="num">2</div><h2>画面一覧</h2><div class="who">落合様の操作</div></div>
+<div class="lead">左側のメニューのうち、本書で使うのは次の5つだけです。<br/>それ以外のメニューは触らなくて大丈夫です。</div>
+<ol class="ops">
+<li>「注文管理」…ご注文の確認・発送済みにする・キャンセル（4章）。電話・FAXのご注文は、中の「下書き注文」で入力します（P.<span class="pref" data-ref="sec-c5"></span>）。</li>
+<li>「商品管理」…商品の登録・価格・非公開（2章）。中の「在庫」で、複数商品の在庫をまとめて直せます（P.<span class="pref" data-ref="sec-a4"></span>）。</li>
+<li>「顧客管理」…業者様アカウントの作成・情報の変更（3章）。開いたときの画面名は「お客様」です。</li>
+<li>「コンテンツ」の中の「メタオブジェクト」…割引率の表の編集（P.<span class="pref" data-ref="sec-b3"></span>）と、お知らせの投稿（P.<span class="pref" data-ref="sec-e1"></span>）。</li>
+<li>「設定」…Walkers側で設定します。通常は触りません。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/02_metaobjects-list.jpg" style="max-height:78mm"/><div class="cap">「コンテンツ」の中の「メタオブジェクト」。割引率の表とお知らせはここにあります。</div></div>
+</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== 0章 STEP3 3つのお願い ===== -->
+<section class="page" id="sec-rules">
+<div class="band"><div class="num">3</div><h2>操作するときの3つのお願い</h2><div class="who">落合様の操作</div></div>
+<div class="lead">操作を始める前に、3つだけお願いがあります。<br/>「入力が消えた」「誤った設定に気づかない」を防ぐためのものです。</div>
+<ol class="ops">
+<li>入力したら<b>必ず「保存」を押してください</b>。保存ボタンは、内容を変更すると画面の右上（画面によっては右下）に出ます。押さずに別のページへ移ると、入力内容が消えます。</li>
+<li>迷ったら<b>保存せずに閉じてください</b>。誤って保存するより安全です。</li>
+<li>価格・区分の設定を変えたときは、必ず結果を目で確認してください（確認の仕方はP.<span class="pref" data-ref="sec-b3"></span>からの節の最後のページにあります）。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/90_save-button.png"/><div class="cap">変更すると画面上部にこのバーが出ます。「保存」を押して確定します。</div></div>
+</div>
+<div class="ok"><span class="t">✅ 準備完了です。</span>この3つを覚えたら、次の2章から実際の操作に進みます。分からなくなったら、いつでも目次から該当ページを開いてください。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== A章 とびら ===== -->
+<section class="page">
+<div class="band" style="background:#16a34a"><h2 style="font-size:22pt; padding:6px 0;">2章　商品を売る準備</h2></div>
+<div class="lead">この章は「売る前の準備」です。商品を登録する・価格を変える・売るのをやめる・在庫を直す、の4つの流れがあります。<br/>業者様の価格は「上代 × 掛け率」で自動計算されるため、この章で扱うのは商品側の設定だけです（掛け率のしくみはP.<span class="pref" data-ref="sec-b3"></span>）。</div>
+<div class="tgroup" style="margin-top:10mm">
+<div class="gh"><span class="dot" style="background:#16a34a"></span>この章の内容</div>
+<div class="trow"><span class="tt">新しい商品を売り始める</span><span class="dots"></span><span class="tp"></span></div>
+<div class="trow"><span class="tt">価格を変える（10/1の値上げなど）</span><span class="dots"></span><span class="tp"></span></div>
+<div class="trow"><span class="tt">商品を売るのをやめる（非公開にする）</span><span class="dots"></span><span class="tp"></span></div>
+<div class="trow"><span class="tt">在庫を直す（補充・棚卸し・EC以外で売れた分）</span><span class="dots"></span><span class="tp"></span></div>
+</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== A-1 STEP1 一括登録と画像の追加 ===== -->
+<section class="page" id="sec-a1">
+<div class="band"><div class="num">1</div><h2><span class="kw">商品の一括登録と画像の追加</span><span class="kw">（初回の移行）</span></h2><div class="who">落合様の操作</div></div>
+<div class="lead">Excelの商品データは、最初にWalkersがCSVでまとめて登録します。<br/>落合様にお願いするのは、各商品への<b>画像の登録</b>と、公開への切り替えです。</div>
+<ol class="ops">
+<li>「商品管理」から対象の商品をクリックします。</li>
+<li>「メディア」の枠に画像をドラッグします（または「＋」をクリックしてファイルを選択します）。</li>
+<li>画像が複数あるときは、1枚目がサイトの一覧写真になります（並び順はドラッグで入れ替えられます）。</li>
+<li>右上の「ステータス」を<b class="kw">「下書き」</b>から<b class="kw">「アクティブ」</b>に変えます。</li>
+<li>「保存」をクリックします。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/26_product-media.png" style="max-height:58mm"/><div class="cap">商品詳細の「メディア」の枠。「＋」から画像を追加できます。</div></div>
+<div class="shot"><img alt="" src="../33-manual-assets/print/27_product-status-active.png" style="max-height:40mm"/><div class="cap">右上の「ステータス」。「アクティブ」でサイトに表示されます。</div></div>
+</div>
+<div class="note"><span class="t">一括登録した直後の商品は「下書き」の状態で、サイトにはまだ出ません。</span> 画像を入れてアクティブにした商品から順にサイトに並びます。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== A-1 STEP2 新しい商品を追加する ===== -->
+<section class="page">
+<div class="band"><div class="num">2</div><h2>新しい商品を追加する</h2><div class="who">落合様の操作</div></div>
+<div class="lead">新しく扱い始める商品は、管理画面から1件ずつ登録します。</div>
+<ol class="ops">
+<li>左メニューの「商品管理」をクリックし、右上の<b class="kw">「商品を追加」</b>をクリックします。</li>
+<li>「タイトル」に商品名、「説明」に商品の説明を入力し、「メディア」で商品画像を追加します。</li>
+<li>「価格」の欄に上代（税抜）を入力します。</li>
+<li>サイズなどの種類がある商品は、「バリエーション」で種類（例: S／M／L）を追加します。バリエーションの行をクリックすると、商品コード（画面では「SKU」）とJANコード（画面では「バーコード」）の入力欄が出ます。</li>
+<li>「商品の整理」の「コレクション」で並べたい商品グループを選び、「保存」をクリックします。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/44_product-new-form.png" style="max-height:64mm"/><div class="cap">「商品を追加」の入力画面。タイトル・説明・メディア（画像）を入力します。</div></div>
+<div class="shot"><img alt="" src="../33-manual-assets/print/29_variant-sku-jan.png" style="max-height:28mm"/><div class="cap">バリエーションの詳細。「SKU」と「バーコード」にコードを入力します。</div></div>
+</div>
+<div class="note"><span class="t">画像も登録してから公開します。</span></div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== A-1 STEP3 商品区分を付ける ===== -->
+<section class="page">
+<div class="band"><div class="num">3</div><h2>商品区分（A／B／C）を付ける</h2><div class="who">落合様の操作</div></div>
+<div class="lead">商品区分は「この商品にどの割引率を使うか」を決める目印です。<br/><b>付け忘れると、業者様にも上代のまま（割引なし）で表示されます。</b>必ず付けてください。</div>
+<ol class="ops">
+<li>保存した商品の詳細画面を開きます。</li>
+<li>画面を下にスクロールし、「商品のメタフィールド」の枠を探します。</li>
+<li>「商品区分」の欄をクリックし、<b class="kw">「A」「B」「C」</b>から1つを選びます。</li>
+<li>画面右下（または右上）の「保存」をクリックします。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/15_product-metafields.jpg" style="max-height:105mm"/><div class="cap">商品の詳細画面の下部。「商品のメタフィールド」の枠に「商品区分＝A」が入っています。</div></div>
+</div>
+<div class="note"><span class="t">区分の割り当てと在庫について。</span> どの商品をどの区分にするかは落合コーポレーション様でお決めいただき、8/20の説明会で実際の値を入力します。<br/>EC用の在庫数の入れ方はP.<span class="pref" data-ref="sec-a4"></span>です。<br/>最初に入れる数の目安は <span class="tbd">確定後に記入</span> です。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== A-2 価格を変える ===== -->
+<section class="page" id="sec-a2">
+<div class="band"><div class="num">1</div><h2>価格（上代）を変える</h2><div class="who">落合様の操作</div></div>
+<div class="lead">年1回程度の価格改定と、随時の価格変更の手順です。<br/>今回の予定: <b>9/1は現行価格で始め、10/1に新価格へ切り替えます。</b></div>
+<ol class="ops">
+<li>左メニューの「商品管理」をクリックします。</li>
+<li>対象の商品名をクリックします。</li>
+<li>「価格」の欄を新しい上代（税抜）に書き換えます。種類がある商品は、種類ごとに直します。</li>
+<li>「保存」をクリックします。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/45_product-price.png" style="max-height:30mm"/><div class="cap">「価格」の枠。上代（税抜）を書き換えます。</div></div>
+</div>
+<div class="ok"><span class="t">✅ 割引率の表は直さなくて大丈夫です。</span>業者様の価格は「上代 × 掛け率」で自動計算されます。上代を変えるだけで、業者様の価格も自動で変わります。</div>
+<div class="note"><span class="t">⚠ すでに入っているご注文の金額は変わりません。</span><br/>ご注文は「注文した時点の価格」で確定しています。<br/>作成済みの請求書の金額も変わりません。<br/>値上げ後の価格一覧は <span class="tbd">確定後に記入</span> です。<br/>商品数が多く一括で変えたいときは、Walkersにご相談ください。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== A-3 非公開にする ===== -->
+<section class="page" id="sec-a3">
+<div class="band"><div class="num">1</div><h2>商品を売るのをやめる（非公開にする）</h2><div class="who">落合様の操作</div></div>
+<div class="lead">取り扱いをやめるとき、または一時的にサイトから隠したいときの手順です。<br/><b>「下書き」にするとサイトから見えなくなり</b>、いつでも公開に戻せます。</div>
+<ol class="ops">
+<li>「商品管理」から対象の商品名をクリックします。</li>
+<li>画面右上の「ステータス」の欄（「アクティブ」と表示されています）をクリックします。</li>
+<li><b class="kw">「下書き」</b>に変更します。</li>
+<li>「保存」をクリックします。売り始めるときは、同じ手順で「アクティブ」に戻します。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/12_product-detail-top.jpg" style="max-height:88mm"/><div class="cap">商品の詳細画面。右上に「ステータス」の欄があります（アクティブ／下書き）。</div></div>
+</div>
+<div class="note"><span class="t">⚠ 商品の「削除」は行わないでください。</span> 削除すると過去のご注文の記録と紐づかなくなります。<br/>「下書き」ならサイトから見えなくなるだけで、いつでも公開に戻せます。<br/>非公開にする前に、その商品のご注文が入っていないかをP.<span class="pref" data-ref="sec-c1"></span>の一覧でご確認ください。</div>
+<!-- 判断メモ(m1): v2 A-3「カートに入れている商品を非公開にした場合の見え方は Walkers で確認中」は、未確定の挙動でありページ密度も高いため本文から割愛した。復活させる場合はこの note に 1 文追加。 -->
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== A-4 STEP1 在庫の考え方 ===== -->
+<section class="page" id="sec-a4">
+<div class="band"><div class="num">1</div><h2>在庫の考え方を知る</h2><div class="who">落合様の操作</div></div>
+<div class="lead">このサイトに登録する在庫数は、<b>倉庫の実在庫そのものではありません</b>。<br/>「ECで売ってよい分」だけを登録し、管理画面では次の3つの数字で表示されます。</div>
+<ol class="ops">
+<li>「手持ち」…登録しているEC用在庫の総数です。<b>補充のときに変更するのは、この数字です。</b></li>
+<li>「引当済み」…ご注文が入って、まだ発送していない分です（自動で増減します）。</li>
+<li>「販売可能」…手持ち − 引当済み。サイト上で「在庫あり」として売れる数です。</li>
+</ol>
+<div class="note"><span class="t">なぜ実在庫をそのまま入れないのか。</span> 実在庫を公開すると、売れ筋を特定の業者様に大量に買われたり、電話・LINEのご注文分と取り合いになったりするためです（2026-07-31の打ち合わせで決めた運用です）。<b>「普通ぐらいの数」を登録し、減ってきたら追加する</b>運用にします。</div>
+<div class="note"><span class="t">業者様の発注表での見え方。</span>EC用在庫が一定数以下になると「残りわずか」（切り替わる数は現在10で、変更できます）、0になると「在庫切れ」と表示され、数量が入力できなくなります。最初に入れる数の目安と切り替わる数は <span class="tbd">確定後に記入</span> です。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== A-4 STEP2 1商品の在庫を変える ===== -->
+<section class="page">
+<div class="band"><div class="num">2</div><h2>1つの商品の在庫数を変える</h2><div class="who">落合様の操作</div></div>
+<div class="lead">補充したとき・棚卸しをしたとき・EC以外で売れた分を反映するときの手順です。<br/>見直す頻度は「棚卸しのタイミング＋EC以外で売れた都度」が基本です。</div>
+<ol class="ops">
+<li>「商品管理」から対象の商品名をクリックします。</li>
+<li>「在庫」の枠にある表で、「手持ち」の数字をクリックします。</li>
+<li>小さな入力欄が開きます。左の<b class="kw">「設定」</b>を選んだまま、新しい在庫数を入力します（「調整」に切り替えると、増減する数を入力する方式になります）。</li>
+<li>入力欄の右にあるチェックマーク（✓）をクリックすると、その場で反映されます。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/13_product-inventory-section.jpg" style="max-height:88mm"/><div class="cap">商品の詳細画面の「在庫」の枠。「手持ち」の数字をクリックします。</div></div>
+<div class="shot"><img alt="" src="../33-manual-assets/print/14_product-inventory-popover.jpg" style="max-height:88mm"/><div class="cap">開いた入力欄。「設定」で新しい数を入力し、右端の ✓ で確定します。</div></div>
+</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== A-4 STEP3 まとめて変更 ===== -->
+<section class="page">
+<div class="band"><div class="num">3</div><h2>複数の商品をまとめて確認・変更する</h2><div class="who">落合様の操作</div></div>
+<div class="lead">複数の商品を一度に見直すときは、「在庫」の一覧画面が便利です。</div>
+<ol class="ops">
+<li>左メニューの「商品管理」を開き、その下の「在庫」をクリックします。</li>
+<li>商品（種類ごと）と在庫数が一覧で表示されます。</li>
+<li>変更したい行の「手持ち」の数字をクリックすると、前のページと同じ入力欄が開きます。</li>
+<li>新しい数を入力し、右端のチェックマーク（✓）をクリックします。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/16_inventory-page-edit.jpg" style="max-height:88mm"/><div class="cap">「在庫」画面。行の「手持ち」をクリックすると、その場で数を変更できます。</div></div>
+</div>
+<div class="note"><span class="t">⚠ 「在庫はあるのに、サイトで在庫切れ」のとき。</span><br/>実在庫があっても、EC用在庫が0なら在庫切れと表示されます。<br/>前のページの手順でEC用在庫を追加してください。<br/>「引当済み」が多いときは、未発送のご注文が在庫を押さえています。<br/>在庫を超える数のご注文が入ったときの扱いは <span class="tbd">確定後に記入</span> です（8/20にご相談します）。</div>
+<!-- 判断メモ(m1): v2 A-4 つまずきの「在庫は追跡されています」スイッチと「在庫がマイナス」は、頻度が低くページ密度が高いため割愛した。 -->
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== B章 とびら ===== -->
+<section class="page">
+<div class="band" style="background:#7c3aed"><h2 style="font-size:22pt; padding:6px 0;">3章　業者様を迎える</h2></div>
+<div class="lead">この章は業者様（取引先）に関する流れです。取引を始める・情報を直す・取引条件を変える・取引をやめる、の4つです。<br/>業者様の価格のしくみ（顧客区分 × 商品区分 → 割引率）は、P.<span class="pref" data-ref="sec-b3"></span>にまとめています。</div>
+<div class="tgroup" style="margin-top:10mm">
+<div class="gh"><span class="dot" style="background:#7c3aed"></span>この章の内容</div>
+<div class="trow"><span class="tt">新しい業者様と取引を始める</span><span class="dots"></span><span class="tp"></span></div>
+<div class="trow"><span class="tt">業者様の情報が変わる（住所・担当者・メールアドレス）</span><span class="dots"></span><span class="tp"></span></div>
+<div class="trow"><span class="tt">取引条件を変える（掛け率・顧客区分・支払区分）</span><span class="dots"></span><span class="tp"></span></div>
+<div class="trow"><span class="tt">取引をやめる</span><span class="dots"></span><span class="tp"></span></div>
+</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== B-1 STEP1 アカウント作成 ===== -->
+<section class="page" id="sec-b1">
+<div class="band"><div class="num">1</div><h2>業者様アカウントを作成する</h2><div class="who">落合様の操作</div></div>
+<div class="lead">業者様のログインは<b>メールアドレスと6桁の確認コード</b>で行い、パスワードはありません。<br/>コードは登録したアドレスに届くため、<b>登録するアドレスとご案内するアドレスは必ず一致</b>させてください。</div>
+<ol class="ops">
+<li>左メニューの「顧客管理」をクリックし（画面名は「お客様」です）、右上の<b class="kw">「お客様を追加」</b>をクリックします。</li>
+<li>「名」「姓」に、ご担当者様のお名前を入力します。</li>
+<li>「メールアドレス」を入力します。<b>ログインに使われる、いちばん大事な項目です。</b></li>
+<li>「電話番号」を入力し、「デフォルトの住所」の「住所を追加」から会社名・所在地を入力します。</li>
+<li>「保存」をクリックします。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/10_customer-new.jpg" style="max-height:88mm"/><div class="cap">「新しいお客様」の入力画面。名・姓・メールアドレス・電話番号・住所を入力します。</div></div>
+</div>
+<div class="note"><span class="t">店舗が複数ある業者様について。</span> お届け先が複数ある業者様の登録の仕方は、8/20にご一緒に決めます。それまでは1社1アカウントで作成してください。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== B-1 STEP2 区分とタグ ===== -->
+<section class="page">
+<div class="band"><div class="num">2</div><h2>顧客区分と支払いのタグを付ける</h2><div class="who">落合様の操作</div></div>
+<div class="lead">作成した業者様に、価格を決める<b>「顧客区分」</b>と支払いの<b>「タグ」</b>を付けます。<br/>顧客区分のしくみは、先にP.<span class="pref" data-ref="sec-b3"></span>をお読みください。</div>
+<ol class="ops">
+<li>お客様の詳細画面を下にスクロールし、「メタフィールド」の枠を探します。</li>
+<li>「顧客区分2(f)」の欄で、「顧客区分A」「顧客区分B」「顧客区分C」「顧客区分カスタム」から1つを選びます。</li>
+<li>カスタムを選んだ場合は、「区分カスタム_商品A割引率」「同B」「同C」を<b>3つとも必ず</b>入力します（入れ方はP.<span class="pref" data-ref="sec-b3"></span>からの節にあります）。</li>
+<li>画面右側の「タグ」の欄に、次のどれか1つを入力します。<br/><b class="kw">payment:prepaid</b>（都度払い）<br/><b class="kw">payment:20th</b>（かけ払い・20日締め）<br/><b class="kw">payment:eom</b>（かけ払い・末締め）</li>
+<li>Enterキーでタグを確定し、「保存」をクリックします。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/07_customer-A-metafields-tags.jpg" style="max-height:105mm"/><div class="cap">お客様の詳細画面。「メタフィールド」の枠と、右側の「タグ」の欄です。</div></div>
+</div>
+<div class="note"><span class="t">⚠ タグは半角で、コロン（:）の前後にスペースを入れないでください。</span> 表記が違うと目印として働きません。ご注文のほうのタグはシステムが自動で付けるため、手で付けるのはお客様のタグだけです。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== B-1 STEP3 支払区分・会社名・顧客タイプ ===== -->
+<section class="page">
+<div class="band"><div class="num">3</div><h2><span class="kw">支払区分・会社名・</span><span class="kw">顧客タイプを入れる</span></h2><div class="who">落合様の操作</div></div>
+<div class="lead">請求書のあて先と締め日を決める3項目です。<br/>この3つが入っていないと、<b>業者様価格が表示されません</b>。</div>
+<ol class="ops">
+<li>お客様の詳細画面を下にスクロールし、「メタフィールド」の枠を探します。</li>
+<li><b class="kw">「会社名」</b>に、請求書に載る正式名称を入力します。</li>
+<li><b class="kw">「支払区分」</b>に、次のどれか1つを半角で入力します。<br/><b class="kw">prepaid</b>（都度払い）<br/><b class="kw">20th</b>（かけ払い20日締め）<br/><b class="kw">eom</b>（かけ払い末締め）</li>
+<li>同じ枠の<b class="kw">「すべて表示」</b>をクリックします。<br/>「ピン止めされていない項目」の<span style="white-space:nowrap">「B2B Customer Type」</span>に半角で<b class="kw">corporate</b>と入力します（業者様のしるしです）。</li>
+<li>「保存」をクリックします。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/40_customer-metafields-defined.png" style="max-height:56mm"/><div class="cap">「メタフィールド」の枠。「会社名」と「支払区分」に入力します。</div></div>
+<div class="shot"><img alt="" src="../33-manual-assets/print/46_customer-type-allview.png" style="max-height:26mm"/><div class="cap">「すべて表示」の「ピン止めされていない項目」。「B2B Customer Type」にcorporateと入力します。</div></div>
+</div>
+<div class="note"><span class="t">⚠ つづり・大文字小文字が1文字でも違うと働きません。</span> 入力後にサイトで業者様価格が出ないときは、Walkersにご連絡ください。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== B-1 STEP4 業者様にご案内する ===== -->
+<section class="page">
+<div class="band"><div class="num">4</div><h2>業者様にご案内する</h2><div class="who">落合様の操作</div></div>
+<div class="lead">アカウントの作成から支払区分の入力（前のページ）までが済んだら、業者様にサイトのご案内をお送りします。</div>
+<ol class="ops">
+<li>営業担当の方から、メールまたはLINEでご案内をお送りください。</li>
+<li>ご案内には次の4点を必ず含めます。<br/>・業者様向けサイトのURL。<br/>・パスワードは不要であること。<br/>・ログイン手順（メールアドレス→届いた6桁のコード）。<br/>・お問い合わせ先。</li>
+</ol>
+<div class="note"><span class="t">⚠ ご案内を送るタイミング。</span><br/>掛け率の実際の値と実際の商品が揃ってから送ります。それまでは送りません。<br/>本番のURLとサイトの保護解除は、移管後にWalkersからお知らせ・対応します。</div>
+<div class="note"><span class="t">業者様が「ログインできない」とき。</span> ①登録したメールアドレスとご案内先が一字でも違わないか ②6桁のコードが迷惑メールに入っていないか ③最後に届いたメールのコードを使っているか、の順にご確認ください。それでも入れなければWalkersにご連絡ください。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== B-2 情報を直す ===== -->
+<section class="page" id="sec-b2">
+<div class="band"><div class="num">1</div><h2>業者様の情報を直す</h2><div class="who">落合様の操作</div></div>
+<div class="lead">業者様から住所・電話番号・ご担当者・メールアドレスの変更のご連絡があったときの手順です。</div>
+<ol class="ops">
+<li>左メニューの「顧客管理」をクリックします（画面名は「お客様」です）。</li>
+<li>対象の業者様の名前をクリックします。</li>
+<li>画面右側の「お客様」の枠の右上にある「⋯」をクリックし、<b class="kw">「連絡先情報を編集する」</b>を選びます。名・姓・メールアドレス・電話番号を直せます。</li>
+<li>住所は「デフォルトの住所」の枠の「管理」（または「編集」）から直します。</li>
+<li>「保存」をクリックします。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/30_customer-menu-edit.png" style="max-height:42mm"/><div class="cap">「お客様」の枠の「⋯」メニュー。</div></div>
+<div class="shot"><img alt="" src="../33-manual-assets/print/31_customer-contact-dialog.png" style="max-height:52mm"/><div class="cap">「お客様を編集する」の画面。</div></div>
+</div>
+<div class="note"><span class="t">⚠ メールアドレスを変えると、ログインのIDも変わります。</span><br/>6桁のコードは新しいアドレスに届くようになります。<br/>変更したら、業者様に「次回から新しいメールアドレスでログインしてください」とお伝えください。<br/>変更のご連絡をどこで受けるか（電話・LINE・メールなど）は <span class="tbd">確定後に記入</span> です。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== B-3 STEP1 しくみ ===== -->
+<section class="page" id="sec-b3">
+<div class="band"><div class="num">1</div><h2>業者様価格のしくみを知る</h2><div class="who">落合様の操作</div></div>
+<div class="lead">業者様の価格は、業者様の<b>「顧客区分」</b>（A／B／C／カスタム）と商品の<b>「商品区分」</b>（A／B／C）の組み合わせで、割引率が1つに決まります。<br/>数字は割引率（％）で、<b class="kw">30は「30％引き」</b>（上代10,000円 → 7,000円）です。</div>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/03_customerclass-list.jpg" style="max-height:88mm"/><div class="cap">割引率の表（「顧客区分(f)」の一覧）。今の数字は例の値で、実際の値は8/20に入力します。</div></div>
+<div class="shot"><img alt="" src="../33-manual-assets/print/24_storefront-b2b-order.jpg" style="max-height:88mm"/><div class="cap">業者様向けサイトの発注表。上代と「御社価格（税抜）」が並んで表示されます。</div></div>
+</div>
+<div class="note"><span class="t">⚠ 大切なルール。</span> 区分A・B・Cの業者様には<b>表の数字だけ</b>が使われ、カスタムの業者様には<b>その業者様に入力した個別の数字だけ</b>が使われます。<br/>区分A・B・Cの業者様の個別欄は、必ず空にしておいてください。<br/>設定が足りないときは「安い」ではなく<b>「上代のまま（高い）」</b>に振れる作りです。上代のままの表示は、設定漏れのサインです。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== B-3 STEP2 表を編集 ===== -->
+<section class="page">
+<div class="band"><div class="num">2</div><h2>割引率の表を編集する</h2><div class="who">落合様の操作</div></div>
+<div class="lead">割引率の表は、全業者様に共通です。<br/>ここを直すと、区分A・B・Cのすべての業者様の価格が変わります。</div>
+<ol class="ops">
+<li>左メニューの「コンテンツ」→「メタオブジェクト」をクリックします。</li>
+<li>一覧から<b class="kw">「顧客区分(f)」</b>をクリックします。</li>
+<li>変更したい区分（例: 顧客区分A）をクリックします。</li>
+<li>「商品区分A割引率」「商品区分B割引率」「商品区分C割引率」に、割引率を数字だけで入力します（例: 30）。入れられるのは<b>0〜99の整数</b>で、0は「割引しない」です。</li>
+<li>画面右上に表示される「保存」をクリックします。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/04_customerclass-A-edit.jpg" style="max-height:80mm"/><div class="cap">「顧客区分A」の編集画面。商品区分A／B／Cの割引率と「カスタム」欄があります。</div></div>
+<div class="shot"><img alt="" src="../33-manual-assets/print/90_save-button.png"/><div class="cap">変更すると画面上部にこのバーが出ます。「保存」を押して確定します。</div></div>
+</div>
+<div class="note"><span class="t">⚠ 「カスタム」欄のTrue／False（オン／オフの意味です）は変更しないでください。</span><br/>ここを変えると、カスタムの業者様全員が全商品上代のままになり、ご請求が高く出ます。<br/>「顧客区分カスタム」の行には割引率を入力しません（個別の率は次のページ）。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== B-3 STEP3 カスタム＋確認 ===== -->
+<section class="page">
+<div class="band"><div class="num">3</div><h2><span class="kw">カスタムの率を入れ、</span><span class="kw">結果を確認する</span></h2><div class="who">落合様の操作</div></div>
+<div class="lead">「この業者様だけ特別な掛け率にしたい」ときは、その業者様の画面で個別の割引率を入力します。<br/>空欄の区分は上代のまま（ご請求が高く出ます）になるため、<b>3つとも必ず</b>入力してください。</div>
+<ol class="ops">
+<li>「顧客管理」から対象の業者様の名前をクリックします。</li>
+<li>「メタフィールド」の「顧客区分2(f)」で<b class="kw">「顧客区分カスタム」</b>を選びます。</li>
+<li>「区分カスタム_商品A割引率」「同B」「同C」を、3つとも数字だけで入力します（例: 25）。</li>
+<li>画面右上に表示される「保存」をクリックします。</li>
+<li>確認用アカウントで業者様向けサイトの発注表を開き、「御社価格（税抜）」が意図した金額かを目で確認します。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/09_customer-custom-detail.jpg" style="max-height:62mm"/><div class="cap">カスタムの業者様の例。「顧客区分2(f)＝顧客区分カスタム」で個別の割引率が入っています。</div></div>
+</div>
+<div class="ok"><span class="t">✅ 確認のしかた</span>確認用のテストアカウントはWalkersがご用意し、メールアドレスをお知らせします。変更は<b>これから入る新しいご注文</b>から反映され、すでに入っているご注文・作成済みの請求書は変わりません。</div>
+<div class="note"><span class="t">支払区分を変えるとき。</span><br/>「支払区分」の欄と、お客様のタグ（どちらもP.<span class="pref" data-ref="sec-b1"></span>からの節）の両方を、新しいものに付け替えてください。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ===== B-4 取引をやめる ===== -->
+<section class="page" id="sec-b4">
+<div class="band"><div class="num">1</div><h2>取引をやめる</h2><div class="who">落合様の操作</div></div>
+<div class="lead">業者様との取引を終了する、または一時的に利用を止めるときの流れです。<br/><b>お客様の「削除」は行わないでください。</b>過去のご注文・請求書との紐づきが失われます。</div>
+<ol class="ops">
+<li>その業者様のかけ払いの未締め分・都度払いの未入金分が無いかを、5章の手順（P.<span class="pref" data-ref="sec-d4"></span>）で確認します。</li>
+<li>お客様の詳細画面の「メタフィールド」の「すべて表示」から、<span style="white-space:nowrap">「B2B Customer Type」</span>の<b class="kw">corporate</b>を消して保存します。<br/>業者様価格の表示と業者様向けのご注文が止まります。</li>
+<li>過去のご注文・請求の記録はそのまま残ります。</li>
+</ol>
+<div class="shots">
+<div class="shot"><img alt="" src="../33-manual-assets/print/46_customer-type-allview.png" style="max-height:28mm"/><div class="cap">「すべて表示」の画面。「B2B Customer Type」のcorporateを消すと、業者様価格が止まります。</div></div>
+</div>
+<div class="note"><span class="t">⚠ お客様の「削除」は使いません。</span> 停止にするか削除にするかの扱いは8/20にご相談します（Walkersのおすすめは「削除はせず、この方法で無効化のみ」です）。</div>
+<div class="foot"><span>落合コーポレーション様 操作マニュアル</span><span class="pnum"></span></div>
+</section>
+<!-- ============================================================
+     m1 完了報告（ochiai-hq へ SendMessage 不達のためここに記載）
+     - ページ数: 21（0章=4 / A章=8 / B章=9）。上限 22 以内。
+     - 自己 QA で直した点:
+       1) B-1 STEP3 帯タイトルが「連絡し」の途中で改行 → kw で句切り単位に。
+       2) B-3 STEP3 帯タイトルが「業者様の／率」で不自然改行 → 短縮＋kw。
+       3) B-1 STEP2 lead が「ます。」2 文字だけの折り返し → 文を短縮。
+       最終 PDF（m1-preview.pdf）は全ページ、はみ出し・フッター重なり・
+       丸数字ずれ・画像サイズ・欠けなしを目視確認済み。
+     - 判断に迷った点: 下記の作業メモと各ページ内「判断メモ(m1)」参照。
+       B-1 は手順④(Walkers)＋⑤(落合様)を 1 ページに統合し、ピルは
+       「落合様の操作」（連絡・案内の動作主体が落合様のため）とした。
+     ============================================================ -->
+<!-- ============================================================
+     m1 作業メモ（司令塔向け・結合時に削除可）
+     - ページ数: 21（0章=4 / A章=8 / B章=9）。
+     - 画像パスは manual-v3/ からの相対（../33-manual-assets/print/）。結合先の階層が
+       変わる場合はパスの付け替えが必要。
+     - v2 0-2 の用語表は指示どおり作成せず、0章は「ログイン・地図・3つのお願い」に圧縮。
+     - §5-3 対応: ログインは「メール＋6桁コード」のみ記載（顧客番号前段画面に触れず）、
+       カスタム空欄は「上代のまま・必須入力」として記載、税抜表記は発注表（テーマ画面）
+       の説明に限定。
+     - 判断に迷った点は各ページ内の「判断メモ(m1)」コメント参照（A-3 カート内商品の
+       挙動、A-4 在庫追跡スイッチ等の低頻度つまずきを割愛）。
+     ============================================================ -->
+</body>
+</html>

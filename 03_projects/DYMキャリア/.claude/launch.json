@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dym-mockup",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "/Users/naru/Walkers_naru/output/deploy/dym-career-matching", "--", "-p", "3005"],
+      "port": 3005
+    }
+  ]
+}

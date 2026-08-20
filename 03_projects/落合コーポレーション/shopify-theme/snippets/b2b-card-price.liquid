@@ -1,0 +1,94 @@
+{%- comment -%}
+  B2B 卸価格表示（コレクションページ・商品カード用コンパクト版）
+  =====================================================================
+  ログイン法人顧客のみ、商品カードに卸価格を表示する。
+  ロジックは b2b-wholesale-price.liquid（商品詳細ページ用）と同一:
+    レート決定: (1) custom_overrides[category] → (2) matrix[group][category] → (3) 1.0（正価）
+
+  Accepts:
+    - card_product: {Object} 商品 Liquid オブジェクト（必須）
+
+  組み込み方法:
+    card-product.liquid の価格表示（{% render 'price' ... %}）直後に追加:
+
+      {% render 'b2b-card-price', card_product: card_product %}
+
+  注意:
+    - B2C 顧客（未ログイン含む）には何も表示しない
+    - 卸対象外（rate == 1.0）の商品にも何も表示しない（カード上では正価のみ）
+    - 実際の卸価格での発注は裏側 createDraftOrder.js が処理する
+{%- endcomment -%}
+
+{%- if customer and customer.metafields.b2b.customer_type.value == 'corporate' and card_product != blank -%}
+  {%- assign b2b_card_variant = card_product.selected_or_first_available_variant -%}
+  {%- assign group = customer.metafields.b2b.discount_group.value -%}
+  {%- assign category = card_product.metafields.b2b.category.value -%}
+  {%- assign rate = 1.0 -%}
+
+  {%- comment -%} (1) custom_overrides: 顧客固有の掛率 {%- endcomment -%}
+  {%- assign overrides = customer.metafields.b2b.custom_overrides.value -%}
+  {%- if overrides != blank and category != blank and overrides[category] -%}
+    {%- assign rate = overrides[category] -%}
+
+  {%- comment -%} (2) discount_matrix: グループ x カテゴリの掛率 {%- endcomment -%}
+  {%- elsif group != blank and category != blank -%}
+    {%- for entry in shop.metaobjects.discount_matrix.values -%}
+      {%- if entry.group.value == group and entry.category.value == category -%}
+        {%- assign rate = entry.discount_rate.value -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+
+  {%- comment -%} (3) rate == 1.0 なら卸対象外 → 何も表示しない {%- endcomment -%}
+  {%- if rate < 1.0 -%}
+    {%- assign wholesale = b2b_card_variant.price | times: rate -%}
+    {%- assign pct = rate | times: 100 | minus: 100 | times: -1 -%}
+
+    <div class="b2b-card-price" style="
+      margin-top: 6px;
+      padding: 5px 8px;
+      border: 1.5px solid #1a3a6b;
+      border-radius: 6px;
+      background: #f4f7fc;
+      line-height: 1.3;
+    ">
+      <div style="
+        font-size: 0.65rem;
+        color: #1a3a6b;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        margin-bottom: 2px;
+      ">
+        法人卸価格
+      </div>
+      <div style="
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        flex-wrap: wrap;
+      ">
+        <span style="
+          text-decoration: line-through;
+          color: #999;
+          font-size: 0.75rem;
+        ">{{ b2b_card_variant.price | money }}</span>
+        <span style="
+          font-size: 1.1rem;
+          font-weight: 800;
+          color: #c0392b;
+          line-height: 1;
+        ">{{ wholesale | money }}</span>
+        <span style="
+          background: #c0392b;
+          color: #fff;
+          font-size: 0.6rem;
+          padding: 1px 5px;
+          border-radius: 3px;
+          font-weight: 700;
+          white-space: nowrap;
+        ">{{ pct | round }}% OFF</span>
+      </div>
+    </div>
+  {%- endif -%}
+{%- endif -%}
