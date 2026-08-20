@@ -4,39 +4,186 @@
     {
       "name": "walkers-dashboard",
       "runtimeExecutable": "/usr/bin/python3",
-      "runtimeArgs": ["<PROJECT_ROOT>/05_development/walkers-dashboard/server.py"],
+      "runtimeArgs": [
+        "<PROJECT_ROOT>/05_development/walkers-dashboard/server.py"
+      ],
       "port": 8080
     },
     {
       "name": "remotion-studio",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["remotion", "studio", "--cwd", "<PROJECT_ROOT>/05_development/remotion"],
+      "runtimeArgs": [
+        "remotion",
+        "studio",
+        "--cwd",
+        "<PROJECT_ROOT>/05_development/remotion"
+      ],
       "port": 3000
     },
     {
       "name": "static-preview",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["<PROJECT_ROOT>/output/gui/serve.js"],
+      "runtimeArgs": [
+        "<PROJECT_ROOT>/output/gui/serve.js"
+      ],
       "port": 8888
     },
     {
       "name": "slide-starter",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["http-server", "<YOUR_PATH>", "-p", "8090", "-c-1"],
+      "runtimeArgs": [
+        "http-server",
+        "<YOUR_PATH>",
+        "-p",
+        "8090",
+        "-c-1"
+      ],
       "port": 8090
     },
     {
       "name": "lp-preview",
       "runtimeExecutable": "/usr/bin/python3",
-      "runtimeArgs": ["-m", "http.server", "8091", "-d", "/tmp/claude-preview"],
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8091",
+        "-d",
+        "/tmp/claude-preview"
+      ],
       "port": 8091
     },
     {
       "name": "squat-stickk",
       "runtimeExecutable": "/bin/bash",
-      "runtimeArgs": ["-c", "cd /Users/naru/Walkers_naru/output/deploy/squat-stickk && npm run dev"],
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/naru/Walkers_naru/output/deploy/squat-stickk && npm run dev"
+      ],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "fukuoka-eco-mockup",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/naru/Walkers_naru/output/deploy/pref-fukuoka-eco-mockup && npm run dev"
+      ],
+      "port": 3000,
+      "autoPort": true
+    },
+    {
+      "name": "enpact-ai-roleplay",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/naru/Walkers_naru/output/deploy/enpact-ai-roleplay && npm run dev"
+      ],
+      "port": 3000,
+      "autoPort": true
+    },
+    {
+      "name": "toppan-coupon",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/naru/Walkers_naru/output/deploy/toppan-coupon && npm run dev"
+      ],
+      "port": 3000,
+      "autoPort": true
+    },
+    {
+      "name": "scratchpad-preview",
+      "runtimeExecutable": "/usr/bin/python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8096",
+        "-d",
+        "/private/tmp/claude-501/-Users-naru-Walkers-naru/2b95d0fa-44ad-47f5-9c3a-d00de5f2bc67/scratchpad"
+      ],
+      "port": 8096
+    },
+    {
+      "name": "wi2-mockup",
+      "runtimeExecutable": "/usr/bin/python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8095",
+        "-d",
+        "/Users/naru/Walkers_naru/03_projects/ 株式会社ワイヤ・アンド・ワイヤレス/mockup"
+      ],
+      "port": 8095
+    },
+    {
+      "name": "ptj-poc",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "source ~/.nvm/nvm.sh && nvm use 22 && cd /Users/naru/Walkers_naru/03_projects/パーソナルトレーナージャパン/app && npx next dev --turbopack -p 62309"
+      ],
+      "port": 62309,
+      "autoPort": false
+    },
+    {
+      "name": "gibson-mockup",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/naru/Walkers_naru/output/deploy/gibson-mockup && npm run dev"
+      ],
+      "port": 3000,
+      "autoPort": true
+    },
+    {
+      "name": "ochiai-b2c-concept",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/naru/Walkers_naru/output/deploy/ochiai-b2c-concept && npm run dev"
+      ],
+      "port": 3000,
+      "autoPort": true
+    },
+    {
+      "name": "sense-pr-mockup",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/naru/Walkers_naru/output/deploy/sense-pr-mockup && npm run dev"
+      ],
+      "port": 3000,
+      "autoPort": true
+    },
+    {
+      "name": "walkers-mission-control",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/naru/Walkers_naru/output/deploy/walkers-mission-control && npm run dev"
+      ],
+      "port": 3000,
+      "autoPort": true
+    },
+    {
+      "name": "koinobori-cockpit",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/naru/Walkers_naru/output/deploy/koinobori-cockpit && npm run dev"
+      ],
+      "port": 3000,
+      "autoPort": true
+    },
+    {
+      "name": "company-system",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/naru/Walkers_naru/05_development/company_system && npm start"
+      ],
+      "port": 4321
     }
   ]
 }

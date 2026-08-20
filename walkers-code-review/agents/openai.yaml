@@ -1,0 +1,4 @@
+interface:
+  display_name: "Walkers Code Review"
+  short_description: "証拠付きで39観点を巡回する受託開発向けコードレビュー"
+  default_prompt: "Use $walkers-code-review to review this change with evidence for every applicable checkpoint."

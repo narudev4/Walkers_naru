@@ -1,0 +1,68 @@
+<svg viewBox="0 0 680 670" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="t d">
+  <title id="t">Walkers 業務フロー × スキル対応マップ</title>
+  <desc id="d">営業から要件定義・本見積もり・本開発（準備・自走・検収）・クローズまでの各段階で、どのスキル・コマンド・Hook を使うかの一覧。本開発の準備〜検収は AI 自走ゾーン。</desc>
+
+  <!-- legend -->
+  <rect x="20" y="12" width="14" height="14" rx="3" fill="var(--color-text-info)"/>
+  <text x="40" y="24" font-family="var(--font-sans)" font-size="13" fill="var(--color-text-secondary)">自走ゾーン（AIが回す）</text>
+  <text x="420" y="24" font-family="var(--font-sans)" font-size="13" fill="var(--color-text-secondary)">↓ 縦＝案件の進行</text>
+
+  <!-- row template: rect + accent(opt) + divider + label/sub + skills -->
+  <!-- r1 -->
+  <rect x="20" y="56" width="640" height="76" rx="10" fill="var(--color-background-primary)" stroke="var(--color-border-secondary)"/>
+  <line x1="200" y1="70" x2="200" y2="118" stroke="var(--color-border-tertiary)"/>
+  <text x="38" y="90" font-family="var(--font-sans)" font-size="15" font-weight="500" fill="var(--color-text-primary)">① 営業</text>
+  <text x="38" y="112" font-family="var(--font-sans)" font-size="12" fill="var(--color-text-secondary)">提案・初回MTG</text>
+  <text x="216" y="88" font-family="var(--font-mono)" font-size="12" fill="var(--color-text-secondary)">create-mockup · create-proposal</text>
+  <text x="216" y="110" font-family="var(--font-mono)" font-size="12" fill="var(--color-text-secondary)">meeting-transcribe · gmail-reply（お礼）</text>
+
+  <!-- r2 -->
+  <rect x="20" y="142" width="640" height="76" rx="10" fill="var(--color-background-primary)" stroke="var(--color-border-secondary)"/>
+  <line x1="200" y1="156" x2="200" y2="204" stroke="var(--color-border-tertiary)"/>
+  <text x="38" y="176" font-family="var(--font-sans)" font-size="15" font-weight="500" fill="var(--color-text-primary)">③ 要件定義</text>
+  <text x="38" y="198" font-family="var(--font-sans)" font-size="12" fill="var(--color-text-secondary)">Fix・要件定義書</text>
+  <text x="216" y="174" font-family="var(--font-mono)" font-size="12" fill="var(--color-text-secondary)">spreadsheet-driven · meeting-minutes</text>
+  <text x="216" y="196" font-family="var(--font-mono)" font-size="12" fill="var(--color-text-secondary)">＋ 画面/機能/非機能 タブ派生</text>
+
+  <!-- r3 -->
+  <rect x="20" y="228" width="640" height="76" rx="10" fill="var(--color-background-primary)" stroke="var(--color-border-secondary)"/>
+  <line x1="200" y1="242" x2="200" y2="290" stroke="var(--color-border-tertiary)"/>
+  <text x="38" y="262" font-family="var(--font-sans)" font-size="15" font-weight="500" fill="var(--color-text-primary)">④ 本見積もり</text>
+  <text x="38" y="284" font-family="var(--font-sans)" font-size="12" fill="var(--color-text-secondary)">工数積算</text>
+  <text x="216" y="272" font-family="var(--font-mono)" font-size="12" fill="var(--color-text-secondary)">spreadsheet-driven（見積もりタブ）</text>
+
+  <!-- r4 (accent) -->
+  <rect x="20" y="314" width="640" height="76" rx="10" fill="var(--color-background-primary)" stroke="var(--color-border-secondary)"/>
+  <rect x="20" y="314" width="6" height="76" fill="var(--color-text-info)"/>
+  <line x1="200" y1="328" x2="200" y2="376" stroke="var(--color-border-tertiary)"/>
+  <text x="44" y="348" font-family="var(--font-sans)" font-size="15" font-weight="500" fill="var(--color-text-primary)">⑥ 準備</text>
+  <text x="44" y="370" font-family="var(--font-sans)" font-size="12" fill="var(--color-text-secondary)">自走前</text>
+  <text x="216" y="346" font-family="var(--font-mono)" font-size="12" fill="var(--color-text-secondary)">project-init → spreadsheet-driven</text>
+  <text x="216" y="368" font-family="var(--font-mono)" font-size="12" fill="var(--color-text-secondary)">→ goal-check（発射前検査）</text>
+
+  <!-- r5 (accent) -->
+  <rect x="20" y="400" width="640" height="76" rx="10" fill="var(--color-background-primary)" stroke="var(--color-border-secondary)"/>
+  <rect x="20" y="400" width="6" height="76" fill="var(--color-text-info)"/>
+  <line x1="200" y1="414" x2="200" y2="462" stroke="var(--color-border-tertiary)"/>
+  <text x="44" y="434" font-family="var(--font-sans)" font-size="15" font-weight="500" fill="var(--color-text-primary)">⑥ 自走</text>
+  <text x="44" y="456" font-family="var(--font-sans)" font-size="12" fill="var(--color-text-secondary)">完了まで</text>
+  <text x="216" y="432" font-family="var(--font-mono)" font-size="12" fill="var(--color-text-secondary)">/goal  ⟲  /loop</text>
+  <text x="216" y="454" font-family="var(--font-mono)" font-size="12" fill="var(--color-text-secondary)">確認事項に起票して停止 → 回答で再開</text>
+
+  <!-- r6 (accent) -->
+  <rect x="20" y="486" width="640" height="76" rx="10" fill="var(--color-background-primary)" stroke="var(--color-border-secondary)"/>
+  <rect x="20" y="486" width="6" height="76" fill="var(--color-text-info)"/>
+  <line x1="200" y1="500" x2="200" y2="548" stroke="var(--color-border-tertiary)"/>
+  <text x="44" y="520" font-family="var(--font-sans)" font-size="15" font-weight="500" fill="var(--color-text-primary)">⑥ 検収</text>
+  <text x="44" y="542" font-family="var(--font-sans)" font-size="12" fill="var(--color-text-secondary)">品質ゲート</text>
+  <text x="216" y="518" font-family="var(--font-mono)" font-size="12" fill="var(--color-text-secondary)">verifier（独立検証・3層分離）</text>
+  <text x="216" y="540" font-family="var(--font-mono)" font-size="12" fill="var(--color-text-secondary)">hooks: 編集後警告／コミット前ゲート</text>
+
+  <!-- r7 -->
+  <rect x="20" y="572" width="640" height="76" rx="10" fill="var(--color-background-primary)" stroke="var(--color-border-secondary)"/>
+  <line x1="200" y1="586" x2="200" y2="634" stroke="var(--color-border-tertiary)"/>
+  <text x="38" y="606" font-family="var(--font-sans)" font-size="15" font-weight="500" fill="var(--color-text-primary)">クローズ</text>
+  <text x="38" y="628" font-family="var(--font-sans)" font-size="12" fill="var(--color-text-secondary)">納品後</text>
+  <text x="216" y="604" font-family="var(--font-mono)" font-size="12" fill="var(--color-text-secondary)">project-close → distill</text>
+  <text x="216" y="626" font-family="var(--font-mono)" font-size="12" fill="var(--color-text-secondary)">→ archive/ ＋ 納品リンク集</text>
+</svg>

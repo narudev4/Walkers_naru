@@ -1,0 +1,29 @@
+{
+  "_comment": "L4 開発 app 用の hooks テンプレート。carveout/project-init が app/.claude/settings.json として配置する（既存があればマージ）。.claude/hooks/ に check-after-edit.sh と gate-before-commit.sh を一緒にコピーする。",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/check-after-edit.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/gate-before-commit.sh",
+            "timeout": 180
+          }
+        ]
+      }
+    ]
+  }
+}

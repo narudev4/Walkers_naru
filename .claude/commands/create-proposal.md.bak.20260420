@@ -124,10 +124,10 @@ MTG実施 → ① 情報収集 → ② 骨子策定（承認必須） → ③ Go
 - 既存の提案書を更新する場合は `google_drive_search` で検索 → `google_docs_get` で取得 → `google_docs_batch_update` で更新
 
 ### Google Drive 格納先（必須）
-- **提案書フォルダID**: `1k5pmN_SCWyWhjG2lPM_PT5vdtPYh9BUS`
-- **URL**: https://drive.google.com/drive/folders/1k5pmN_SCWyWhjG2lPM_PT5vdtPYh9BUS
+- **提案書フォルダID**: `14NMX2LoSluaJkiNdz-iQy_HU_joJKXRK`
+- **URL**: https://drive.google.com/drive/folders/14NMX2LoSluaJkiNdz-iQy_HU_joJKXRK
 - 新規作成した提案書は、作成後に必ずこのフォルダに移動する
-- `google_drive_move_file(fileId, folderId="1k5pmN_SCWyWhjG2lPM_PT5vdtPYh9BUS")` を使用
+- `google_drive_move_file(fileId, folderId="14NMX2LoSluaJkiNdz-iQy_HU_joJKXRK")` を使用
 
 ### テンプレート使用（必須）
 - **テンプレートID**: `1SS_Xw7gGHPOpLj8x8lgUJr4gmJRE8OZUqSA7_4Fr5DA`

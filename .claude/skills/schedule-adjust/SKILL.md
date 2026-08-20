@@ -14,7 +14,7 @@ description: 日程調整
 |--------|--------|------|
 | 仕事カレンダー | `gcal_list_events` | `calendarId="primary"` で仕事の予定を取得 |
 | 個人カレンダー | `gcal_list_events` | `calendarId=` CLAUDE_LOCAL.md「個人カレンダーID」参照 で個人の予定を取得 |
-| メール下書き | `gmail_create_draft`（マネージドコネクタ） | 候補日メール文面を下書き保存 |
+| メール下書き | `mcp__google-workspace__draft_gmail_message` | 候補日メール文面を下書き保存（`include_signature=false` 必須。`.claude/refs/email-signature.md` 参照） |
 
 ## 実行手順
 
@@ -60,7 +60,7 @@ description: 日程調整
 ### Step 5: 出力
 1. まずユーザーに候補一覧をテキストで提示する
 2. 承認されたらメール文面を生成する（コピペ用テキスト）
-3. 必要に応じて `gmail_create_draft`（マネージドコネクタ）でGmailの下書きを作成する
+3. 必要に応じて `mcp__google-workspace__draft_gmail_message`（`include_signature=false` 必須）でGmailの下書きを作成する
 
 ## メール文面テンプレート
 

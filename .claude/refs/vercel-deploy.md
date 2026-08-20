@@ -20,12 +20,20 @@ git push origin main
 
 ### その他のプロジェクト（output/deploy/ 配下のモックアップ等）
 
-`output/deploy/deploy.sh` を使う。`.vercel/project.json` の存在チェック・デプロイ先確認が組み込まれている。
+`vercel` CLI を直接叩く。実行前に必ず `.vercel/project.json` の存在とプロジェクト ID を確認する。
 
 ```bash
 cd output/deploy/<project-name>
-./deploy.sh
+cat .vercel/project.json   # 存在し、想定したプロジェクトなら次へ
+vercel --prod
 ```
+
+<!-- 2026-07-29 修正: 旧記述の `deploy.sh` は全 20 プロジェクトに実体が存在しなかったため CLI 直叩きに改めた -->
+
+### Vercel プラグインについて
+
+`vercel@claude-plugins-official` プラグインは **2026-07-29 に無効化済み**（`~/.claude/settings.json`）。
+`/vercel:deploy` 等のスラッシュコマンド・`vercel:*` スキル・Vercel MCP は使えない。デプロイは上記の CLI 直叩きで行う。
 
 ## 新規プロジェクトをリンクする場合
 
