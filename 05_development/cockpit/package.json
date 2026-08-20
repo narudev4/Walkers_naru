@@ -1,0 +1,16 @@
+{
+  "name": "walkers-cockpit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "案件セッションの司令塔。左に状態、中央にターミナル、下から指示を配る。",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@xterm/addon-fit": "^0.11.0",
+    "@xterm/xterm": "^6.0.0",
+    "node-pty": "^1.1.0",
+    "ws": "^8.18.0"
+  }
+}

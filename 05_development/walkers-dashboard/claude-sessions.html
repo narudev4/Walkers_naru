@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Session Hub - Walkers</title>
+<style>
+:root {
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --surface-2: #eef3fb;
+  --line: #d8dee8;
+  --line-strong: #aeb8c8;
+  --text: #18202f;
+  --muted: #687386;
+  --blue: #2563eb;
+  --cyan: #0891b2;
+  --green: #059669;
+  --amber: #b45309;
+  --red: #dc2626;
+  --violet: #7c3aed;
+  --rose: #e11d48;
+  --task-bg: #fff7ed;
+  --task-line: #fed7aa;
+  --shadow: 0 8px 24px rgba(24, 32, 47, 0.08);
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  overflow: hidden;
+}
+button, input, select, textarea {
+  font: inherit;
+}
+button {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 7px 11px;
+  cursor: pointer;
+}
+button:hover { border-color: var(--line-strong); background: #f8fafc; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+.primary:hover { background: #1d4ed8; border-color: #1d4ed8; }
+.quiet { background: transparent; }
+.danger { color: var(--red); border-color: #fecaca; }
+.success { color: var(--green); border-color: #bbf7d0; }
+.topbar {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, .92);
+  backdrop-filter: blur(12px);
+}
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.mark {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #2563eb, #0891b2);
+  color: #fff;
+  font-weight: 800;
+}
+.brand h1 { margin: 0; font-size: 15px; font-weight: 700; }
+.top-actions { display: flex; align-items: center; gap: 8px; }
+.index-status { color: var(--muted); font-size: 12px; white-space: nowrap; }
+.layout {
+  height: calc(100vh - 52px);
+  display: grid;
+  grid-template-columns: 260px minmax(330px, 430px) minmax(0, 1fr);
+}
+.filters, .list-pane, .detail-pane {
+  min-height: 0;
+  overflow: hidden;
+  border-right: 1px solid var(--line);
+}
+.filters {
+  background: linear-gradient(180deg, #ffffff, #f8fbff);
+  padding: 14px;
+  overflow-y: auto;
+}
+.filter-group { margin-bottom: 14px; }
+.filter-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+.field, .select, .memo {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 8px 9px;
+  outline: none;
+}
+.field:focus, .select:focus, .memo:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37, 99, 235, .12); }
+.check-row { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
+.metric-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.metric {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: linear-gradient(135deg, #eff6ff, #eefdf7);
+}
+.metric strong { display: block; font-size: 20px; line-height: 1.1; }
+.metric span { color: var(--muted); font-size: 11px; }
+.list-pane {
+  display: flex;
+  flex-direction: column;
+  background: #fbfcfe;
+}
+.list-head {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.list-count { font-size: 12px; color: var(--muted); }
+.session-list {
+  overflow-y: auto;
+  padding: 8px;
+}
+.session-item {
+  width: 100%;
+  text-align: left;
+  display: block;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 6px;
+}
+.session-item:hover { background: var(--surface); border-color: #bfdbfe; }
+.session-item.selected {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  box-shadow: inset 3px 0 0 var(--blue);
+}
+.project-header {
+  margin: 14px 4px 7px;
+  padding: 7px 9px;
+  border-left: 4px solid var(--cyan);
+  border-radius: 6px;
+  background: #ecfeff;
+  color: #155e75;
+  font-size: 12px;
+  font-weight: 800;
+}
+.session-title {
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.35;
+  margin-bottom: 5px;
+  word-break: break-word;
+}
+.session-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 11px;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 1px 7px;
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--surface);
+}
+.badge.active { color: var(--green); border-color: #a7f3d0; background: #ecfdf5; }
+.badge.live { color: var(--blue); border-color: #bfdbfe; background: #eff6ff; }
+.badge.pending { color: var(--amber); border-color: #fed7aa; background: #fff7ed; }
+.badge.review { color: var(--violet); border-color: #ddd6fe; background: #f5f3ff; }
+.badge.done { color: var(--green); border-color: #bbf7d0; background: #f0fdf4; }
+.badge.high { color: var(--rose); border-color: #fecdd3; background: #fff1f2; }
+.badge.case { color: #0f766e; border-color: #99f6e4; background: #f0fdfa; }
+.last-line {
+  margin-top: 7px;
+  color: #3a4658;
+  font-size: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.load-more { margin: 8px; width: calc(100% - 16px); }
+.detail-pane {
+  border-right: none;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  background: var(--surface);
+}
+.empty-detail {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+.detail-head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.detail-title {
+  margin: 0 0 7px;
+  font-size: 18px;
+  line-height: 1.35;
+  word-break: break-word;
+}
+.detail-meta {
+  color: var(--muted);
+  font-size: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.detail-body {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 14px 18px 18px;
+}
+.section-title {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.message {
+  max-width: 920px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  background: #fff;
+}
+.message.user { margin-left: auto; background: #f0fdf4; border-color: #86efac; }
+.message.assistant { background: #f8fafc; border-color: #c7d2fe; }
+.message-role {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.markdown { word-break: break-word; font-size: 13px; }
+.markdown p { margin: 0 0 8px; }
+.markdown h1, .markdown h2, .markdown h3 { margin: 10px 0 6px; line-height: 1.25; }
+.markdown h1 { font-size: 18px; }
+.markdown h2 { font-size: 16px; }
+.markdown h3 { font-size: 14px; }
+.markdown ul { margin: 6px 0 10px 20px; padding: 0; }
+.markdown li { margin: 3px 0; }
+.markdown code {
+  background: #e5e7eb;
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+.markdown pre {
+  overflow: auto;
+  padding: 10px;
+  border-radius: 8px;
+  background: #111827;
+  color: #e5e7eb;
+}
+.markdown pre code { background: transparent; color: inherit; padding: 0; }
+.markdown blockquote {
+  margin: 8px 0;
+  padding: 6px 10px;
+  border-left: 3px solid var(--blue);
+  background: #eff6ff;
+  color: #1e3a8a;
+}
+.suggestions {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+.suggestion {
+  text-align: left;
+  line-height: 1.45;
+  background: #f8fafc;
+}
+.resume-brief {
+  max-width: 920px;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f0f9ff, #f5f3ff);
+  padding: 12px;
+  margin-bottom: 12px;
+}
+.brief-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.brief-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #075985;
+}
+.brief-sub {
+  color: var(--muted);
+  font-size: 11px;
+}
+.brief-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.brief-card {
+  border: 1px solid rgba(14, 116, 144, .18);
+  border-radius: 8px;
+  background: rgba(255,255,255,.72);
+  padding: 9px;
+  min-width: 0;
+}
+.brief-card strong {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.brief-card p {
+  margin: 0;
+  font-size: 12px;
+}
+.brief-list {
+  margin: 0;
+  padding-left: 17px;
+  font-size: 12px;
+}
+.brief-list li { margin: 3px 0; }
+.timeline {
+  display: grid;
+  gap: 5px;
+  margin-top: 8px;
+}
+.timeline-row {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 8px;
+  font-size: 11px;
+}
+.timeline-role {
+  color: var(--muted);
+  font-weight: 800;
+}
+.recent-runs {
+  display: grid;
+  gap: 7px;
+  margin-top: 10px;
+}
+.mini-run {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 8px;
+  font-size: 11px;
+}
+.mini-run.failed { border-color: #fecaca; background: #fff1f2; }
+.mini-run.done { border-color: #bbf7d0; background: #f0fdf4; }
+.mini-run strong { display: block; margin-bottom: 3px; }
+.view-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.view-toggle button.active {
+  background: #dbeafe;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+  font-weight: 800;
+}
+.project-list, .task-list {
+  display: grid;
+  gap: 6px;
+  max-height: 260px;
+  overflow: auto;
+}
+.project-chip, .task-chip {
+  width: 100%;
+  text-align: left;
+  border-radius: 8px;
+  padding: 8px;
+  background: #fff;
+}
+.project-chip.active {
+  background: #ecfeff;
+  border-color: #67e8f9;
+  box-shadow: inset 3px 0 0 var(--cyan);
+}
+.project-chip strong, .task-chip strong {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 3px;
+}
+.project-chip span, .task-chip span {
+  color: var(--muted);
+  font-size: 11px;
+}
+.task-chip {
+  background: var(--task-bg);
+  border-color: var(--task-line);
+}
+.task-chip.high {
+  background: #fff1f2;
+  border-color: #fecdd3;
+}
+.task-chip.review {
+  background: #f5f3ff;
+  border-color: #ddd6fe;
+}
+.state-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.memo { min-height: 74px; resize: vertical; }
+.composer {
+  border-top: 1px solid var(--line);
+  padding: 12px 18px 14px;
+  background: linear-gradient(180deg, #ffffff, #eef6ff);
+}
+.composer-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.composer-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 800;
+}
+.draft-status {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+.prompt-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.prompt-chip {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #1e40af;
+  font-size: 12px;
+  padding: 5px 8px;
+}
+.composer textarea {
+  width: 100%;
+  min-height: 118px;
+  max-height: 260px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 11px;
+  outline: none;
+  line-height: 1.55;
+  background: #fff;
+}
+.composer textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37, 99, 235, .12); }
+.composer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 8px;
+}
+.action-left, .action-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.run-diagnosis {
+  border: 1px solid #fed7aa;
+  border-radius: 8px;
+  background: #fff7ed;
+  color: #7c2d12;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+.run-diagnosis strong { display: block; margin-bottom: 3px; }
+.run-box, .live-box {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #111827;
+  color: #e5e7eb;
+  padding: 10px;
+  font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 260px;
+  overflow: auto;
+  margin-bottom: 14px;
+}
+.run-box.markdown {
+  background: #f8fafc;
+  color: var(--text);
+  font-family: inherit;
+}
+.split-block {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 14px;
+  align-items: start;
+}
+.split-block > * { min-width: 0; }
+.side-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fbfcfe;
+}
+.toast {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  background: #18202f;
+  color: #fff;
+  padding: 10px 13px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  font-size: 13px;
+  z-index: 20;
+}
+.hidden { display: none !important; }
+@media (max-width: 1100px) {
+  body { overflow: auto; }
+  .layout { height: auto; min-height: calc(100vh - 52px); grid-template-columns: 1fr; }
+  .filters, .list-pane, .detail-pane { border-right: none; border-bottom: 1px solid var(--line); }
+  .filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .filter-group { margin-bottom: 0; }
+  .detail-pane { min-height: 720px; }
+  .split-block { grid-template-columns: 1fr; }
+  .brief-grid { grid-template-columns: 1fr; }
+  .composer-toolbar, .composer-actions { align-items: stretch; flex-direction: column; }
+  .action-left, .action-right { width: 100%; }
+  .action-left button, .action-right button { flex: 1; }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="mark">W</span>
+    <h1>Claude Session Hub</h1>
+    <span id="index-status" class="index-status">読み込み中</span>
+    <span id="auto-status" class="index-status">自動更新待機中</span>
+  </div>
+  <div class="top-actions">
+    <a href="/" style="text-decoration:none"><button>Dashboard</button></a>
+    <button id="refresh-index-btn">インデックス更新</button>
+  </div>
+</header>
+
+<main class="layout">
+  <aside class="filters">
+    <div class="filter-group">
+      <label class="filter-label" for="q">検索</label>
+      <input id="q" class="field" placeholder="指示、案件、cwd">
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">表示</label>
+      <div class="view-toggle">
+        <button id="view-sessions" class="active" type="button">セッション</button>
+        <button id="view-projects" type="button">案件別</button>
+      </div>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label" for="project">案件</label>
+      <select id="project" class="select"><option value="">すべて</option></select>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">案件一覧</label>
+      <div id="project-list" class="project-list"></div>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">上がってきたタスク</label>
+      <div id="task-list" class="task-list"></div>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label" for="status">状態</label>
+      <select id="status" class="select">
+        <option value="all">すべて</option>
+        <option value="open">未処理</option>
+        <option value="pending">保留</option>
+        <option value="review">要確認</option>
+        <option value="done">完了</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label" for="priority">優先度</label>
+      <select id="priority" class="select">
+        <option value="all">すべて</option>
+        <option value="high">高</option>
+        <option value="normal">通常</option>
+        <option value="low">低</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label class="check-row"><input id="active" type="checkbox"> 稼働中だけ</label>
+    </div>
+    <div class="filter-group metric-row">
+      <div class="metric"><strong id="metric-total">0</strong><span>表示対象</span></div>
+      <div class="metric"><strong id="metric-active">0</strong><span>稼働中</span></div>
+    </div>
+  </aside>
+
+  <section class="list-pane">
+    <div class="list-head">
+      <strong>セッション</strong>
+      <span id="list-count" class="list-count">0件</span>
+    </div>
+    <div id="session-list" class="session-list"></div>
+    <button id="load-more" class="load-more hidden">もっと読む</button>
+  </section>
+
+  <section id="detail" class="detail-pane">
+    <div class="empty-detail">左の一覧からセッションを選択してください。</div>
+  </section>
+</main>
+
+<div id="toast" class="toast hidden"></div>
+
+<script>
+const state = {
+  sessions: [],
+  projects: [],
+  tasks: [],
+  viewMode: 'sessions',
+  selectedId: null,
+  selected: null,
+  messages: [],
+  suggestions: [],
+  brief: null,
+  recentRuns: [],
+  total: 0,
+  activeCount: 0,
+  offset: 0,
+  limit: 120,
+  loading: false,
+  runTimer: null,
+  liveTimer: null,
+  autoTimer: null,
+  autoCountdown: 45,
+};
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const short = (s, n = 120) => {
+  s = String(s || '').replace(/\s+/g, ' ').trim();
+  return s.length > n ? s.slice(0, n - 1) + '…' : s;
+};
+const fmtDate = (s) => {
+  if (!s) return '';
+  const d = new Date(s);
+  if (Number.isNaN(d.getTime())) return s.slice(0, 16);
+  return d.toLocaleString('ja-JP', {month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'});
+};
+const statusLabel = {open:'未処理', pending:'保留', review:'要確認', done:'完了'};
+const priorityLabel = {high:'高', normal:'通常', low:'低'};
+const priorityClass = {high:'high', normal:'', low:''};
+
+function promptStorageKey(sessionId = state.selectedId) {
+  return sessionId ? `claude-hub-prompt:${sessionId}` : '';
+}
+
+function savePromptDraft() {
+  const prompt = $('prompt');
+  const key = promptStorageKey();
+  if (!prompt || !key) return;
+  localStorage.setItem(key, prompt.value);
+  const status = $('prompt-draft-status');
+  if (status) status.textContent = prompt.value.trim() ? '下書き保存済み' : '下書きなし';
+}
+
+function loadPromptDraft(sessionId = state.selectedId) {
+  const key = promptStorageKey(sessionId);
+  return key ? (localStorage.getItem(key) || '') : '';
+}
+
+function clearPromptDraft(sessionId = state.selectedId) {
+  const key = promptStorageKey(sessionId);
+  if (key) localStorage.removeItem(key);
+}
+
+function autoResizePrompt() {
+  const prompt = $('prompt');
+  if (!prompt) return;
+  prompt.style.height = 'auto';
+  prompt.style.height = Math.min(Math.max(prompt.scrollHeight, 118), 260) + 'px';
+}
+
+function setPromptValue(text, mode = 'replace') {
+  const prompt = $('prompt');
+  if (!prompt) return;
+  const value = String(text || '').trim();
+  if (!value) return;
+  if (mode === 'append' && prompt.value.trim()) {
+    prompt.value = prompt.value.trimEnd() + '\n\n' + value;
+  } else {
+    prompt.value = value;
+  }
+  autoResizePrompt();
+  savePromptDraft();
+  prompt.focus();
+}
+
+function inlineMd(text) {
+  return text
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>');
+}
+
+function mdToHtml(raw) {
+  if (!raw) return '';
+  const fences = [];
+  let text = String(raw).replace(/```([\s\S]*?)```/g, (_, code) => {
+    const token = `@@CODE${fences.length}@@`;
+    fences.push(`<pre><code>${esc(code.trim())}</code></pre>`);
+    return token;
+  });
+  const lines = esc(text).split('\n');
+  let html = '';
+  let inList = false;
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      if (inList) { html += '</ul>'; inList = false; }
+      continue;
+    }
+    const fenceMatch = trimmed.match(/^@@CODE(\d+)@@$/);
+    if (fenceMatch) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += fences[Number(fenceMatch[1])] || '';
+      continue;
+    }
+    const heading = trimmed.match(/^(#{1,3})\s+(.+)$/);
+    if (heading) {
+      if (inList) { html += '</ul>'; inList = false; }
+      const level = heading[1].length;
+      html += `<h${level}>${inlineMd(heading[2])}</h${level}>`;
+      continue;
+    }
+    const bullet = trimmed.match(/^[-*]\s+(.+)$/);
+    if (bullet) {
+      if (!inList) { html += '<ul>'; inList = true; }
+      html += `<li>${inlineMd(bullet[1])}</li>`;
+      continue;
+    }
+    const quote = trimmed.match(/^&gt;\s?(.+)$/);
+    if (quote) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += `<blockquote>${inlineMd(quote[1])}</blockquote>`;
+      continue;
+    }
+    if (inList) { html += '</ul>'; inList = false; }
+    html += `<p>${inlineMd(trimmed)}</p>`;
+  }
+  if (inList) html += '</ul>';
+  return html;
+}
+
+async function api(path, options = {}) {
+  const res = await fetch(path, {
+    ...options,
+    headers: {'Content-Type': 'application/json', ...(options.headers || {})},
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || res.statusText);
+  return data;
+}
+
+function toast(msg) {
+  const el = $('toast');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+  setTimeout(() => el.classList.add('hidden'), 2800);
+}
+
+function queryParams(reset) {
+  if (reset) state.offset = 0;
+  const params = new URLSearchParams();
+  params.set('limit', state.limit);
+  params.set('offset', state.offset);
+  const q = $('q').value.trim();
+  const project = $('project').value;
+  const status = $('status').value;
+  const priority = $('priority').value;
+  if (q) params.set('q', q);
+  if (project) params.set('project', project);
+  if (status !== 'all') params.set('status', status);
+  if (priority !== 'all') params.set('priority', priority);
+  if ($('active').checked) params.set('active', '1');
+  return params;
+}
+
+async function loadSessions(reset = true) {
+  if (state.loading) return;
+  state.loading = true;
+  try {
+    const data = await api('/api/claude/sessions?' + queryParams(reset).toString());
+    state.total = data.total || 0;
+    state.activeCount = data.activeCount || 0;
+    state.projects = data.projects || state.projects;
+    state.tasks = data.tasks || state.tasks;
+    if (reset) state.sessions = data.sessions || [];
+    else state.sessions = state.sessions.concat(data.sessions || []);
+    state.offset = state.sessions.length;
+    renderProjects();
+    renderTasks();
+    renderIndexStatus(data.index || {});
+    renderList();
+  } catch (e) {
+    toast(e.message);
+  } finally {
+    state.loading = false;
+  }
+}
+
+function renderProjects() {
+  const select = $('project');
+  const current = select.value;
+  const options = ['<option value="">すべて</option>'].concat(
+    state.projects.map(p => `<option value="${esc(p.key)}">${esc(p.name)} (${p.count})</option>`)
+  );
+  select.innerHTML = options.join('');
+  select.value = current;
+  const board = $('project-list');
+  const visible = state.projects.slice(0, 28);
+  board.innerHTML = visible.map(p => {
+    const active = p.key === current ? ' active' : '';
+    const live = p.activeCount ? ` / 稼働 ${p.activeCount}` : '';
+    return `<button class="project-chip${active}" data-project-key="${esc(p.key)}">
+      <strong>${esc(p.name)}</strong>
+      <span>${p.count} セッション / タスク ${p.taskCount}${live}</span>
+    </button>`;
+  }).join('') || '<span style="color:var(--muted);font-size:12px">案件がありません</span>';
+}
+
+function renderTasks() {
+  const list = $('task-list');
+  const filtered = $('project').value
+    ? state.tasks.filter(t => t.projectKey === $('project').value)
+    : state.tasks;
+  list.innerHTML = filtered.slice(0, 14).map(t => {
+    const cls = t.priority === 'high' ? ' high' : (t.status === 'review' ? ' review' : '');
+    return `<button class="task-chip${cls}" data-session-id="${esc(t.sessionId)}">
+      <strong>${esc(t.projectName)} / ${esc(short(t.title, 46))}</strong>
+      <span>${esc(short(t.task, 92))}</span>
+    </button>`;
+  }).join('') || '<span style="color:var(--muted);font-size:12px">未処理タスクはありません</span>';
+}
+
+function renderIndexStatus(index) {
+  const running = index.running;
+  const count = index.indexedSessions || 0;
+  const total = index.total || 0;
+  const processed = index.processed || 0;
+  $('index-status').textContent = running
+    ? `インデックス中 ${processed}/${total} / 登録 ${count}`
+    : `登録 ${count} セッション`;
+}
+
+function renderList() {
+  $('metric-total').textContent = state.total;
+  $('metric-active').textContent = state.activeCount;
+  $('list-count').textContent = `${state.sessions.length}/${state.total}件`;
+  const list = $('session-list');
+  if (!state.sessions.length) {
+    list.innerHTML = '<div style="padding:22px;color:var(--muted);font-size:13px">該当セッションがありません。インデックス中の場合は少し待って更新してください。</div>';
+  } else if (state.viewMode === 'projects') {
+    list.innerHTML = groupedSessionHtml();
+  } else {
+    list.innerHTML = state.sessions.map(sessionItemHtml).join('');
+  }
+  $('load-more').classList.toggle('hidden', state.sessions.length >= state.total);
+}
+
+function groupedSessionHtml() {
+  const groups = new Map();
+  state.sessions.forEach(s => {
+    const key = s.projectKey || s.projectName || 'unknown';
+    if (!groups.has(key)) groups.set(key, {name: s.projectName || '未分類', items: []});
+    groups.get(key).items.push(s);
+  });
+  let html = '';
+  groups.forEach(group => {
+    const open = group.items.filter(s => s.status !== 'done').length;
+    html += `<div class="project-header">${esc(group.name)} <span style="font-weight:600;opacity:.75">${group.items.length}件 / 未処理 ${open}</span></div>`;
+    html += group.items.map(sessionItemHtml).join('');
+  });
+  return html;
+}
+
+function sessionItemHtml(s) {
+  const selected = s.sessionId === state.selectedId ? ' selected' : '';
+  const statusClass = s.status && s.status !== 'open' ? ` ${s.status}` : '';
+  const live = s.tmux && s.tmux.attached ? '<span class="badge live">Live</span>' : '';
+  const active = s.active ? '<span class="badge active">稼働中</span>' : '';
+  const status = `<span class="badge${statusClass}">${esc(statusLabel[s.status] || '未処理')}</span>`;
+  const priority = s.priority === 'high' ? '<span class="badge high">優先度 高</span>' : '';
+  const caseBadge = s.projectKind === 'case' ? '<span class="badge case">案件</span>' : '';
+  const last = s.lastUser || s.lastPrompt || s.firstPrompt || s.lastAssistant || '';
+  return `<button class="session-item${selected}" data-session-id="${esc(s.sessionId)}">
+    <div class="session-title">${esc(short(s.title || s.sessionId, 96))}</div>
+    <div class="session-meta">
+      ${status}${priority}${active}${live}${caseBadge}
+      <span>${esc(fmtDate(s.updatedAt))}</span>
+      <span>${esc(s.projectName || '')}</span>
+      <span>${Number(s.messageCount || 0)}件</span>
+    </div>
+    <div class="last-line">${esc(s.taskText || last)}</div>
+  </button>`;
+}
+
+function listHtml(items, emptyText) {
+  const values = (items || []).filter(Boolean).slice(0, 5);
+  if (!values.length) return `<p style="color:var(--muted)">${esc(emptyText)}</p>`;
+  return `<ul class="brief-list">${values.map(item => `<li>${esc(short(item, 170))}</li>`).join('')}</ul>`;
+}
+
+function briefHtml(brief) {
+  if (!brief) return '';
+  const timeline = (brief.timeline || []).slice(0, 5).map(item => `
+    <div class="timeline-row">
+      <span class="timeline-role">${esc(item.role === 'user' ? 'User' : 'Claude')}</span>
+      <span>${esc(short(item.text, 120))}</span>
+    </div>`).join('');
+  return `
+    <section class="resume-brief">
+      <div class="brief-head">
+        <div>
+          <div class="brief-title">再開ブリーフ</div>
+          <div class="brief-sub">${esc(brief.projectName || '未分類')} / 過去話を圧縮して次の指示に使える形にしています</div>
+        </div>
+        <button id="insert-brief" type="button">ブリーフを挿入</button>
+      </div>
+      <div class="brief-grid">
+        <div class="brief-card"><strong>これまで</strong><p>${esc(brief.past || '取得なし')}</p></div>
+        <div class="brief-card"><strong>いま</strong><p>${esc(brief.now || '取得なし')}</p></div>
+        <div class="brief-card"><strong>守ること</strong>${listHtml(brief.constraints, '明示された制約は未検出')}</div>
+        <div class="brief-card"><strong>次アクション</strong>${listHtml(brief.nextActions, '候補なし')}</div>
+      </div>
+      ${timeline ? `<div class="timeline">${timeline}</div>` : ''}
+    </section>`;
+}
+
+function recentRunsHtml(runs) {
+  const items = (runs || []).slice(0, 4);
+  if (!items.length) return '<div style="color:var(--muted);font-size:12px">まだ実行履歴はありません</div>';
+  return `<div class="recent-runs">${items.map(run => {
+    const diag = run.diagnosis && run.diagnosis.summary ? `<span>${esc(run.diagnosis.summary)}</span>` : `<span>${esc(short(run.output || run.error || run.raw || '', 72))}</span>`;
+    return `<div class="mini-run ${esc(run.status)}">
+      <strong>${esc(run.status)} / ${esc(fmtDate(run.startedAt))}</strong>
+      ${diag}
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function promptTemplate(kind) {
+  const brief = state.brief || {};
+  const s = state.selected || {};
+  if (kind === 'resume') return brief.resumePrompt || 'このセッションを再開します。現状を整理して次の1手を実行してください。';
+  if (kind === 'continue') return [
+    brief.resumePrompt || `案件: ${s.projectName || '未分類'}`,
+    '未完了の作業を確認し、続きから実行してください。最後に「実施内容 / 確認結果 / 残タスク」だけ報告してください。',
+  ].filter(Boolean).join('\n\n');
+  if (kind === 'verify') return '直近の実装・変更内容を確認し、必要なテストや表示確認を実行してください。結果、問題、次に必要な対応だけ簡潔に報告してください。';
+  if (kind === 'blocker') return 'このセッションが止まっている理由を、事実ベースで「原因 / いま必要な入力 / 自力で進められる次の一手」に分けて整理してください。';
+  if (kind === 'handoff') return 'ここまでの経緯、決定事項、未完了タスク、次に実行すべきコマンドやファイルを、別セッションに渡せる引き継ぎメモとしてMarkdownでまとめてください。';
+  return '';
+}
+
+function runOutputHtml(run) {
+  const diagnosis = run.diagnosis && run.diagnosis.summary
+    ? `<div class="run-diagnosis"><strong>失敗診断</strong><div>${esc(run.diagnosis.summary)}</div><div>${esc(run.diagnosis.nextAction || '')}</div></div>`
+    : '';
+  const body = mdToHtml(run.output || run.raw || run.error || '実行中...');
+  const command = run.commandPreview ? `<p style="color:var(--muted);font-size:12px">Command: <code>${esc(run.commandPreview)}</code></p>` : '';
+  return diagnosis + command + body;
+}
+
+async function selectSession(sessionId) {
+  savePromptDraft();
+  state.selectedId = sessionId;
+  clearInterval(state.liveTimer);
+  renderList();
+  $('detail').innerHTML = '<div class="empty-detail">読み込み中</div>';
+  try {
+    const data = await api('/api/claude/sessions/' + encodeURIComponent(sessionId));
+    state.selected = data.session;
+    state.messages = data.messages || [];
+    state.suggestions = data.suggestions || [];
+    state.brief = data.brief || null;
+    state.recentRuns = data.recentRuns || [];
+    renderDetail();
+    if (state.selected.tmux && state.selected.tmux.attached) startLivePolling();
+  } catch (e) {
+    $('detail').innerHTML = `<div class="empty-detail">${esc(e.message)}</div>`;
+  }
+}
+
+function renderDetail() {
+  const s = state.selected;
+  const messages = state.messages.map(m => `<div class="message ${esc(m.role)}">
+    <div class="message-role">${m.role === 'user' ? 'User' : 'Claude'} ${esc(fmtDate(m.timestamp))}${m.tools && m.tools.length ? ' / ' + esc(m.tools.join(', ')) : ''}</div>
+    <div class="markdown">${mdToHtml(m.text || '')}</div>
+  </div>`).join('');
+  const suggestions = state.suggestions.map(text => `<button class="suggestion" data-suggestion="${esc(text)}">${esc(text)}</button>`).join('');
+  const draft = loadPromptDraft(s.sessionId);
+  $('detail').innerHTML = `
+    <div class="detail-head">
+      <h2 class="detail-title">${esc(s.title || s.sessionId)}</h2>
+      <div class="detail-meta">
+        <span>${esc(s.cwd || '')}</span>
+        <span class="badge case">${esc(s.projectName || '未分類')}</span>
+        <span>${esc(s.sessionId)}</span>
+        <span>${esc(fmtDate(s.updatedAt))}</span>
+        ${s.active ? '<span class="badge active">稼働中</span>' : ''}
+        ${s.tmux && s.tmux.attached ? '<span class="badge live">Live</span>' : ''}
+      </div>
+    </div>
+    <div class="detail-body">
+      <div class="split-block">
+        <div>
+          ${briefHtml(state.brief)}
+          <h3 class="section-title">直近の会話</h3>
+          <div class="message assistant" style="border-color:#fed7aa;background:#fff7ed">
+            <div class="message-role">Task</div>
+            <div class="markdown">${mdToHtml(s.taskText || 'このセッションの次アクションを確認してください。')}</div>
+          </div>
+          ${messages || '<div style="color:var(--muted);font-size:13px">表示できるメッセージがありません。</div>'}
+          <h3 id="run-title" class="section-title hidden">通常実行の結果</h3>
+          <div id="run-box" class="run-box markdown hidden"></div>
+          <h3 id="live-title" class="section-title ${s.tmux && s.tmux.attached ? '' : 'hidden'}">Live Mode 出力</h3>
+          <div id="live-box" class="live-box ${s.tmux && s.tmux.attached ? '' : 'hidden'}"></div>
+        </div>
+        <aside class="side-panel">
+          <h3 class="section-title">次プロンプト候補</h3>
+          <div class="suggestions">${suggestions}</div>
+          <h3 class="section-title">状態</h3>
+          <div class="state-grid">
+            <select id="detail-status" class="select">
+              <option value="open">未処理</option>
+              <option value="pending">保留</option>
+              <option value="review">要確認</option>
+              <option value="done">完了</option>
+            </select>
+            <select id="detail-priority" class="select">
+              <option value="high">高</option>
+              <option value="normal">通常</option>
+              <option value="low">低</option>
+            </select>
+          </div>
+          <textarea id="detail-note" class="memo" placeholder="メモ">${esc(s.note || '')}</textarea>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button id="save-state">保存</button>
+            <button id="open-live">ライブで開く</button>
+          </div>
+          <h3 class="section-title" style="margin-top:14px">Quick Run履歴</h3>
+          ${recentRunsHtml(state.recentRuns)}
+        </aside>
+      </div>
+    </div>
+    <div class="composer">
+      <div class="composer-toolbar">
+        <div class="composer-title">次の指示 <span id="prompt-draft-status" class="draft-status">${draft.trim() ? '下書き保存済み' : '下書きなし'}</span></div>
+        <div class="action-right">
+          <button id="insert-task" type="button">Task挿入</button>
+          <button id="clear-prompt" type="button">クリア</button>
+        </div>
+      </div>
+      <div class="prompt-chips">
+        <button class="prompt-chip" data-template="resume" type="button">再開ブリーフ</button>
+        <button class="prompt-chip" data-template="continue" type="button">続きから実行</button>
+        <button class="prompt-chip" data-template="verify" type="button">検証して報告</button>
+        <button class="prompt-chip" data-template="blocker" type="button">止まり理由</button>
+        <button class="prompt-chip" data-template="handoff" type="button">引き継ぎ化</button>
+      </div>
+      <textarea id="prompt" placeholder="ここに次の指示を書く。候補やブリーフはクリックで挿入。⌘Enterで通常実行、Shift+⌘EnterでLive送信。">${esc(draft)}</textarea>
+      <div class="composer-actions">
+        <div class="action-left">
+          <button id="quick-run" class="primary">通常実行 -p</button>
+          <button id="live-send">Liveに送信</button>
+        </div>
+        <div class="action-right">
+          <span style="font-size:12px;color:var(--muted)">権限: auto / 失敗時は診断を表示</span>
+        </div>
+      </div>
+    </div>`;
+  $('detail-status').value = s.status || 'open';
+  $('detail-priority').value = s.priority || 'normal';
+  bindDetailEvents();
+  autoResizePrompt();
+}
+
+function bindDetailEvents() {
+  document.querySelectorAll('.suggestion').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setPromptValue(btn.dataset.suggestion || '', 'append');
+    });
+  });
+  document.querySelectorAll('.prompt-chip').forEach(btn => {
+    btn.addEventListener('click', () => setPromptValue(promptTemplate(btn.dataset.template), btn.dataset.template === 'resume' ? 'replace' : 'append'));
+  });
+  const prompt = $('prompt');
+  prompt.addEventListener('input', () => {
+    autoResizePrompt();
+    savePromptDraft();
+  });
+  prompt.addEventListener('keydown', (event) => {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+      event.preventDefault();
+      if (event.shiftKey) sendLive();
+      else quickRun();
+    }
+  });
+  const briefButton = $('insert-brief');
+  if (briefButton) briefButton.addEventListener('click', () => setPromptValue(promptTemplate('resume'), 'replace'));
+  $('insert-task').addEventListener('click', () => setPromptValue(state.selected?.taskText || state.brief?.now || '', 'append'));
+  $('clear-prompt').addEventListener('click', () => {
+    $('prompt').value = '';
+    clearPromptDraft();
+    savePromptDraft();
+    autoResizePrompt();
+    $('prompt').focus();
+  });
+  $('save-state').addEventListener('click', saveState);
+  $('open-live').addEventListener('click', openLive);
+  $('quick-run').addEventListener('click', quickRun);
+  $('live-send').addEventListener('click', sendLive);
+}
+
+async function saveState() {
+  if (!state.selectedId) return;
+  try {
+    await api(`/api/claude/sessions/${encodeURIComponent(state.selectedId)}/state`, {
+      method: 'POST',
+      body: JSON.stringify({
+        status: $('detail-status').value,
+        priority: $('detail-priority').value,
+        note: $('detail-note').value,
+      }),
+    });
+    toast('状態を保存しました');
+    await loadSessions(true);
+    await selectSession(state.selectedId);
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+async function quickRun() {
+  const prompt = $('prompt').value.trim();
+  if (!prompt || !state.selectedId) return;
+  savePromptDraft();
+  $('quick-run').disabled = true;
+  $('run-title').classList.remove('hidden');
+  $('run-box').classList.remove('hidden');
+  $('run-box').innerHTML = mdToHtml('実行中...');
+  try {
+    const run = await api(`/api/claude/sessions/${encodeURIComponent(state.selectedId)}/quick-run`, {
+      method: 'POST',
+      body: JSON.stringify({prompt}),
+    });
+    pollRun(run.runId);
+  } catch (e) {
+    $('run-box').innerHTML = mdToHtml(e.message);
+    $('quick-run').disabled = false;
+  }
+}
+
+async function pollRun(runId) {
+  clearInterval(state.runTimer);
+  const tick = async () => {
+    try {
+      const run = await api('/api/claude/runs/' + encodeURIComponent(runId));
+      $('run-box').innerHTML = runOutputHtml(run);
+      $('run-box').scrollTop = $('run-box').scrollHeight;
+      if (run.status !== 'running') {
+        clearInterval(state.runTimer);
+        $('quick-run').disabled = false;
+        await loadSessions(true);
+      }
+    } catch (e) {
+      clearInterval(state.runTimer);
+      $('run-box').innerHTML = mdToHtml(e.message);
+      $('quick-run').disabled = false;
+    }
+  };
+  await tick();
+  state.runTimer = setInterval(tick, 2500);
+}
+
+async function openLive() {
+  if (!state.selectedId) return;
+  $('open-live').disabled = true;
+  try {
+    const data = await api(`/api/claude/sessions/${encodeURIComponent(state.selectedId)}/tmux/open`, {method: 'POST', body: '{}'});
+    $('live-title').classList.remove('hidden');
+    $('live-box').classList.remove('hidden');
+    $('live-box').textContent = data.capture || 'Live Modeを開始しました。';
+    startLivePolling();
+    toast('Live Modeを開始しました');
+    await loadSessions(true);
+  } catch (e) {
+    toast(e.message);
+  } finally {
+    $('open-live').disabled = false;
+  }
+}
+
+async function sendLive() {
+  const prompt = $('prompt').value.trim();
+  if (!prompt || !state.selectedId) return;
+  $('live-send').disabled = true;
+  try {
+    const data = await api(`/api/claude/sessions/${encodeURIComponent(state.selectedId)}/tmux/send`, {
+      method: 'POST',
+      body: JSON.stringify({prompt}),
+    });
+    $('live-title').classList.remove('hidden');
+    $('live-box').classList.remove('hidden');
+    $('live-box').textContent = data.capture || '';
+    $('prompt').value = '';
+    clearPromptDraft();
+    savePromptDraft();
+    autoResizePrompt();
+    startLivePolling();
+  } catch (e) {
+    toast(e.message);
+  } finally {
+    $('live-send').disabled = false;
+  }
+}
+
+function startLivePolling() {
+  clearInterval(state.liveTimer);
+  const tick = async () => {
+    if (!state.selectedId || !$('live-box')) return;
+    try {
+      const data = await api(`/api/claude/sessions/${encodeURIComponent(state.selectedId)}/tmux/capture`);
+      if (data.capture !== undefined) {
+        $('live-title').classList.remove('hidden');
+        $('live-box').classList.remove('hidden');
+        $('live-box').textContent = data.capture || '';
+        $('live-box').scrollTop = $('live-box').scrollHeight;
+      }
+    } catch (_) {}
+  };
+  tick();
+  state.liveTimer = setInterval(tick, 2500);
+}
+
+let searchTimer = null;
+['q', 'project', 'status', 'priority', 'active'].forEach(id => {
+  $(id).addEventListener(id === 'q' ? 'input' : 'change', () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => loadSessions(true), id === 'q' ? 250 : 0);
+  });
+});
+
+$('view-sessions').addEventListener('click', () => {
+  state.viewMode = 'sessions';
+  $('view-sessions').classList.add('active');
+  $('view-projects').classList.remove('active');
+  renderList();
+});
+$('view-projects').addEventListener('click', () => {
+  state.viewMode = 'projects';
+  $('view-projects').classList.add('active');
+  $('view-sessions').classList.remove('active');
+  renderList();
+});
+
+$('session-list').addEventListener('click', (event) => {
+  const item = event.target.closest('.session-item');
+  if (item) selectSession(item.dataset.sessionId);
+});
+$('project-list').addEventListener('click', (event) => {
+  const item = event.target.closest('.project-chip');
+  if (!item) return;
+  $('project').value = item.dataset.projectKey || '';
+  state.viewMode = 'projects';
+  $('view-projects').classList.add('active');
+  $('view-sessions').classList.remove('active');
+  loadSessions(true);
+});
+$('task-list').addEventListener('click', (event) => {
+  const item = event.target.closest('.task-chip');
+  if (item) selectSession(item.dataset.sessionId);
+});
+$('load-more').addEventListener('click', () => loadSessions(false));
+$('refresh-index-btn').addEventListener('click', async () => {
+  try {
+    const data = await api('/api/claude/index/refresh', {method:'POST', body: JSON.stringify({force:false})});
+    renderIndexStatus(data);
+    toast('インデックス更新を開始しました');
+    setTimeout(() => loadSessions(true), 1200);
+  } catch (e) {
+    toast(e.message);
+  }
+});
+
+async function autoRefresh() {
+  if (document.hidden) return;
+  try {
+    $('auto-status').textContent = '自動更新中...';
+    await api('/api/claude/index/refresh', {method:'POST', body: JSON.stringify({force:false})});
+    await loadSessions(true);
+    if (state.selectedId && !$('prompt')?.value) {
+      const data = await api('/api/claude/sessions/' + encodeURIComponent(state.selectedId));
+      state.selected = data.session;
+      state.messages = data.messages || [];
+      state.suggestions = data.suggestions || [];
+      state.brief = data.brief || null;
+      state.recentRuns = data.recentRuns || [];
+      renderDetail();
+    }
+    state.autoCountdown = 45;
+    $('auto-status').textContent = '自動更新完了';
+  } catch (_) {
+    $('auto-status').textContent = '自動更新失敗';
+  }
+}
+
+function startAutoRefresh() {
+  clearInterval(state.autoTimer);
+  state.autoTimer = setInterval(() => {
+    state.autoCountdown -= 1;
+    if (state.autoCountdown <= 0) {
+      state.autoCountdown = 45;
+      autoRefresh();
+    } else {
+      $('auto-status').textContent = `次の自動更新 ${state.autoCountdown}s`;
+    }
+  }, 1000);
+}
+
+loadSessions(true);
+startAutoRefresh();
+setInterval(async () => {
+  try {
+    const data = await api('/api/claude/status');
+    renderIndexStatus(data);
+    if (data.running) loadSessions(true);
+  } catch (_) {}
+}, 8000);
+</script>
+</body>
+</html>

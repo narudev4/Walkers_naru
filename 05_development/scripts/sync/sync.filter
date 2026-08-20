@@ -59,6 +59,12 @@
 - **/.idea/**
 - **/.vscode/**
 
+# --- 案件内の作業一時物 (S3 同期不要。ASCII パターンで案件名非依存に除外) ---
+# .claude/settings.local.json (権限キャッシュ) / playwright 自動化ログ / 作業スクショ
+- **/.claude/**
+- **/.playwright-mcp/**
+- **/board-top-*.png
+
 # --- Sync internals (would create recursion if synced) ---
 - .sync-logs/**
 - .sync-daily/**
@@ -66,11 +72,28 @@
 - .sync-gitleaks-report.json
 - output/**
 
+# --- Secrets (リネーム非依存で常に除外。pre-sync-guard.sh と二重の防壁) ---
+# ※ .env.example / .env.sample はテンプレートなので除外しない (guard も許可)
+- **/.env
+- **/.env.local
+- **/.env.production
+- **/.env.development
+- **/.env.staging
+- **/.mcp.json
+- **/*.key
+- **/*.pem
+- **/*.p12
+- **/*.pfx
+- **/credentials.json
+
 # --- 独立 git リポジトリ (.gitignore と同期、各 git で別管理されているので S3 同期不要) ---
-# PTJ Next.js アプリ (PTJ_xxx/app glob で将来の改称・別案件にも対応)
-- **/PTJ_*/app/**
-# OKWEB 配下の独立リポ (love-search-match 等のハイフン系も含む)
+# 各案件直下の app/ (Next.js 等の独立リポ) を案件名非依存・ASCII で除外。
+# ※ 日本語ディレクトリ名で glob を書くと macOS の NFD 正規化でマッチしないため /*/app/** を使う。
+# ※ 将来 app/ を実コンテンツに使う案件が出たら要調整 (現状は該当なし)。
+- /*/app/**
+# OKWEB(オーケーウェブ) 配下の独立リポ (love-search-match 等のハイフン系も含む)
 - **/aikata-auth-test/**
+- **/repos/aikata/**
 - **/love-search*/**
 - **/love_search*/**
 # 開発ツール

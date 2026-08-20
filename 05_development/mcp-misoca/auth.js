@@ -90,15 +90,17 @@ async function main() {
 
       // アクセストークンを取得
       try {
+        const basicAuth = Buffer.from(`${client_id}:${client_secret}`).toString("base64");
         const tokenRes = await fetch(MISOCA_TOKEN_URL, {
           method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": `Basic ${basicAuth}`,
+          },
           body: new URLSearchParams({
             grant_type: "authorization_code",
             code,
             redirect_uri: redirectUri,
-            client_id,
-            client_secret,
           }).toString(),
         });
 

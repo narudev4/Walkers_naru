@@ -47,29 +47,40 @@ SYNC_INCLUDES=(
   'DAILY.md'
 )
 
-# filter 適用後にだけ残る範囲をチェック対象とするため、build/cache 系ディレクトリを prune する
-# (sync.filter と同じ pattern を find で再現)
-FIND_PRUNE=( \( \
-  -type d \( \
-    -name node_modules -o -name .git -o -name .next -o -name .turbo \
-    -o -name .vercel -o -name .shinkoku -o -name .venv -o -name venv \
-    -o -name Pods -o -name build -o -name DerivedData -o -name '__pycache__' \
-    -o -name '.idea' -o -name '.vscode' -o -name dist -o -name target \
-    -o -name 'aikata-auth-test' -o -name 'mailmag-automation' \
-    -o -name 'love-search*' -o -name 'love_search*' \
-  \) \
-  -o -path '*/PTJ_*/app' \
-  -o -path '*/PTJ_*/app/*' \
-\) -prune )
+# SSOT: sync.filter で実際に同期されるファイル集合だけを検査対象にする。
+# rclone lsf を bisync と同じ filter で回すので、filter で除外されるファイル
+# (.env.local 等) は検査に出ず、filter を素通りする新種 secret だけが残る。
+# → sync.filter と guard の二重メンテ (PTJ_ glob の drift) を構造的に根絶する。
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+FILTER_FILE="${SCRIPT_DIR}/sync.filter"
+
+if ! command -v rclone >/dev/null 2>&1; then
+  echo "${RED}[GUARD] rclone が必要です (filter 駆動の検査に使用)。brew install rclone${NC}" >&2
+  exit 4
+fi
+
+matches_forbidden() {
+  local base="$1" pat
+  for pat in "${FORBIDDEN_PATTERNS[@]}"; do
+    # shellcheck disable=SC2254
+    case "$base" in $pat) return 0 ;; esac
+  done
+  return 1
+}
 
 violations=()
 for inc in "${SYNC_INCLUDES[@]}"; do
   [[ -e "$inc" ]] || continue
-  for pat in "${FORBIDDEN_PATTERNS[@]}"; do
-    while IFS= read -r -d '' f; do
-      violations+=("$f")
-    done < <(find "$inc" "${FIND_PRUNE[@]}" -o -type f -name "${pat##*/}" -print0 2>/dev/null || true)
-  done
+  if [[ -f "$inc" ]]; then
+    # 単一ファイル (DAILY.md): basename を直接照合
+    matches_forbidden "${inc##*/}" && violations+=("$inc")
+  else
+    # ディレクトリ: sync.filter 適用後に実際に同期されるファイルだけを照合
+    while IFS= read -r f; do
+      [[ -n "$f" ]] || continue
+      matches_forbidden "${f##*/}" && violations+=("$inc/$f")
+    done < <(rclone lsf "$inc" --filter-from "$FILTER_FILE" -R --files-only 2>/dev/null || true)
+  fi
 done
 
 if (( ${#violations[@]} > 0 )); then

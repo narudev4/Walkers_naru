@@ -16,6 +16,7 @@ import urllib.request
 import mimetypes
 import ssl
 from datetime import datetime
+from claude_session_hub import ClaudeSessionHub
 
 # SSL context for Google API calls
 try:
@@ -248,6 +249,7 @@ class SheetsSync:
 
 
 sheets_sync = None  # main() で初期化
+claude_hub = None  # main() で初期化
 
 
 def init_sheets_sync():
@@ -296,10 +298,20 @@ class WalkersHandler(http.server.BaseHTTPRequestHandler):
 
         if path == '/' or path == '/index.html':
             self.serve_file(DASHBOARD_DIR / 'index.html', 'text/html')
+        elif path == '/claude-sessions.html':
+            self.serve_file(DASHBOARD_DIR / 'claude-sessions.html', 'text/html')
         elif path == '/themes.json':
             self.serve_file(DASHBOARD_DIR / 'themes.json', 'application/json')
         elif path == '/api/data':
             self.handle_data()
+        elif path == '/api/claude/status':
+            self.handle_claude_status()
+        elif path == '/api/claude/sessions':
+            self.handle_claude_sessions(parsed)
+        elif path.startswith('/api/claude/sessions/'):
+            self.handle_claude_session_get(path)
+        elif path.startswith('/api/claude/runs/'):
+            self.handle_claude_run_get(path)
         elif path.startswith('/api/skill/'):
             name = urllib.parse.unquote(path[len('/api/skill/'):])
             self.handle_skill_read(name)
@@ -308,6 +320,8 @@ class WalkersHandler(http.server.BaseHTTPRequestHandler):
             self.handle_memory_read(key)
         elif path == '/api/skillhub':
             self.handle_skillhub()
+        elif path == '/api/mtg-pipeline':
+            self.handle_mtg_pipeline()
         elif path == '/api/pipeline':
             self.handle_pipeline()
         elif path == '/api/projects':
@@ -339,6 +353,10 @@ class WalkersHandler(http.server.BaseHTTPRequestHandler):
 
         if path == '/api/refresh':
             self.handle_refresh()
+        elif path == '/api/claude/index/refresh':
+            self.handle_claude_index_refresh()
+        elif path.startswith('/api/claude/sessions/'):
+            self.handle_claude_session_post(path)
         elif path == '/api/skillhub/publish':
             self.handle_skillhub_publish()
         elif path == '/api/skillhub/unpublish':
@@ -487,6 +505,97 @@ class WalkersHandler(http.server.BaseHTTPRequestHandler):
         else:
             self.send_json({})
 
+    def _read_json_body(self):
+        body = self.read_body()
+        if not body:
+            return {}
+        return json.loads(body)
+
+    def _require_claude_hub(self):
+        if not claude_hub:
+            raise RuntimeError('Claude Session Hub is not initialized')
+        return claude_hub
+
+    def handle_claude_status(self):
+        try:
+            self.send_json(self._require_claude_hub().index_status())
+        except Exception as e:
+            self.send_error_json(500, str(e))
+
+    def handle_claude_sessions(self, parsed):
+        try:
+            query = urllib.parse.parse_qs(parsed.query)
+            self.send_json(self._require_claude_hub().list_sessions(query))
+        except Exception as e:
+            self.send_error_json(500, str(e))
+
+    def handle_claude_session_get(self, path):
+        try:
+            parts = path.strip('/').split('/')
+            if len(parts) < 4:
+                self.send_error_json(404, 'Not found')
+                return
+            session_id = urllib.parse.unquote(parts[3])
+            hub = self._require_claude_hub()
+            if len(parts) == 4:
+                self.send_json(hub.session_detail(session_id))
+            elif len(parts) == 5 and parts[4] == 'messages':
+                self.send_json({'messages': hub.messages(session_id, limit=120)})
+            elif len(parts) == 6 and parts[4] == 'tmux' and parts[5] == 'capture':
+                self.send_json(hub.capture_tmux(session_id))
+            else:
+                self.send_error_json(404, 'Not found')
+        except KeyError as e:
+            self.send_error_json(404, str(e))
+        except Exception as e:
+            self.send_error_json(500, str(e))
+
+    def handle_claude_run_get(self, path):
+        try:
+            run_id = urllib.parse.unquote(path.rstrip('/').split('/')[-1])
+            self.send_json(self._require_claude_hub().get_run(run_id))
+        except KeyError as e:
+            self.send_error_json(404, str(e))
+        except Exception as e:
+            self.send_error_json(500, str(e))
+
+    def handle_claude_index_refresh(self):
+        try:
+            data = self._read_json_body()
+            force = bool(data.get('force'))
+            self.send_json(self._require_claude_hub().refresh_index_background(force=force))
+        except Exception as e:
+            self.send_error_json(500, str(e))
+
+    def handle_claude_session_post(self, path):
+        try:
+            parts = path.strip('/').split('/')
+            if len(parts) < 5:
+                self.send_error_json(404, 'Not found')
+                return
+            session_id = urllib.parse.unquote(parts[3])
+            action = parts[4:]
+            data = self._read_json_body()
+            hub = self._require_claude_hub()
+            if action == ['quick-run']:
+                self.send_json(hub.quick_run(session_id, data.get('prompt') or ''))
+            elif action == ['tmux', 'open']:
+                self.send_json(hub.open_tmux(session_id))
+            elif action == ['tmux', 'send']:
+                self.send_json(hub.send_tmux(session_id, data.get('prompt') or ''))
+            elif action == ['state']:
+                self.send_json(hub.save_state(session_id, data))
+            elif action == ['suggest']:
+                self.send_json({'suggestions': hub.suggest(session_id)})
+            else:
+                self.send_error_json(404, 'Not found')
+        except ValueError as e:
+            self.send_error_json(400, str(e))
+        except KeyError as e:
+            self.send_error_json(404, str(e))
+        except Exception as e:
+            self.send_error_json(500, str(e))
+
     def _get_registry_path(self):
         return os.path.join(WALKERS_ROOT, '05_development', 'walkers-marketplace', 'skill-registry.json')
 
@@ -505,6 +614,21 @@ class WalkersHandler(http.server.BaseHTTPRequestHandler):
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
+
+    def handle_mtg_pipeline(self):
+        """MTG パイプラインの表示契約 JSON をライブ配信する。
+        worker（mtg-pipeline スキル）が書き出す mtg-pipeline.json をその場で読む。
+        data.json には埋め込まない（stale 問題を継承しないため）。"""
+        path = os.path.join(DASHBOARD_DIR, 'mtg-pipeline.json')
+        if not os.path.isfile(path):
+            self.send_json({'generatedAt': None, 'deals': [], 'na': [], 'stats': {}, 'events': [],
+                            'note': 'worker 未実行（mtg-pipeline.json がまだ生成されていません）'})
+            return
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                self.send_json(json.load(f))
+        except Exception as e:
+            self.send_error_json(500, f'mtg-pipeline.json read error: {e}')
 
     def handle_skillhub(self):
         """Return published skills from shared registry (Sheets優先)."""
@@ -642,14 +766,16 @@ class WalkersHandler(http.server.BaseHTTPRequestHandler):
 
 
 def main():
-    global WALKERS_ROOT, CONFIG
+    global WALKERS_ROOT, CONFIG, claude_hub
     CONFIG = load_config()
     host = os.environ.get('WALKERS_HOST', CONFIG.get('host', '127.0.0.1'))
     port = int(os.environ.get('WALKERS_PORT', CONFIG.get('port', 8080)))
     WALKERS_ROOT = (DASHBOARD_DIR / CONFIG.get('walkers_root', '../..')).resolve()
+    claude_hub = ClaudeSessionHub(WALKERS_ROOT)
 
     print(f'Walkers Dashboard v1.0.0')
     print(f'Data root: {WALKERS_ROOT}')
+    print(f'Claude Hub DB: {claude_hub.db_path}')
 
     # Sheets sync 初期化
     init_sheets_sync()

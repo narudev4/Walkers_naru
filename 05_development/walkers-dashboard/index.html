@@ -317,9 +317,11 @@ body {
       <a class="nav-link active" data-panel="skills">Skills</a>
       <a class="nav-link" data-panel="memory">Memory</a>
       <a class="nav-link" data-panel="pipeline">Pipeline</a>
+      <a class="nav-link" data-panel="mtg">MTG</a>
       <a class="nav-link" data-panel="projects">Projects</a>
       <a class="nav-link" data-panel="outputs">Outputs</a>
       <a class="nav-link" data-panel="skillhub">Skill Hub</a>
+      <a class="nav-link" href="/claude-sessions.html">Claude Hub</a>
       <a class="nav-link" data-panel="settings">Settings</a>
     </nav>
   </div>
@@ -336,6 +338,7 @@ body {
   <div id="panel-skills" class="panel active"></div>
   <div id="panel-memory" class="panel"></div>
   <div id="panel-pipeline" class="panel"></div>
+  <div id="panel-mtg" class="panel"></div>
   <div id="panel-projects" class="panel"></div>
   <div id="panel-outputs" class="panel"></div>
   <div id="panel-skillhub" class="panel"></div>
@@ -461,6 +464,13 @@ const DataLayer = (() => {
       } catch(e) {
         State.set('skillhub', d.skillhub || {skills: []});
       }
+      // MTG pipeline (live endpoint; worker が書き出す JSON)
+      try {
+        const mtg = await fetchJSON('/api/mtg-pipeline');
+        State.set('mtgPipeline', mtg);
+      } catch(e) {
+        State.set('mtgPipeline', {generatedAt: null, deals: [], na: [], stats: {}, events: []});
+      }
       return d;
     },
     async getSkill(name) { return fetchJSON(`/api/skill/${encodeURIComponent(name)}`); },
@@ -485,7 +495,7 @@ const DataLayer = (() => {
 
 // === Module 3: Router ===
 const Router = (() => {
-  const PANELS = ['skills','memory','pipeline','projects','outputs','skillhub','settings'];
+  const PANELS = ['skills','memory','pipeline','mtg','projects','outputs','skillhub','settings'];
   function navigate(panel) {
     if (!PANELS.includes(panel)) panel = 'skills';
     PANELS.forEach(p => {
@@ -498,7 +508,7 @@ const Router = (() => {
     Renderer.renderPanel(panel);
   }
   function init() {
-    document.querySelectorAll('.nav-link').forEach(a => {
+    document.querySelectorAll('.nav-link[data-panel]').forEach(a => {
       a.addEventListener('click', () => {
         const p = a.dataset.panel;
         location.hash = p;
@@ -529,6 +539,7 @@ const Renderer = (() => {
       case 'skills': renderSkills(data.skills || []); break;
       case 'memory': renderMemory(data.memories || {}); break;
       case 'pipeline': renderPipeline(data.pipeline || {}); break;
+      case 'mtg': renderMtgPipeline(State.get('mtgPipeline') || {}); break;
       case 'projects': renderProjects(data.projects || []); break;
       case 'outputs': renderOutputs(data.outputs || []); break;
       case 'skillhub': renderSkillHub(State.get('skillhub')); break;
@@ -646,6 +657,68 @@ const Renderer = (() => {
       });
     }
     return { deals, actions };
+  }
+
+  function renderMtgPipeline(mp) {
+    const panel = document.getElementById('panel-mtg');
+    if (!mp || !mp.generatedAt) {
+      panel.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x1f501;</div><div class="empty-state-msg">worker 未実行（mtg-pipeline スキルを1サイクル回すと表示されます）</div></div>';
+      return;
+    }
+    const stats = mp.stats || {};
+    const na = mp.na || [];
+    const deals = mp.deals || [];
+    const events = mp.events || [];
+    const ageMin = Math.round((Date.now() - new Date(mp.generatedAt).getTime()) / 60000);
+    const stale = ageMin > 30;
+    const open = na.filter(n => !['完了','取消'].includes(n.status));
+    const pending = open.filter(n => n.status === '承認待ち');
+    const byAssignee = stats.openNaByAssignee || {};
+
+    let html = `<div class="panel-header"><h2>MTG Pipeline</h2>
+      <span class="badge ${stale ? 'badge-high' : 'badge-low'}" title="${esc(mp.generatedAt)}">${stale ? 'STALE ' : ''}${ageMin}分前更新</span></div>`;
+
+    html += '<div class="metrics">';
+    html += metricCard(open.length, '未消化 NA', '--accent');
+    html += metricCard(pending.length, '承認待ち', pending.length ? '--danger' : '');
+    html += metricCard(stats.stalled || 0, '滞留', (stats.stalled||0) ? '--danger' : '');
+    Object.entries(byAssignee).forEach(([k, v]) => { html += metricCard(v, `NA: ${k}`, ''); });
+    html += '</div>';
+
+    if (pending.length) {
+      html += '<h3 style="font-size:14px;color:var(--text-heading);margin:16px 0 8px">承認待ち（naru のアクション待ち）</h3>';
+      html += '<table class="action-table"><thead><tr><th>案件</th><th>タイトル</th><th>成果物</th><th>更新</th></tr></thead><tbody>';
+      pending.forEach(n => {
+        const link = n.artifactLink ? `<a href="${esc(n.artifactLink)}" target="_blank">開く</a>` : '-';
+        html += `<tr><td>${esc(n.dealId||'')}</td><td>${esc(n.title||'')}</td><td>${link}</td><td>${esc((n.updatedAt||'').slice(0,16))}</td></tr>`;
+      });
+      html += '</tbody></table>';
+    }
+
+    html += '<h3 style="font-size:14px;color:var(--text-heading);margin:16px 0 8px">未完了 NA</h3>';
+    html += '<table class="action-table"><thead><tr><th>id</th><th>案件</th><th>タイトル</th><th>担当</th><th>状態</th><th>期限</th><th>優先度</th></tr></thead><tbody>';
+    open.slice(0, 30).forEach(n => {
+      html += `<tr><td style="font-size:11px">${esc(n.id||'')}</td><td>${esc(n.dealId||'')}</td><td>${esc(n.title||'')}</td><td>${esc(n.assignee||'')}</td><td>${esc(n.status||'')}</td><td>${esc(n.due||'')}</td><td>${esc(n.priority||'')}</td></tr>`;
+    });
+    html += '</tbody></table>';
+
+    const dist = stats.stageDistribution || {};
+    if (Object.keys(dist).length) {
+      html += '<h3 style="font-size:14px;color:var(--text-heading);margin:16px 0 8px">案件ステージ分布</h3><div class="metrics">';
+      Object.entries(dist).forEach(([k, v]) => { html += metricCard(v, k, ''); });
+      html += '</div>';
+    }
+
+    if (events.length) {
+      html += '<h3 style="font-size:14px;color:var(--text-heading);margin:16px 0 8px">直近イベント</h3>';
+      html += '<table class="action-table"><thead><tr><th>受信</th><th>種別</th><th>会議</th><th>状態</th></tr></thead><tbody>';
+      events.slice(0, 10).forEach(ev => {
+        html += `<tr><td>${esc((ev.ts||'').slice(0,16))}</td><td>${esc(ev.type||'')}</td><td>${esc(ev.name||ev.meetingId||'')}</td><td>${esc(ev.processed||'')}</td></tr>`;
+      });
+      html += '</tbody></table>';
+    }
+
+    panel.innerHTML = html;
   }
 
   function renderPipeline(pipeline) {

@@ -53,14 +53,16 @@ async function getAccessToken() {
 
   if (isTokenExpired(token)) {
     const creds = loadCredentials();
+    const basicAuth = Buffer.from(`${creds.client_id}:${creds.client_secret}`).toString("base64");
     const res = await fetch(TOKEN_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": `Basic ${basicAuth}`,
+      },
       body: new URLSearchParams({
         grant_type: "refresh_token",
         refresh_token: token.refresh_token,
-        client_id: creds.client_id,
-        client_secret: creds.client_secret,
       }).toString(),
     });
 

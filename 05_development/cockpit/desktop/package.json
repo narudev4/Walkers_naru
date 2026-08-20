@@ -1,0 +1,36 @@
+{
+  "name": "cockpit-desktop",
+  "productName": "Cockpit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "案件セッションの司令塔。Walkers 専用のデスクトップアプリ。",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "install-app": "./install.sh"
+  },
+  "devDependencies": {
+    "electron": "^43.2.0",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "co.walkers.cockpit",
+    "productName": "Cockpit",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "icon.icns"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": [
+        "dir"
+      ],
+      "icon": "icon.icns",
+      "identity": null
+    }
+  },
+  "author": "naru"
+}

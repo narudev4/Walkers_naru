@@ -1,0 +1,113 @@
+diff --git a/ui/src/components/ChatView.css b/ui/src/components/ChatView.css
+index 21cb40c..2f3dc36 100644
+--- a/ui/src/components/ChatView.css
++++ b/ui/src/components/ChatView.css
+@@ -4132,13 +4132,31 @@ body.is-resizing-composer * {
+   border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+ }
+ 
++.is-desktop .notif-privacy-menu {
++  top: 68px;
++}
++
++/* 会話を閉じる × は他のアイコンボタンより字面が小さく見えるので少し持ち上げる。 */
++.main-header-close {
++  font-size: 20px;
++  line-height: 1;
++}
++
+ .notif-privacy-menu {
+-  position: absolute;
+-  top: calc(100% + 6px);
+-  right: 0;
++  position: fixed;
++  /* ボタンの右端を起点に左へ 288px 伸ばす作りだったため、ボタンがウィンドウの
++     左寄りにあると左側が画面外に出て読めなかった（幅ではなく配置の問題なので
++     max-width では直らない）。viewport 基準に切り替え、右に余白があるうちは
++     左端 12px に貼り付けて必ず全幅が見えるようにする。 */
++  /* sidebar-header は padding 16/12 + 28px のボタンで 56px。デスクトップは
++     信号機を避けるため padding-top が 22px になるので 62px。その下 6px に出す。 */
++  top: 62px;
++  left: 12px;
++  right: auto;
+   z-index: 60;
+   width: 288px;
+-  max-height: 70vh;
++  max-width: calc(100vw - 24px);
++  max-height: calc(100vh - 80px);
+   overflow-y: auto;
+   padding: 10px;
+   background: var(--color-surface);
+diff --git a/ui/src/components/ChatView.tsx b/ui/src/components/ChatView.tsx
+index 0435d0f..0f19379 100644
+--- a/ui/src/components/ChatView.tsx
++++ b/ui/src/components/ChatView.tsx
+@@ -1078,6 +1078,10 @@ export function ChatView({ managedClients, onLogout }: ChatViewProps) {
+                   client={selectedUnified.client}
+                   room={selectedUnified.room}
+                   onBack={() => setMobilePane("list")}
++                  onCloseConversation={() => {
++                    setSelectedRoomKey(null);
++                    setMobilePane("list");
++                  }}
+                   sidePanelOpen={sidePanelOpen}
+                   onToggleSidePanel={() => setSidePanelOpen((v) => !v)}
+                 />
+@@ -1315,6 +1319,7 @@ interface MainHeaderProps {
+   client: MatrixClient;
+   room: Room;
+   onBack: () => void;
++  onCloseConversation: () => void;
+   sidePanelOpen: boolean;
+   onToggleSidePanel: () => void;
+ }
+@@ -1323,6 +1328,7 @@ function MainHeader({
+   client,
+   room,
+   onBack,
++  onCloseConversation,
+   sidePanelOpen,
+   onToggleSidePanel,
+ }: MainHeaderProps) {
+@@ -1413,6 +1419,17 @@ function MainHeader({
+             <Icon name="edit" size={17} />
+           </button>
+           <PanelSizeButton className="main-header-action panel-size-narrow-only" />
++          {/* 未読にすると必ず閉じるが、未読を付けずに閉じたいときの受け皿がなかった。
++              閉じる印は RoomInfoPanel と同じく文字の × に揃える（close アイコンは無い）。 */}
++          <button
++            type="button"
++            className="main-header-action main-header-close"
++            onClick={onCloseConversation}
++            title="この会話を閉じる"
++            aria-label="この会話を閉じる"
++          >
++            ×
++          </button>
+         </div>
+       </header>
+       {infoTab ? (
+diff --git a/ui/src/components/Timeline.tsx b/ui/src/components/Timeline.tsx
+index d98ea6d..2a33004 100644
+--- a/ui/src/components/Timeline.tsx
++++ b/ui/src/components/Timeline.tsx
+@@ -220,9 +220,16 @@ export function Timeline({
+     const threadTarget = anchor ? null : newestUnreadThreadRoot(threadUnread);
+     const targetId = anchor ?? threadTarget;
+     initialTargetRef.current = targetId;
+-    const node = targetId
+-      ? el.querySelector(`[data-event-id="${CSS.escape(targetId)}"]`)
+-      : null;
++    // naru の指示（2026-08-05）: 部屋を開いたら常に最新を見せる。
++    // 上流は未読の先頭を上端に置く（下の 1. 2. の挙動）が、開くたびに過去へ
++    // 飛ばされる体感になるため、初期位置は常に最下部にする。
++    // 「ここから未読」の区切り線は setUnreadAnchor で従来どおり描かれるので、
++    // どこから未読かは上へ辿れば分かる。
++    const OPEN_AT_LATEST = true;
++    const node =
++      !OPEN_AT_LATEST && targetId
++        ? el.querySelector(`[data-event-id="${CSS.escape(targetId)}"]`)
++        : null;
+     if (node instanceof HTMLElement) {
+       el.scrollTop = Math.max(0, node.offsetTop - UNREAD_CONTEXT_PX);
+       // nearBottom from the RESULTING geometry, never a hardcoded false. In a

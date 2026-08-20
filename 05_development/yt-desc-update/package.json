@@ -1,0 +1,15 @@
+{
+  "name": "yt-desc-update",
+  "version": "1.0.0",
+  "description": "YouTube 概要欄の bit.ly リンクを最新の裸URLに一括置換するツール",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "setup": "node setup.js",
+    "discover": "node discover.js",
+    "apply": "node apply.js"
+  },
+  "dependencies": {
+    "googleapis": "^144.0.0"
+  }
+}

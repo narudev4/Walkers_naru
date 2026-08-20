@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cockpit — 案件司令塔</title>
+<link rel="stylesheet" href="/vendor/xterm.css">
+<style>
+:root{
+  --text:#1a1a1a; --text-secondary:#666; --bg:#ffffff; --bg-secondary:#f5f5f5;
+  --bg-term:#171717; --border:#d8d8d8; --accent:#2f6feb;
+  --st-input:#b06f00; --st-perm:#c0392b; --st-idle:#0e7490; --st-done:#1e7e34; --st-run:#888;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --text:#e0e0e0; --text-secondary:#999; --bg:#1a1a1a; --bg-secondary:#2a2a2a;
+    --bg-term:#141414; --border:#404040; --accent:#6b9bff;
+    --st-input:#e8b45c; --st-perm:#f08a7c; --st-idle:#6ee0e8; --st-done:#6ede8f; --st-run:#888;
+  }
+}
+:root[data-theme="dark"]{
+  --text:#e0e0e0; --text-secondary:#999; --bg:#1a1a1a; --bg-secondary:#2a2a2a;
+  --bg-term:#141414; --border:#404040; --accent:#6b9bff;
+  --st-input:#e8b45c; --st-perm:#f08a7c; --st-idle:#6ee0e8; --st-done:#6ede8f; --st-run:#888;
+}
+:root[data-theme="light"]{
+  --text:#1a1a1a; --text-secondary:#666; --bg:#ffffff; --bg-secondary:#f5f5f5;
+  --bg-term:#171717; --border:#d8d8d8; --accent:#2f6feb;
+  --st-input:#b06f00; --st-perm:#c0392b; --st-idle:#0e7490; --st-done:#1e7e34; --st-run:#888;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;}
+body{
+  background:var(--bg); color:var(--text); display:flex; overflow:hidden;
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
+  font-size:13px; line-height:1.6;
+}
+
+/* ---------- 左ペイン ---------- */
+#side{
+  width:300px; min-width:300px; height:100vh;
+  border-right:1px solid var(--border); background:var(--bg-secondary);
+  display:flex; flex-direction:column;
+}
+#head{
+  padding:11px 14px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:8px;
+}
+#head h1{font-size:13px;margin:0;letter-spacing:.04em;}
+#head .count{font-size:11px;color:var(--text-secondary);}
+#head .need{font-size:11px;color:var(--st-input);font-weight:600;}
+#bellBtn{
+  margin-left:auto;background:transparent;border:1px solid var(--border);
+  border-radius:5px;width:24px;height:24px;cursor:pointer;font-size:12px;line-height:1;padding:0;
+}
+#bellBtn:hover{border-color:var(--accent);}
+#bellBtn.on{border-color:var(--accent);}
+#addBtn{background:transparent;border:1px solid var(--border);color:var(--text-secondary);
+  border-radius:5px;width:24px;height:24px;cursor:pointer;font-size:15px;line-height:1;
+}
+#addBtn:hover{color:var(--text);border-color:var(--accent);}
+
+#list{flex:1;overflow-y:auto;}
+#list .empty{padding:24px 16px;color:var(--text-secondary);font-size:12px;text-align:center;}
+.sec{font-size:11px;color:var(--text-secondary);padding:11px 14px 5px;letter-spacing:.06em;
+     border-top:1px solid var(--border);}
+
+.group{border-bottom:1px solid var(--border);}
+.group > .ghead{
+  display:flex;align-items:center;gap:7px;padding:7px 14px 5px;
+  font-size:11px;color:var(--text-secondary);letter-spacing:.03em;
+}
+.group > .ghead .gname{font-weight:600;color:var(--text);font-size:12px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.group > .ghead .plus{
+  margin-left:auto;cursor:pointer;opacity:.5;font-size:14px;line-height:1;padding:0 2px;
+}
+.group > .ghead .plus:hover{opacity:1;color:var(--accent);}
+
+.item{padding:6px 14px 8px 24px;border-left:3px solid transparent;cursor:pointer;}
+.item:hover{background:var(--bg);}
+.item.active{border-left-color:var(--accent);background:var(--bg);}
+.item .top{display:flex;align-items:center;gap:7px;}
+.item .ttl{
+  font-size:12px;font-weight:600;color:var(--text);flex:1;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.item .meta{display:flex;align-items:center;gap:6px;padding-left:14px;margin-top:1px;}
+.item .st{font-size:11px;font-weight:600;white-space:nowrap;color:var(--st-run);}
+.item .src{font-size:10px;color:var(--text-secondary);border:1px solid var(--border);
+  border-radius:3px;padding:0 4px;white-space:nowrap;}
+.item .ago{font-size:11px;color:var(--text-secondary);margin-left:auto;white-space:nowrap;}
+.item .sum{
+  font-size:11px;color:var(--text-secondary);margin-top:2px;padding-left:14px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.dot{width:7px;height:7px;border-radius:50%;flex:none;background:var(--st-run);}
+.s-要入力 .dot,.s-通知 .dot{background:var(--st-input);} .s-要入力 .st,.s-通知 .st{color:var(--st-input);}
+.s-許可待ち .dot{background:var(--st-perm);}  .s-許可待ち .st{color:var(--st-perm);}
+.s-放置 .dot{background:var(--st-idle);}      .s-放置 .st{color:var(--st-idle);}
+.s-完了 .dot,.s-応答済 .dot{background:var(--st-done);} .s-完了 .st,.s-応答済 .st{color:var(--st-done);}
+
+/* ---------- 案件ピッカー（普段は隠す） ---------- */
+#picker{display:none;border-top:1px solid var(--border);background:var(--bg);}
+#picker.open{display:block;}
+#picker input{
+  width:100%;border:none;border-bottom:1px solid var(--border);background:transparent;
+  color:var(--text);padding:9px 14px;font-size:12px;font-family:inherit;
+}
+#picker input:focus{outline:none;}
+#pickList{max-height:260px;overflow-y:auto;}
+#pickList div{padding:6px 14px;cursor:pointer;font-size:12px;color:var(--text-secondary);}
+#pickList div:hover{background:var(--bg-secondary);color:var(--text);}
+#picker .back{padding:7px 14px;font-size:11px;color:var(--accent);cursor:pointer;
+  border-bottom:1px solid var(--border);}
+#pickList .newsess{color:var(--accent);font-weight:600;}
+#pickList .ttl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#pickList .when{font-size:10px;opacity:.6;}
+
+/* 外部セッション（cockpit の tmux 外で動いているもの） */
+.ext .item{cursor:default;opacity:.72;}
+.ext .item:hover{background:transparent;opacity:1;}
+.ext .ghead .gname{color:var(--text-secondary);font-weight:400;}
+.ext-note{font-size:10px;color:var(--text-secondary);padding:0 14px 6px 24px;}
+.adopt{
+  font-size:10px;color:var(--accent);border:1px solid var(--accent);border-radius:3px;
+  padding:0 5px;cursor:pointer;white-space:nowrap;opacity:0;transition:opacity .12s;
+}
+.ext .item:hover .adopt{opacity:1;}
+.adopt:hover{background:var(--accent);color:#fff;}
+
+/* ---------- 右側 ---------- */
+#main{flex:1;display:flex;flex-direction:column;height:100vh;min-width:0;}
+#bar{display:flex;align-items:center;gap:10px;padding:9px 14px;
+     border-bottom:1px solid var(--border);background:var(--bg-secondary);}
+#bar .cur{font-weight:600;}
+#bar .path{color:var(--text-secondary);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#bar button{background:transparent;border:1px solid var(--border);color:var(--text-secondary);
+  border-radius:5px;padding:3px 9px;cursor:pointer;font-size:11px;}
+#bar button:hover{color:var(--text);border-color:var(--text-secondary);}
+#bar .sp{margin-left:auto;}
+#term{flex:1;background:var(--bg-term);min-height:0;overflow:hidden;padding:0 0 0 6px;}
+#empty{flex:1;display:flex;align-items:center;justify-content:center;
+  color:var(--text-secondary);font-size:13px;text-align:center;padding:24px;line-height:2;}
+/* hidden 属性は display 指定に負けるので明示的に打ち消す */
+#empty[hidden],#term[hidden],#bar button[hidden]{display:none !important;}
+/* xterm を親いっぱいに広げる(高さが 0 のままだと下に潰れる) */
+#term .xterm{height:100%;width:100%;}
+#term .xterm-screen{height:100%;}
+#term .xterm-viewport{overflow-y:auto;}
+
+</style>
+</head>
+<body>
+
+<div id="side">
+  <div id="head">
+    <h1>Cockpit</h1>
+    <span class="count" id="count"></span>
+    <span class="need" id="need"></span>
+    <button id="bellBtn" title="要対応の通知">🔕</button>
+    <button id="addBtn" title="案件を起動">＋</button>
+  </div>
+  <div id="list"></div>
+  <div id="picker">
+    <input id="pickInput" placeholder="案件名で絞り込み…" autocomplete="off">
+    <div id="pickList"></div>
+  </div>
+</div>
+
+<div id="main">
+  <div id="bar">
+    <span class="dot" id="curDot"></span>
+    <span class="cur" id="curName">—</span>
+    <span class="path" id="curPath"></span>
+    <span class="sp"></span>
+    <button id="dupBtn" hidden>この案件をもう1つ</button>
+    <button id="closeBtn" hidden>閉じる</button>
+  </div>
+  <div id="empty">
+    起動中のセッションはありません<br>
+    右上の ＋ から案件を選ぶと、その案件で Claude が立ち上がります
+  </div>
+  <div id="term" hidden></div>
+</div>
+
+<script src="/vendor/xterm.js"></script>
+<script src="/vendor/addon-fit.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+let state = { windows: [], projects: [] };
+let current = null;
+let ws = null, term = null, fit = null;
+
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function ago(ms){
+  const s = Math.floor((Date.now() - ms) / 1000);
+  if (s < 60) return s + "秒"; if (s < 3600) return Math.floor(s/60) + "分";
+  if (s < 86400) return Math.floor(s/3600) + "時間"; return Math.floor(s/86400) + "日";
+}
+// 呼んでいるものを上へ
+const PRI = { "要入力":0, "許可待ち":1, "通知":2, "放置":3, "完了":4, "応答済":5, "起動":6 };
+const pri = (s) => PRI[s] ?? 9;
+
+function render(){
+  // 案件(cwd)ごとにセッションをまとめる。何もしていない案件はそもそも出さない。
+  const groups = new Map();
+  for (const w of state.windows) {
+    if (!groups.has(w.cwd)) groups.set(w.cwd, { cwd: w.cwd, label: w.label, items: [] });
+    groups.get(w.cwd).items.push(w);
+  }
+  for (const g of groups.values()) g.items.sort((a,b) => pri(a.state)-pri(b.state) || b.updatedAt-a.updatedAt);
+  // グループ自体も「一番呼んでいるセッション」の緊急度で並べる
+  const list = [...groups.values()].sort((a,b) =>
+    pri(a.items[0].state) - pri(b.items[0].state) ||
+    b.items[0].updatedAt - a.items[0].updatedAt);
+
+  const total = state.windows.length;
+  const need = state.windows.filter(w => w.state==="要入力"||w.state==="許可待ち").length;
+  $("count").textContent = total ? `${list.length}案件 / ${total}セッション` : "";
+  $("need").textContent = need ? `● 要対応 ${need}` : "";
+
+  // cockpit の外(Ghostty・MulmoTerminal)で動いているものも案件ごとにまとめる
+  const extGroups = new Map();
+  for (const s of (state.external || [])) {
+    if (!extGroups.has(s.cwd)) extGroups.set(s.cwd, { cwd: s.cwd, label: s.label, items: [] });
+    extGroups.get(s.cwd).items.push(s);
+  }
+  const extList = [...extGroups.values()].sort((a,b) =>
+    pri(a.items[0].state) - pri(b.items[0].state) || b.items[0].updatedAt - a.items[0].updatedAt);
+
+  const ownHtml = list.map(g => `
+    <div class="group">
+      <div class="ghead">
+        <span class="gname">${esc(g.label)}</span>
+        <span>${g.items.length}</span>
+        <span class="plus" data-path="${esc(g.cwd)}" title="この案件にもう1セッション">＋</span>
+      </div>
+      ${g.items.map(w => `
+        <div class="item s-${w.state} ${w.id===current?"active":""}" data-id="${esc(w.id)}">
+          <div class="top">
+            <span class="dot"></span>
+            <span class="ttl">${esc(w.title || "新しいセッション")}</span>
+          </div>
+          <div class="meta">
+            <span class="st">${esc(w.state)}</span>
+            ${w.own ? "" : `<span class="src">${esc(w.socket)}</span>`}
+            <span class="ago">${ago(w.updatedAt)}</span>
+          </div>
+          ${w.summary ? `<div class="sum">${esc(w.summary)}</div>` : ""}
+        </div>`).join("")}
+    </div>`).join("");
+
+  const extHtml = extList.length ? `
+    <div class="sec" style="padding-top:14px">cockpit の外で稼働中</div>
+    ${extList.map(g => `
+      <div class="group ext">
+        <div class="ghead"><span class="gname">${esc(g.label)}</span><span>${g.items.length}</span></div>
+        ${g.items.map(s => `
+          <div class="item s-${s.state}">
+            <div class="top">
+              <span class="dot"></span>
+              <span class="st">${esc(s.state)}</span>
+              <span class="ago">${ago(s.updatedAt)}</span>
+              <span class="adopt" data-sid="${esc(s.sessionId)}" data-cwd="${esc(s.cwd)}"
+                    title="この会話の続きを cockpit で開く">引き取る</span>
+            </div>
+            ${s.summary ? `<div class="sum">${esc(s.summary)}</div>` : ""}
+          </div>`).join("")}
+      </div>`).join("")}` : "";
+
+  $("list").innerHTML = (ownHtml || (extHtml ? "" : `<div class="empty">起動中のセッションはありません</div>`)) + extHtml;
+
+}
+
+
+// ---- 要対応の通知（記事の「呼ばれたら応じる」に相当）
+// 画面を見張らなくても「要入力」「許可待ち」に気づけるようにする。
+// 状態が要対応へ「変わった瞬間」だけ鳴らす（既に要対応のものを繰り返し鳴らさない）。
+let notifyOn = false;   // 実体は hook 側。ここは表示と切り替えだけ
+
+function beep(){
+  try {
+    const ac = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.connect(g); g.connect(ac.destination);
+    o.frequency.value = 880; o.type = "sine";
+    g.gain.setValueAtTime(0.0001, ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.15, ac.currentTime + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.35);
+    o.start(); o.stop(ac.currentTime + 0.36);
+    setTimeout(() => ac.close(), 600);
+  } catch {}
+}
+
+// 通知そのものは Claude Code の hook が macOS 通知センターへ直接出す。
+// ブラウザの Notification API は Chrome のプロファイル・サイト許可・macOS 許可の
+// 3段が揃わないと無言で消えるので、通知経路としては使わない。
+function setBell(on, hasNotifier = true){
+  notifyOn = on;
+  $("bellBtn").textContent = on ? "🔔" : "🔕";
+  $("bellBtn").classList.toggle("on", on);
+  $("bellBtn").title = !hasNotifier
+    ? "terminal-notifier が見つかりません（brew install terminal-notifier）"
+    : on ? "通知オン: 要入力・許可待ちになった瞬間に macOS 通知＋音。\nブラウザを閉じていても飛びます。\nShift+クリックでテスト通知"
+         : "通知オフ（クリックで有効化）";
+}
+async function loadBell(){
+  try {
+    const d = await (await fetch("/api/notify")).json();
+    setBell(d.on, d.notifier);
+  } catch {}
+}
+$("bellBtn").addEventListener("click", async (e) => {
+  if (e.shiftKey) {   // 動作確認: 今その場で1本出す
+    await fetch("/api/notify/test", { method: "POST" });
+    return;
+  }
+  const on = !notifyOn;
+  setBell(on);
+  await fetch("/api/notify", { method: "POST",
+    headers: { "Content-Type": "application/json" }, body: JSON.stringify({ on }) });
+  if (on) await fetch("/api/notify/test", { method: "POST" });
+});
+loadBell();
+
+async function refresh(){
+  try {
+    state = await (await fetch("/api/state")).json();
+    render();
+  } catch {}
+}
+
+function ensureTerm(){
+  if (term) return;
+  term = new Terminal({
+    fontFamily: "'HackGen Console', 'JetBrains Mono', monospace",
+    fontSize: 12, cursorBlink: false, scrollback: 20000, allowProposedApi: true,
+    theme: { background: getComputedStyle(document.documentElement).getPropertyValue("--bg-term").trim() || "#141414" },
+  });
+  fit = new FitAddon.FitAddon();
+  term.loadAddon(fit); term.open($("term")); fit.fit();
+  addEventListener("resize", () => { try { fit.fit(); } catch {} });
+  // 折り返し幅が変わったら tmux にも即伝える
+  // キー入力はそのまま PTY へ流す(tmux が解釈する)
+  term.onData(d => ws?.readyState === 1 && ws.send(JSON.stringify({ type:"in", data:d })));
+
+  // Claude Code は CR(\r) を「送信」、ESC+CR(\x1b\r) を「改行」として読む。
+  // xterm は Shift+Enter でも素の \r を送ってしまい区別が付かないので、ここで割り込む。
+  // IME 変換中の Enter は確定操作なので触らない。
+  term.attachCustomKeyEventHandler((ev) => {
+    if (ev.key !== "Enter" || ev.isComposing) return true;
+    if (!(ev.shiftKey || ev.altKey)) return true;   // 素の Enter は従来どおり送信
+    // false を返すだけでは足りない。xterm の _keyDown は false で止まるが
+    // preventDefault を呼ばないため、続く keypress を _keyPress が拾って \r を送る
+    // (_keyPress はカスタムハンドラを見ない)。結果、改行のつもりが送信になる。
+    ev.preventDefault();
+    ev.stopPropagation();
+    if (ev.type === "keydown" && ws?.readyState === 1) {
+      ws.send(JSON.stringify({ type: "in", data: "\x1b\r" }));
+    }
+    return false;
+  });
+  // xterm の実サイズを PTY に伝える。合っていないと折り返し位置がずれる。
+  term.onResize(({ cols, rows }) =>
+    ws?.readyState === 1 && ws.send(JSON.stringify({ type:"resize", cols, rows })));
+}
+
+function select(id){
+  current = id;
+  const w = state.windows.find(x => x.id === id);
+  $("curName").textContent = w ? w.label : "—";
+  $("curPath").textContent = w ? `${w.cwd}${w.own ? "" : `　（${w.socket} で稼働中）`}` : "";
+  $("closeBtn").hidden = !w || !w.own;   // 他ツールのセッションは閉じない
+  $("dupBtn").hidden = !w;
+  $("empty").hidden = true; $("term").hidden = false;
+  ensureTerm();
+  ws?.close();
+  term.reset();   // 前のセッションの内容を残さない
+  // 要素サイズが確定してから fit → その cols/rows で接続する。
+  // fit 前の値で繋ぐと tmux とブラウザで折り返し幅が食い違い、行の断片が残る。
+  requestAnimationFrame(() => { try { fit.fit(); } catch {} connect(id); });
+  render();
+}
+
+function connect(id){
+  const url = `ws://${location.host}/ws?target=${encodeURIComponent(id)}`
+            + `&cols=${term.cols}&rows=${term.rows}`;
+  ws = new WebSocket(url);
+  // PTY の出力をそのまま書く。画面クリアを挟まないので、スクロールバックが正しく積まれる。
+  ws.onmessage = (ev) => {
+    const m = JSON.parse(ev.data);
+    if (m.type === "out") term.write(m.data);
+    else if (m.type === "error") term.write(`\r\n\x1b[31m接続できません: ${m.data}\x1b[0m\r\n`);
+  };
+  ws.onopen = () => { term.focus(); };
+}
+
+async function launch(dir, resumeId = null){
+  const d = await (await fetch("/api/launch", { method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ path: dir, resumeId }) })).json();
+  await refresh();
+  if (d.id) select(d.id);
+}
+
+// ---- 左ペインの操作
+$("list").addEventListener("click", (e) => {
+  // 外で動いているセッションを cockpit 側で resume して引き取る。
+  // 元のターミナルは自動では閉じられないので、二重オープンにならないよう案内する。
+  const ad = e.target.closest(".adopt");
+  if (ad) {
+    if (!confirm("この会話の続きを cockpit で開きます。\n\n二重に開くと記録が競合するので、元のターミナル側は閉じてください。")) return;
+    ad.textContent = "引き取り中…";
+    launch(ad.dataset.cwd, ad.dataset.sid);
+    return;
+  }
+  const plus = e.target.closest(".plus");
+  if (plus) { launch(plus.dataset.path); return; }
+  const item = e.target.closest(".item");
+  if (item && !item.closest(".ext")) select(item.dataset.id);
+});
+
+// ---- 案件ピッカー（＋ で開く。案件 → その案件の過去セッション、の2段）
+let pick = { mode: "projects", cwd: null, label: "", sessions: [] };
+
+function renderPick(){
+  const q = $("pickInput").value.trim().toLowerCase();
+  if (pick.mode === "projects") {
+    $("pickInput").placeholder = "案件名で絞り込み…";
+    $("pickList").innerHTML = state.projects
+      .filter(p => !q || p.name.toLowerCase().includes(q))
+      .slice(0, 40)
+      .map(p => `<div data-path="${esc(p.path)}">${esc(p.name)}</div>`).join("");
+    return;
+  }
+  // セッション選択モード
+  $("pickInput").placeholder = "セッションを絞り込み…";
+  const rows = pick.sessions.filter(s => !q || s.title.toLowerCase().includes(q));
+  $("pickList").innerHTML =
+    `<div class="back" data-back="1">← 案件一覧に戻る（${esc(pick.label)}）</div>` +
+    `<div class="newsess" data-resume="">＋ 新しいセッションを始める</div>` +
+    (rows.length
+      ? rows.map(s => `<div data-resume="${esc(s.id)}">
+           <div class="ttl">${esc(s.title)}</div>
+           <div class="when">${ago(s.mtime)}前</div></div>`).join("")
+      : `<div style="cursor:default;opacity:.6">再開できるセッションはありません</div>`);
+}
+
+$("addBtn").addEventListener("click", () => {
+  const open = $("picker").classList.toggle("open");
+  pick = { mode: "projects", cwd: null, label: "", sessions: [] };
+  $("pickInput").value = "";
+  if (open) { renderPick(); $("pickInput").focus(); }
+});
+$("pickInput").addEventListener("input", renderPick);
+
+$("pickList").addEventListener("click", async (e) => {
+  const back = e.target.closest("[data-back]");
+  if (back) { pick = { mode:"projects", cwd:null, label:"", sessions:[] }; $("pickInput").value=""; renderPick(); return; }
+
+  const proj = e.target.closest("div[data-path]");
+  if (proj) {
+    const p = state.projects.find(x => x.path === proj.dataset.path);
+    pick = { mode: "sessions", cwd: proj.dataset.path, label: p?.name || "", sessions: [] };
+    $("pickInput").value = "";
+    $("pickList").innerHTML = `<div style="cursor:default;opacity:.6">読み込み中…</div>`;
+    try {
+      const r = await fetch("/api/resumable?cwd=" + encodeURIComponent(pick.cwd));
+      pick.sessions = (await r.json()).sessions || [];
+    } catch { pick.sessions = []; }
+    renderPick();
+    $("pickInput").focus();
+    return;
+  }
+
+  const res = e.target.closest("[data-resume]");
+  if (res && pick.cwd) {
+    const id = res.dataset.resume || null;
+    $("picker").classList.remove("open"); $("pickInput").value = "";
+    const cwd = pick.cwd;
+    pick = { mode:"projects", cwd:null, label:"", sessions:[] };
+    launch(cwd, id);
+  }
+});
+
+// ---- ヘッダのボタン
+$("dupBtn").addEventListener("click", () => {
+  const w = state.windows.find(x => x.id === current); if (w) launch(w.cwd);
+});
+$("closeBtn").addEventListener("click", async () => {
+  if (!current || !confirm("このセッションを閉じますか")) return;
+  await fetch("/api/close", { method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ target: current }) });
+  ws?.close(); current = null; $("term").hidden = true; $("empty").hidden = false;
+  refresh();
+});
+
+refresh();
+setInterval(refresh, 2000);
+</script>
+</body>
+</html>
