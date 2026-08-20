@@ -6,6 +6,7 @@
 # 例外: 実 API キーが含まれてるため除外（1Password 移行後にダミー化予定）
 05_development/youtube/comment_automation/.env.example
 .mcp.json
+.mcp.json.bak-*
 *.key
 *.pem
 credentials/
@@ -55,13 +56,16 @@ output/
 05_development/youtube/projects/
 
 # PTJ AI健康相談PoC（nested 独立 git リポ・後で個人GitHubに切り出す）
-03_projects/PTJ_パーソナルトレーナージャパン/app/
+03_projects/パーソナルトレーナージャパン/app/
 
 # Top-level image dumps (use 05_development/youtube/docs/screenshots/ or 03_projects/{slug}/ instead)
 /*.png
 /*.jpg
 /*.jpeg
 /*.gif
+# Worker state (ホタルシステム: heartbeats, processed logs)
+.ops/
+
 # Cross-device sync (rclone bisync state, locks, conflict copies, logs)
 .sync.lock
 .sync-logs/
@@ -69,6 +73,9 @@ output/
 .sync-gitleaks-report.json
 *.conflict-*
 **/*.conflict-*
+
+# ローカル専用領域（同期・git 対象外）
+_local/
 
 # rclone config は credentials/ 配下に置く (credentials/ は既に除外済)
 # 念のため top-level の rclone.conf も除外
@@ -82,8 +89,67 @@ output/
 .review/
 
 # 独立 git リポジトリ（個別 GitHub で管理 or 参照用 clone）
-# OKWEB 案件: 技術検証 + リプレース対象システムの参照用 clone
-03_projects/OKWEB/aikata-auth-test/
-03_projects/OKWEB/repos/
+# オーケーウェブ案件: 技術検証 + リプレース対象システムの参照用 clone（旧名 OKWEB からリネーム済み）
+03_projects/オーケーウェブ/aikata-auth-test/
+03_projects/オーケーウェブ/repos/
 # mailmag 自動化: github.com/narudev4/Walkers_mailmag-automation
 05_development/mailmag-automation/
+# 以下も独立 git リポ（親リポに gitlink で混入させない）
+05_development/1lc-property/
+05_development/ai-workflow-os/
+05_development/company_system/
+05_development/eye-of-providence/
+05_development/walkers-seo-monitor/
+
+# Chrome プロファイル由来の 0 バイトゴミファイル
+/P4_Cookies.src
+
+# cockpit デスクトップアプリのビルド成果物（.app は 276MB）
+05_development/cockpit/desktop/node_modules/
+05_development/cockpit/desktop/dist/
+05_development/cockpit/node_modules/
+
+# Chathub 配布版: github.com/full999/chathub-distribution の clone（古谷さん配布）
+# .env / creds.json / bridge config は絶対に Walkers_naru 側へ持ち込まない
+05_development/chathub-distribution/
+
+# mtg-watch の状態・ログ(ローカル運用ファイル)
+05_development/mtg-pipeline/watch/logs/
+05_development/mtg-pipeline/watch/seen.json
+05_development/mtg-pipeline/watch/.lock
+
+# ── バイナリ成果物は Git 正本に含めない（2026-08-20 決定）────────────────
+# 正本は md / csv / コードなどのテキスト。PDF・音声・画像は AI が読まないうえ
+# 履歴を恒久的に肥大化させるため、ローカルと Google Drive 側に保持する。
+# 個別に必要なものは git add -f で明示追加する。
+*.pdf
+*.wav
+*.mp3
+*.m4a
+*.mp4
+*.mov
+*.zip
+*.xlsx
+*.xls
+*.pptx
+*.docx
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.icns
+
+# 生成物（実行のたび再生成される。正本ではない）
+05_development/yt-desc-update/audit/
+05_development/walkers-dashboard/data.json
+
+# 落合案件の独立 git リポ（Shopify テーマ / 連携スクリプト。個別管理）
+03_projects/落合コーポレーション/ochiai-integrations/
+03_projects/落合コーポレーション/ochiai-theme/
+
+# ── 実トークンを含むファイル（Git に載せない。実体はローカルのみ）────────
+.codex/config.toml
+**/.mf-tokens*
+# 1LC 引き継ぎ資料: Postmark の実 API トークンが本文・コードに直書き
+03_projects/1LC/引き継ぎ/toC_mail-matching/

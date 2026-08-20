@@ -13,7 +13,8 @@ paths = [
   # 独立 git リポジトリ (各リポ個別で gitleaks 管理されるべき)
   # ※ パス境界 / を明示してディレクトリ名の部分一致を防ぐ
   '''.*/aikata-auth-test/.*''',
-  '''.*/PTJ_[^/]+/app/.*''',
+  '''.*/repos/aikata/.*''',
+  # PTJ app 配下の誤検出は下の .next/node_modules グローバル除外でカバー (案件名非依存)
   '''.*/love-search[_-][^/]+/.*''',
   '''.*/love_search[_-][^/]+/.*''',
   '''.*/mailmag-automation/.*''',
@@ -40,6 +41,10 @@ paths = [
   # ※ output/articles/ output/digest/ output/trends/ は S3 同期対象に追加予定だが、
   #   gitleaks は中身もスキャンするので 本物 secret は別途検出される
   '''.*/output/.*''',
+
+  # ビルド成果物 / 依存 (案件名非依存。誤検出源 + スキャン時間の主因。sync.filter も除外済)
+  '''.*/\.next/.*''',
+  '''.*/node_modules/.*''',
 
   # MCP サーバ用 credentials (個別管理、S3 同期対象外)
   '''.*/05_development/mcp-google/.*''',
